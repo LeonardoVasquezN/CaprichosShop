@@ -48,6 +48,11 @@
 
   /* margin-left: 460px; */
   transition: background-color 0.3s ease, color 0.3s ease;
+
+   user-select: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
 }
 
 .btnIniciarSesion:hover {
@@ -72,6 +77,11 @@
 .iconCarrito {
   width: 40px;
   height: 40px;
+
+   user-select: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
 }
 
 .iconCarrito:hover {
@@ -91,6 +101,18 @@
   width: 35px;
   height: 35px;
   margin-left: 80px;
+
+   user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.menuLetra {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 .iconHamburguesa:hover {
@@ -154,6 +176,11 @@
   height: 40px;
   /* height: 20px; */
   padding: 10px;
+
+   user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 .containerBuscador {
@@ -171,6 +198,11 @@
 .imgLupa {
   width: 35px;
   height: 35px;
+
+   user-select: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
 }
 
 

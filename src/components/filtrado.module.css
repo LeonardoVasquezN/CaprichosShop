@@ -14,6 +14,11 @@
   align-items: center;
   justify-content: center;
   color: white;
+
+   user-select: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
 }
 
 .contentGenero {
@@ -23,6 +28,11 @@
   margin: 15px auto;
   display: flex;
   align-items: center;
+
+   user-select: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
 }
 
 .ContentGeneroData,
@@ -32,6 +42,11 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+
+   user-select: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
 }
 
 @media (max-width: 768px) {

@@ -21,6 +21,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
+
 }
 
 .tituloCardDetalle {
@@ -75,6 +77,11 @@
   display: flex;
   gap: 10px;
   padding: 10px 20px;
+
+   user-select: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
 }
 
 .color-box {
@@ -98,6 +105,11 @@
   flex-wrap: wrap;
   gap: 12px;
   padding: 0 20px;
+
+   user-select: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
 }
 
 .talla-box {
@@ -139,6 +151,11 @@
   align-items: center;
   gap: 10px;
   padding-left: 10px;
+
+   user-select: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
 }
 
 .estiloContentAddMASMENOS {
@@ -205,6 +222,10 @@
 
 .spanAddCarrito {
   font-size: 13px;
+   user-select: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
 }
 
 .tituloProductoRelacionado {
@@ -305,6 +326,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
+   user-select: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
 }
 
 .tituloCardDetalle {
@@ -324,6 +350,11 @@
   justify-content: center;
   align-items: center;
   margin-top: 12%;
+
+   user-select: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
 }
 
 .estiloImagen {
@@ -348,6 +379,11 @@
   margin: 10px 0 15px 20px;
   font-weight: bold;
   text-transform: uppercase;
+
+   user-select: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
 }
 
 .estiloPrecio {
@@ -355,7 +391,14 @@
   margin-left: 20px;
   font-weight: bold;
   color: black;
+
+   user-select: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
 }
+
+
 
 /* ================= RELACIONADOS ================= */
 .tituloProductoRelacionado {
@@ -363,6 +406,11 @@
   text-align: center;
   font-weight: bold;
   margin-bottom: 50px;
+
+   user-select: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
 }
 
 .contentProductCarrusel {
@@ -370,6 +418,11 @@
   height: 420px;
   position: relative;
   overflow: visible;
+
+   user-select: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
 }
 
 /* ================= SLIDES ================= */
