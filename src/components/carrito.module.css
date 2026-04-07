@@ -24,6 +24,23 @@
   box-shadow: -2px 0 10px rgba(0,0,0,0.3);
   overflow-y: auto;
   border-radius: 7px;
+
+   user-select: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+}
+
+.contentDNIRUC {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+}
+
+.contentClienteDNI {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
 
@@ -37,7 +54,7 @@
   width: 120px;
   height: 17px;
   padding: 3px;
-  font-size: 15px;
+  font-size: 12px;
   margin-left: 8px;
 }
 
@@ -47,8 +64,7 @@
   width: 120px;
   height: 17px;
   padding: 3px;
-  font-size: 15px;
-  margin-bottom: 15px;
+  font-size: 12px;
 }
 
 .topCarrito {

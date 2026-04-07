@@ -147,22 +147,24 @@ export default function Carrito() {
       </div>
 
       {/* CLIENTE */}
-      <div>
-        <span className={Style.textNameClient}>Cliente:</span>
-        <input
-          className={Style.inputNameClient}
-          value={valueCliente}
-          onChange={(e) => setValueCliente(e.target.value)}
-        />
-      </div>
-
-      <div>
-        <span className={Style.textNameClient}>Dni/Ruc:</span>
-        <input
-          className={Style.inputNameDniRuc}
-          value={valueDniRuc}
-          onChange={(e) => setValueDniRuc(e.target.value)}
-        />
+      <div className={Style.contentClienteDNI}>
+        <div>
+          <span className={Style.textNameClient}>Cliente:</span>
+          <input
+            className={Style.inputNameClient}
+            value={valueCliente}
+            onChange={(e) => setValueCliente(e.target.value)}
+          />
+        </div>
+        <div className={Style.contentDNIRUC}>
+          <span className={Style.textNameClient}>Dni/Ruc:</span>
+          <input
+            className={Style.inputNameDniRuc}
+            value={valueDniRuc}
+            type="number"
+            onChange={(e) => setValueDniRuc(e.target.value)}
+          />
+        </div>
       </div>
 
       {/* PRODUCTOS */}

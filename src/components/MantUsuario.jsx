@@ -62,7 +62,7 @@ export default function MantUsuario() {
       setNombreUsuario(usuarioID.nombre || "");
       setCargo(usuarioID.cargo || "");
     }
-  }, [usuarioID]);
+  }, [usuarioID]); 
 
   return (
     <div className={Style.contentUsuario}>
