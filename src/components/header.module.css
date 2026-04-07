@@ -134,6 +134,11 @@
 .iconUsuario {
   width: 40px;
   height: 40px;
+
+   user-select: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
 }
 
 .iconUsuario:hover {
@@ -199,6 +204,13 @@
   width: 35px;
   height: 35px;
 
+   user-select: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+}
+
+.nombreUsuario{
    user-select: none;
 -webkit-user-select: none;
 -moz-user-select: none;
