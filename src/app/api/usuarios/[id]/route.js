@@ -29,3 +29,34 @@ export async function GET(_req, { params }) {
 
   return NextResponse.json(usuario);
 }
+
+export async function PUT(req, { params }) {
+  const id = Number(params.id);
+
+  if (isNaN(id)) {
+    return NextResponse.json(
+      { mensaje: "ID inválido" },
+      { status: 400 }
+    );
+  }
+
+  try {
+    const body = await req.json();
+
+    const usuarioActualizado = await prisma.usuario.update({
+      where: { id },
+      data: {
+        nombre: body.nombre,
+        cargo: body.cargo,
+        clave: body.clave,
+      },
+    });
+
+    return NextResponse.json(usuarioActualizado);
+  } catch (error) {
+    return NextResponse.json(
+      { mensaje: "Error al actualizar usuario" },
+      { status: 500 }
+    );
+  }
+}

@@ -83,7 +83,11 @@ export default function CardDetalle() {
   const coloresDisponibles = [
     ...new Map(
       variantes
-        .filter((v) => v.color?.estado === 1)
+        .filter((v) =>
+          v.color?.estado === 1 &&
+          v.talla?.isActivo === true &&
+          v.stock > 0
+        )
         .map((v) => [v.colorId, v.color])
     ).values(),
   ];
@@ -153,7 +157,7 @@ export default function CardDetalle() {
         <p className={styles.estiloPrecio}>
           S/. {producto.precioVenta}
         </p>
-
+        
         <div className={styles.estiloContentColorDisponibles}>
           {coloresDisponibles.map((color) => (
             <div
@@ -237,6 +241,7 @@ export default function CardDetalle() {
             </span>
           </button>
         </div>
+
       </div>
 
       <h3 className={styles.tituloProductoRelacionado}>

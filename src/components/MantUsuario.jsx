@@ -35,14 +35,14 @@ export default function MantUsuario() {
         body: JSON.stringify({
           nombre: nombreUsuario,
           cargo,
-          password: clave,
+          clave: clave,
         }),
       });
 
       if (!response.ok) throw new Error();
 
       alert(id ? " Usuario actualizado con éxito" : " Usuario registrado con éxito");
-      router.push("/formUsuarios");
+      router.push("/FormUsuarios");
     } catch (error) {
       alert(" Error al guardar usuario");
     }
@@ -62,7 +62,7 @@ export default function MantUsuario() {
       setNombreUsuario(usuarioID.nombre || "");
       setCargo(usuarioID.cargo || "");
     }
-  }, [usuarioID]); 
+  }, [usuarioID]);
 
   return (
     <div className={Style.contentUsuario}>
@@ -90,8 +90,8 @@ export default function MantUsuario() {
             onChange={(e) => setCargo(e.target.value)}
           >
             <option value="">Elegir usuario</option>
-            <option value="administrador">Administrador</option>
-            <option value="vendedor">Vendedor</option>
+            <option value="Administrador">Administrador</option>
+            <option value="Vendedor">Vendedor</option>
           </select>
         </div>
 
