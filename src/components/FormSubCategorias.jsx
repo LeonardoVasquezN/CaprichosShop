@@ -31,6 +31,12 @@ export default function FormSubCategorias() {
 
   const cambiarEstadoSubCategorias = async (id, nuevoEstado) => {
     try {
+      useSubCategoriasStore.setState((state) => ({
+        subCategorias: state.subCategorias.map((sc) =>
+          sc.id === id ? { ...sc, estado: nuevoEstado } : sc
+        ),
+      }));
+
       await fetch(`/api/subCategorias/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -38,6 +44,7 @@ export default function FormSubCategorias() {
       });
 
       await actualizarSubCategorias();
+
     } catch (error) {
       console.error("Error al cambiar estado:", error);
     }

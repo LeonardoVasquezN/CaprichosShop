@@ -13,8 +13,10 @@ import { useLoginStore } from "@/store/LoginStore";
 import { useMenuStore } from "@/store/MenuStore";
 import { useCarritoStore } from "@/store/CarritoStore";
 import { useUsuarioStore } from "@/store/UsuarioStore";
+import { useProductosStore } from "@/store/ProductosStore";
 
 export default function Header() {
+
   const router = useRouter();
 
   const usuario = useUsuarioStore((s) => s.usuario);
@@ -42,24 +44,11 @@ export default function Header() {
   
   const [mostrarMenuUsuario, setMostrarMenuUsuario] = useState(false);
   const [showAutoComplete, setShowAutoComplete] = useState(false);
-  const [productos, setProductos] = useState([]);
+  const productos = useProductosStore((s) => s.productos);
   
   useEffect(() => {
     cargarUsuario();
   }, [cargarUsuario]);
-  
-  useEffect(() => {
-    async function loadProductos() {
-      try {
-        const res = await fetch("/api/productos");
-        const data = await res.json();
-        setProductos(data);
-      } catch {
-        setProductos([]);
-      }
-    }
-    loadProductos();
-  }, []);
   
   const handleInputChange = (e) => {
     const valor = e.target.value;
