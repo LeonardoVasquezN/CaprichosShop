@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import styles from "./filtrado.module.css";
 
@@ -54,9 +54,11 @@ export default function Filtrado() {
         <span>CATEGORÍA</span>
       </div>
 
+      
       <div className={styles.ContentCategoriaData}>
         {subCategoriasFiltradas.map((sub) => (
-          <label key={sub.id}>
+          <>
+            {sub.estado === 1 && <label key={sub.id}>
             <input
               type="radio"
               name="categoria"
@@ -65,7 +67,8 @@ export default function Filtrado() {
               }
             />
             {sub.nombre}
-          </label>
+          </label>}
+          </>
         ))}
       </div>
     </div>

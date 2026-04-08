@@ -101,14 +101,16 @@ export default function Catalogo() {
       {/* PRODUCTOS */}
       <div className={Styles.containerCatalogo}>
         {productosFiltrados.map((p) => (
-          <Card
+          <>
+            {p.subCategoria?.estado === 1 && <Card
             key={p.id}
             onClick={() => router.push(`/detalle/${p.id}`)}
             imagenCatalogo={p.imagen}
             marca={p.marca?.nombre}
             nombre={p.nombre}
             precio={`S/. ${p.precioVenta}`}
-          />
+          />}
+          </>
         ))}
       </div>
     </div>
