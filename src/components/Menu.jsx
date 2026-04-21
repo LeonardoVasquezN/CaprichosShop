@@ -20,6 +20,14 @@ export default function Menu() {
 
   return (
     <aside className={Style.contentMenu}>
+
+      <div
+        className={Style.contentMantenimientoUsuario}
+        onClick={() => ir("/post")}
+      >
+        + Nuevo Comprobante
+      </div>
+
       {/* Preventa */}
       <div
         className={Style.contentPreventa}
@@ -38,6 +46,7 @@ export default function Menu() {
 
       {usuario.cargo !== "Vendedor" ? (
         <>
+
           <div
             className={Style.contentMantenimientoProductos}
             onClick={() => ir("/MantProductos")}

@@ -1,0 +1,15 @@
+@media print {
+  .noPrint {
+    display: none !important;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  .ticket {
+    width: 80mm;
+    font-size: 12px;
+  }
+}

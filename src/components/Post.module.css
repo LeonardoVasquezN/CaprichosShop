@@ -1,0 +1,209 @@
+.title {
+  margin-top: 120px;
+  margin-left: 40px;
+
+  font-weight: bold;
+}
+
+.contentComprobanteCliente {
+  /* border: 2px solid red; */
+  width: 300px;
+  height: 300px;
+  margin-left: 40px;
+}
+
+.contentBotones {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tituloComprobante {
+  color: red;
+}
+
+.buttons {
+  border: 2px solid black;
+  border-radius: 7px;
+  padding: 5px;
+  width: 200px;
+  font-size: 15px;
+}
+
+.buttons:hover {
+  cursor: pointer;
+}
+
+.inputCliente {
+  border: 2px solid black;
+  border-radius: 5px;
+  width: 150px;
+  border: none;
+  font-size: 14px;
+}
+
+.inputCliente:focus {
+  outline: none;
+  border: none;
+}
+
+.imagenInput {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 2px solid black;
+  width: 200px;
+  border-radius: 8px;
+  padding: 5px;
+}
+
+.contentBuscarProducto {
+  margin-top: 10px;
+  border: 2px solid black;
+  border-radius: 8px;
+  width: 200px;
+  padding: 3px;
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.tabla th {
+  border-bottom: 2px solid #ccc;
+  text-align: left;
+  padding: 8px;
+}
+
+.tabla td {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.inputTabla {
+  width: 60px;
+  padding: 4px;
+  text-align: center;
+}
+
+.totalContainer {
+  display: flex;
+  justify-content: flex-end;
+  width: auto;
+}
+
+.btnCrear {
+  border: 2px solid rgba(0, 128, 0, 0.803);
+  background-color: rgba(0, 128, 0, 0.803);
+  border-radius: 5px;
+  color: white;
+  width: 300px;
+  height: 30px;
+  padding: 5px;
+  margin-bottom: 10px;
+}
+
+.btnCrear:hover {
+  cursor: pointer;
+  border: 2px solid rgba(0, 128, 0, 0.803);
+  background-color: rgba(0, 128, 0, 0.8);
+}
+
+.listaClientes {
+  position: absolute;
+  top: 40px;
+  left: 30px;
+  width: 250px;
+  background: white;
+  border: 1px solid #ccc;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 100;
+  border-radius: 5px;
+}
+
+.itemCliente {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.itemCliente:hover {
+  background: #f5f5f5;
+}
+
+.listaClientes, .listaProductos {
+  position: absolute;
+  background: white;
+  border: 1px solid #ccc;
+  max-height: 200px;
+  overflow-y: auto;
+  width: 250px;
+  z-index: 100;
+  border-radius: 5px;
+}
+
+.itemCliente, .itemProducto {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.itemCliente:hover, .itemProducto:hover {
+  background: #f5f5f5;
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ticket {
+  background: white;
+  padding: 15px;
+  width: 260px;
+  font-family: monospace;
+}
+
+.ticketItem {
+  display: flex;
+  justify-content: space-between;
+}
+
+.ticketTotal {
+  margin-top: 10px;
+  border-top: 1px dashed black;
+}
+
+.modalButtons {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.btnPrint {
+  background: green;
+  color: white;
+  flex: 1;
+}
+
+.btnClose {
+  background: red;
+  color: white;
+  flex: 1;
+}
+
+.buttonActive {
+  background-color: rgba(0, 128, 0, 0.8);
+  color: white;
+  border: 2px solid rgba(0, 128, 0, 0.8);
+}

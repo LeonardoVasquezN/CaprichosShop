@@ -91,6 +91,8 @@ model Producto {
   stockTotal Int @map("stock_total")
   imagen String?
 
+  estado Boolean @default(true)
+
   subCategoriaId Int @map("id_sub_categorias")
   marcaId Int? @map("id_marca")
 

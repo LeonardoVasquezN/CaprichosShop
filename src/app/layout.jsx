@@ -2,6 +2,7 @@ import "./globals.css";
 import { Providers } from "./providers";
 import { GlobalDataProvider } from "@/components/GlobalDataContext";
 import ClientLayout from "./ClientLayout";
+import '@/styles/print.css';
 
 export default function RootLayout({ children }) {
   return (

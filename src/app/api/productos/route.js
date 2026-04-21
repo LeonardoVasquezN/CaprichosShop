@@ -12,6 +12,12 @@ cloudinary.config({
 
 export async function GET() {
   const productos = await prisma.producto.findMany({
+    where: {
+      estado: true,
+      subCategoria: {
+        estado: 1,
+      }
+    },
     include: {
       subCategoria: { include: { categoria: true } },
       marca: true,

@@ -108,7 +108,7 @@ export default function FormProductos() {
                     className={Style.botonEliminar}
                     onClick={() => eliminarProducto(producto.id)}
                   >
-                    Eliminar
+                    Deshabilitar
                   </button>
                 </td>
               </tr>

@@ -106,8 +106,9 @@ export async function DELETE(req) {
   try {
     const id = Number(req.nextUrl.pathname.split("/").pop());
 
-    await prisma.producto.delete({
+    await prisma.producto.update({
       where: { id },
+      data: { estado: false },
     });
 
     return NextResponse.json({
