@@ -94,3 +94,59 @@ body {
     visibility: hidden;
   }
 }
+
+@media print {
+  @page {
+    size: 58mm auto;
+    margin: 0;
+  }
+
+  html,
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 58mm !important;
+    background: white !important;
+  }
+
+  body * {
+    visibility: hidden !important;
+  }
+
+  .printOverlay,
+  .printOverlay * {
+    visibility: visible !important;
+  }
+
+  .printOverlay {
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 58mm !important;
+    height: auto !important;
+    background: white !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .printTicket {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 48mm !important;
+    padding: 2mm !important;
+    margin: 0 !important;
+    background: white !important;
+    color: black !important;
+    font-family: monospace !important;
+    font-size: 10px !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  .printButtons,
+  .printButtons * {
+    display: none !important;
+    visibility: hidden !important;
+  }
+}

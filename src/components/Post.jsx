@@ -97,28 +97,27 @@ export default function Post() {
   }, []);
 
   // const imprimir = async () => {
-  //   const res = await fetch("/api/print", {
+  //   await fetch("http://localhost:3001/print", {
   //     method: "POST",
-  //     headers: { "Content-Type": "application/json" },
+  //     headers: {
+  //       "Content-Type": "application/json"
+  //     },
   //     body: JSON.stringify({
   //       cliente,
   //       productos,
-  //       total
+  //       total,
+  //       tipoComprobante
   //     })
-  //   });
+  //   })
+  // }
 
-  //   const data = await res.json();
-
-  //   if (data.ok) {
-  //     alert("Impreso correctamente");
-  //   } else {
-  //     alert("Error al imprimir");
-  //   }
-  // };
+  const imprimir = () => {
+    window.print();
+  };
 
   return(
     <>
-      <div className='noPrint'>
+      <div className={`${Style.noPrint} noPrint`}>
         <h1 className={Style.title}>Nuevo Comprobante</h1>
         <div className={Style.contentComprobanteCliente}>
           <h1 className={Style.tituloComprobante}>Tipo de COMPROBANTE</h1>
@@ -251,9 +250,9 @@ export default function Post() {
       </div>
 
       {mostrarPreview && (
-        <div className={Style.modalOverlay}>
+        <div className={`${Style.modalOverlay} printOverlay`}>
           
-          <div className={Style.ticket}>
+          <div className={`${Style.ticket} printTicket`}>
 
             {tipoComprobante === 'NV' && (
               <>
@@ -293,10 +292,10 @@ export default function Post() {
               </>
             )}
 
-            <div className={Style.modalButtons}>
+            <div className={`${Style.modalButtons} printButtons`}>
               <button 
                 className={Style.btnPrint}
-                onClick={() => window.print()}
+                onClick={imprimir}
               > 
                 Imprimir
               </button>
