@@ -16,21 +16,14 @@ export default function Carrito() {
 
   const usuario = useUsuarioStore((s) => s.usuario);
 
-  const [productoEditandoCantidad, setProductoEditandoCantidad] = useState(null);
-  const [productoEditandoPrecio, setProductoEditandoPrecio] = useState(null);
-
   const [valueCliente, setValueCliente] = useState("");
   const [valueDniRuc, setValueDniRuc] = useState("");
 
   const [clientes, setClientes] = useState([]);
-
   const [procesando, setProcesando] = useState(false);
 
-  const puedeEditar =
-    usuario &&
-    ["Administrador", "Vendedora", "administrador", "vendedor"].includes(
-      usuario.cargo
-    );
+  const [editandoPrecio, setEditandoPrecio] = useState(null);
+  const [precioTemp, setPrecioTemp] = useState("");
 
   const subTotal = productos.reduce(
     (total, p) => total + Number(p.precio) * Number(p.cantidad),
@@ -44,22 +37,8 @@ export default function Carrito() {
       .catch(console.error);
   }, []);
 
-  const handleCantidadChange = (index, value) => {
-    actualizarProducto(index, {
-      ...productos[index],
-      cantidad: value,
-    });
-  };
-
-  const handlePrecioChange = (index, value) => {
-    actualizarProducto(index, {
-      ...productos[index],
-      precio: value,
-    });
-  };
-
   const handleRegistrarPreVenta = async () => {
-    if (procesando) return; 
+    if (procesando) return;
     setProcesando(true);
 
     try {
@@ -80,11 +59,7 @@ export default function Carrito() {
           }),
         });
 
-        if (!resCliente.ok) {
-          alert("Error al crear cliente");
-          return;
-        }
-
+        if (!resCliente.ok) return alert("Error al crear cliente");
         cliente = await resCliente.json();
       }
 
@@ -97,10 +72,7 @@ export default function Carrito() {
         sub_total: Number(p.precio) * Number(p.cantidad),
       }));
 
-      const total = datosProductos.reduce(
-        (acc, p) => acc + p.sub_total,
-        0
-      );
+      const total = datosProductos.reduce((acc, p) => acc + p.sub_total, 0);
 
       const resPreVenta = await fetch("/api/pre-ventas", {
         method: "POST",
@@ -112,178 +84,153 @@ export default function Carrito() {
         }),
       });
 
-      if (!resPreVenta.ok) {
-        alert("Error al registrar la pre-venta");
-        return;
-      }
+      if (!resPreVenta.ok) return alert("Error al registrar");
 
-      alert(" Pre-venta registrada correctamente");
+      alert("Pre-venta registrada");
       vaciarCarrito();
       cerrarCarrito();
     } catch (error) {
       console.error(error);
-      alert(" Error de conexión");
+      alert("Error de conexión");
     } finally {
-      setProcesando(false); 
+      setProcesando(false);
     }
   };
 
   return (
     <div className={Style.contenedorCarrito}>
-      {/* LOGO */}
-      <Image
-        src="/images/caprichosLogoT.png"
-        className={Style.fotoLogo}
-        alt="Logo"
-        width={130}
-        height={30}
-      />
-
-      <div className={Style.topCarrito}>
-        <h1 className={Style.titulo}>Carrito de Compras</h1>
-        <button className={Style.estilobtnCerrar} onClick={cerrarCarrito}>
-          X
+      {/* HEADER */}
+      <div className={Style.header}>
+        <Image
+          src="/images/caprichosLogoT.png"
+          alt="Logo"
+          width={130}
+          height={30}
+        />
+        <button onClick={cerrarCarrito} className={Style.btnCerrar}>
+          ✕
         </button>
       </div>
 
+      <h2 className={Style.titulo}>Carrito de Compras</h2>
+
       {/* CLIENTE */}
-      <div className={Style.contentClienteDNI}>
-        <div>
-          <span className={Style.textNameClient}>Cliente:</span>
-          <input
-            className={Style.inputNameClient}
-            value={valueCliente}
-            onChange={(e) => setValueCliente(e.target.value)}
-          />
-        </div>
-        <div className={Style.contentDNIRUC}>
-          <span className={Style.textNameClient}>Dni/Ruc:</span>
-          <input
-            className={Style.inputNameDniRuc}
-            value={valueDniRuc}
-            type="number"
-            onChange={(e) => setValueDniRuc(e.target.value)}
-          />
-        </div>
+      <div className={Style.form}>
+        <input
+          placeholder="Ingrese Nombre"
+          value={valueCliente}
+          onChange={(e) => setValueCliente(e.target.value)}
+        />
+        <input
+          placeholder="DNI / RUC"
+          value={valueDniRuc}
+          onChange={(e) => setValueDniRuc(e.target.value)}
+        />
       </div>
 
       {/* PRODUCTOS */}
-      <div className={Style.contenedorItems}>
-        {productos.length === 0 ? (
-          <p className={Style.NoProductsCarrito}>
-            No hay productos en el carrito.
-          </p>
-        ) : (
-          productos.map((producto, i) => (
-            <div key={i} className={Style.estiloItemCarrito}>
-              <div className={Style.estiloContentIMGNamePrice}>
-                <Image
-                  src={producto.imagen || "/images/placeholder.jpg"}
-                  alt={producto.nombre}
-                  width={40}
-                  height={40}
-                  className={Style.imagen}
-                />
+      <div className={Style.lista}>
+        {productos.map((p, i) => (
+          <div key={i} className={Style.card}>
+            <Image
+              src={p.imagen || "/images/placeholder.jpg"}
+              width={60}
+              height={60}
+              alt={p.nombre}
+              className={Style.img}
+            />
 
-                <div className={Style.nombreProducto}>
-                  <p className={Style.nombrePProducto}>{producto.nombre}</p>
-                </div>
+            <div className={Style.info}>
+              <p className={Style.nombre}>{p.nombre}</p>
 
-                {productoEditandoCantidad === i && puedeEditar ? (
+              <div className={Style.detalles}>
+                <span>Talla: {p.talla}</span>
+                <span>Color: {p.color}</span>
+
+                {editandoPrecio === i ? (
                   <input
                     type="number"
-                    min="1"
-                    value={producto.cantidad}
-                    onChange={(e) =>
-                      handleCantidadChange(i, e.target.value)
-                    }
-                    onBlur={() => setProductoEditandoCantidad(null)}
+                    value={precioTemp}
                     autoFocus
+                    onChange={(e) => setPrecioTemp(e.target.value)}
+                    onBlur={() => {
+                      actualizarProducto(i, {
+                        ...p,
+                        precio: Number(precioTemp),
+                      });
+                      setEditandoPrecio(null);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        actualizarProducto(i, {
+                          ...p,
+                          precio: Number(precioTemp),
+                        });
+                        setEditandoPrecio(null);
+                      }
+                    }}
+                    className={Style.inputPrecio}
                   />
                 ) : (
-                  <p
-                    onDoubleClick={() =>
-                      puedeEditar && setProductoEditandoCantidad(i)
-                    }
+                  <span
+                    onDoubleClick={() => {
+                      setEditandoPrecio(i);
+                      setPrecioTemp(p.precio);
+                    }}
+                    className={Style.precioEditable}
                   >
-                    Cantidad: {producto.cantidad}
-                  </p>
+                    PU: S/. {p.precio}
+                  </span>
                 )}
               </div>
 
-              <div className={Style.estiloContentColorTallaCantidad}>
-                <div className={Style.estiloColor}>
-                  <p>Talla: {producto.talla}</p>
-                </div>
-
-                <div className={Style.estiloTalla}>
-                  <p>{producto.color}</p>
-                </div>
-
-                <div className={Style.precioProducto}>
-                  <div className={Style.contentPrecioUnitario}>
-                    {productoEditandoPrecio === i && puedeEditar ? (
-                      <input
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        value={producto.precio}
-                        onChange={(e) =>
-                          handlePrecioChange(i, e.target.value)
-                        }
-                        onBlur={() => setProductoEditandoPrecio(null)}
-                        autoFocus
-                      />
-                    ) : (
-                      <p
-                        className={Style.precioUnitario}
-                        onDoubleClick={() =>
-                          puedeEditar && setProductoEditandoPrecio(i)
-                        }
-                      >
-                        S/. {producto.precio}
-                      </p>
-                    )}
-                  </div>
-
-                  <p>
-                    SubTotal: S/.{" "}
-                    {(Number(producto.precio) *
-                      Number(producto.cantidad)).toFixed(2)}
-                  </p>
-                </div>
-              </div>
-
-              <div className={Style.contentBotones}>
-                <Image
-                  src="/images/tachoBasura.png"
-                  alt="Eliminar"
-                  width={25}
-                  height={15}
-                  onClick={() => eliminarProducto(i)}
+              <div className={Style.bottom}>
+                <input
+                  type="number"
+                  min="1"
+                  value={p.cantidad}
+                  onChange={(e) =>
+                    actualizarProducto(i, {
+                      ...p,
+                      cantidad: Number(e.target.value),
+                    })
+                  }
+                  className={Style.inputCantidad}
                 />
+
+                <span className={Style.subtotal}>
+                  S/. {(p.precio * p.cantidad).toFixed(2)}
+                </span>
               </div>
             </div>
-          ))
-        )}
+
+            <button
+              onClick={() => eliminarProducto(i)}
+              className={Style.delete}
+            >
+              🗑
+            </button>
+          </div>
+        ))}
       </div>
 
-      <hr />
-
-      <div className={Style.estiloContentSubTotal}>
-        <h2 className={Style.subtotalLetra}>
-          Total: S/. {subTotal.toFixed(2)}
-        </h2>
+      {/* TOTAL */}
+      <div className={Style.total}>
+        <span>Total a pagar</span>
+        <strong>S/. {subTotal.toFixed(2)}</strong>
       </div>
 
+      {/* BOTÓN */}
       {usuario && (
-        <button
-          className={Style.botonPreventa}
-          disabled={procesando}
-          onClick={handleRegistrarPreVenta}
-        >
-          {procesando ? "Guardando..." : "Pre Venta"}
-        </button>
+        <div className={Style.acciones}>
+          <button
+            className={Style.btnComprar}
+            onClick={handleRegistrarPreVenta}
+            disabled={procesando}
+          >
+            {procesando ? "Guardando..." : "Proceder →"}
+          </button>
+        </div>
       )}
     </div>
   );

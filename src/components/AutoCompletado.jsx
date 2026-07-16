@@ -32,35 +32,62 @@ export default function Autocompletado({
   return (
     <div className={Style.contentAutocompletado}>
       <div className={Style.containerProducts}>
-        {productosVisibles.map((producto) => (
-          <ProductAutocomplete
-            key={producto.id}
-            estiloProductAutoComplete={StyleAutoComplete.containerProductAuto}
-            eventoOnClick={() => {
-              router.push(`/detalle/${producto.id}`);
-              setShowAutoComplete(false);
-              setTextoBusquedaTemporal("");
-              setProductosFiltrados([]);
-            }}
-            estiloContainerImagen={StyleAutoComplete.estiloContainerImagen}
-            imagen={producto.imagen}
-            estiloImagen={StyleAutoComplete.estiloImagen}
-            estiloContentDescripcion={StyleAutoComplete.estiloContentDescripcion}
-            estiloContentMarca={StyleAutoComplete.estiloContentMarca}
-            marca={producto.marca?.nombre ?? ""}
-            estiloMarca={StyleAutoComplete.estiloMarca}
-            nombre={producto.nombre}
-            estiloNombre={StyleAutoComplete.estiloNombre}
-            precio={`S/. ${producto.precioVenta}`}
-            estiloPrecio={StyleAutoComplete.estiloPrecio}
-            estiloContentNombre={StyleAutoComplete.estiloContentNombre}
-            estiloContentPrecio={StyleAutoComplete.estiloContentPrecio}
-            estiloContentBoton={StyleAutoComplete.estiloContentBoton}
-            textoBoton="AÑADIR AL CARRITO"
-            estiloBoton={StyleAutoComplete.estiloBoton}
-            estiloTextoBoton={StyleAutoComplete.estiloTextoBoton}
-          />
-        ))}
+        {productosVisibles.map((producto) => {
+          
+          const generoCorrecto = (() => {
+            const categoriaId =
+              producto.subCategoria?.categoriaId ??
+              producto.categoria?.id ??
+              producto.categoriaId;
+
+            if (Number(categoriaId) === 2) return "Caballeros";
+            if (Number(categoriaId) === 1) return "Damas";
+
+            return "General"; // fallback
+          })();
+
+          return (
+            <ProductAutocomplete
+              key={producto.id}
+              estiloProductAutoComplete={
+                StyleAutoComplete.containerProductAuto
+              }
+              eventoOnClick={() => {
+                router.push(`/detalle/${producto.id}`);
+                setShowAutoComplete(false);
+                setTextoBusquedaTemporal("");
+                setProductosFiltrados([]);
+              }}
+              estiloContainerImagen={
+                StyleAutoComplete.estiloContainerImagen
+              }
+              imagen={producto.imagen}
+              estiloImagen={StyleAutoComplete.estiloImagen}
+              estiloContentDescripcion={
+                StyleAutoComplete.estiloContentDescripcion
+              }
+              estiloMarca={StyleAutoComplete.estiloMarca}
+              estiloNombre={StyleAutoComplete.estiloNombre}
+              estiloCategoria={StyleAutoComplete.estiloCategoria}
+              marca={producto.marca?.nombre ?? ""}
+              nombre={producto.nombre}
+
+              // 🔥 AQUÍ ESTÁ LA MAGIA
+              categoria={generoCorrecto}
+
+              precio={`S/. ${producto.precioVenta}`}
+              estiloPrecio={StyleAutoComplete.estiloPrecio}
+              estiloContentBoton={
+                StyleAutoComplete.estiloContentBoton
+              }
+              textoBoton="AÑADIR AL CARRITO"
+              estiloBoton={StyleAutoComplete.estiloBoton}
+              estiloTextoBoton={
+                StyleAutoComplete.estiloTextoBoton
+              }
+            />
+          );
+        })}
       </div>
     </div>
   );

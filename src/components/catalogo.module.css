@@ -1,108 +1,292 @@
 .divCatalogo {
-  background-color: #ffffff;
+  --espacio-header: 90px;
+
+  min-height: 100vh;
+  padding-top: var(--espacio-header);
+  box-sizing: border-box;
+  background: #f5f5f5;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
-/* ===== DESKTOP ===== */
+.catalogoLayout {
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr);
+  align-items: start;
+
+  width: 100%;
+  min-height: calc(100vh - var(--espacio-header));
+  margin: 0;
+
+  background: #f5f5f5;
+}
+
 .containerFiltradoDesktop {
-  position: fixed;
-  left: 240px;
-  top: 150px;
+  position: sticky;
+  top: var(--espacio-header);
+  align-self: start;
+
+  width: 230px;
+  min-height: calc(100vh - var(--espacio-header));
+
+  background: #ffffff;
+  border-right: 1px solid #dddddd;
+}
+
+.catalogoMain {
+  min-width: 0;
+  padding: 14px 14px 28px;
+  box-sizing: border-box;
 }
 
 .containerCatalogo {
-  width: 880px;
-  display: flex;
-  flex-wrap: wrap;
-  margin-left: 520px;
-  margin-top: 110px;
-
-   user-select: none;
--webkit-user-select: none;
--moz-user-select: none;
--ms-user-select: none;
+  display: grid;
+  grid-template-columns: repeat(
+    5,
+    minmax(0, 1fr)
+  );
+  gap: 12px;
+  width: 100%;
+  user-select: none;
 }
 
-/* ===== FILTRO MOBILE ===== */
+/*
+ * Obliga al componente Card a respetar el ancho
+ * de cada columna, aunque tenga un ancho fijo.
+ */
+.containerCatalogo > * {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.containerCatalogo :global(img) {
+  max-width: 100% !important;
+  object-fit: contain;
+}
+
+.estadoCatalogo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 350px;
+  padding: 30px;
+  color: #777777;
+  text-align: center;
+  font-size: 16px;
+}
+
+.paginacion {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+  margin-top: 22px;
+}
+
+.botonPagina,
+.botonPaginacionTexto {
+  border: none;
+  background: transparent;
+  color: #333333;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.botonPagina {
+  min-width: 25px;
+  height: 25px;
+  padding: 0 5px;
+  border-radius: 5px;
+}
+
+.botonPagina:hover {
+  background: #ead9e8;
+  color: #810074;
+}
+
+.paginaActiva {
+  background: #8f0082;
+  color: #ffffff;
+}
+
+.paginaActiva:hover {
+  background: #75006a;
+  color: #ffffff;
+}
+
+.botonPaginacionTexto {
+  padding: 5px 6px;
+}
+
+.botonPaginacionTexto:hover:not(:disabled) {
+  color: #8f0082;
+  text-decoration: underline;
+}
+
+.botonPaginacionTexto:disabled {
+  color: #aaaaaa;
+  cursor: not-allowed;
+}
+
+.paginacionPuntos {
+  color: #777777;
+  font-size: 13px;
+}
+
+/* Botón móvil */
 .filtroMobileWrapper {
   display: none;
-  width: 100%;
-  padding: 15px 0;
-  position: sticky;
-  top: 70px;
-  background: #fff;
-  z-index: 20;
 }
 
 .btnFiltroMobile {
-  width: 90%;
-  margin: 0 auto;
-  background-color: purple;
-  color: white;
-  padding: 12px;
-  border-radius: 12px;
-  border: none;
-  font-size: 16px;
   display: flex;
-  align-items: center;
   justify-content: center;
-  gap: 8px;
+  align-items: center;
+  gap: 7px;
+  width: calc(100% - 24px);
+  min-height: 43px;
+  margin: 0 auto;
+  border: none;
+  border-radius: 8px;
+  background: #8f0082;
+  color: #ffffff;
+  font-size: 15px;
+  cursor: pointer;
 }
 
-/* ===== MODAL ===== */
+/* Modal móvil */
 .modalFiltro {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
   z-index: 1000;
+  display: flex;
+  justify-content: flex-start;
+  align-items: stretch;
+  background: rgba(0, 0, 0, 0.5);
 }
 
 .modalContent {
-  background: white;
-  width: 100%;
-  max-height: 85vh;
-  border-radius: 20px 20px 0 0;
-  padding: 20px;
+  width: min(360px, 90%);
+  height: 100%;
+  padding: 15px;
+  box-sizing: border-box;
   overflow-y: auto;
-  animation: slideUp 0.3s ease;
+  background: #ffffff;
+  box-shadow: 5px 0 20px rgba(0, 0, 0, 0.2);
+  animation: aparecerDesdeIzquierda 0.25s ease;
+}
+
+.modalEncabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3px 4px 12px;
+  font-size: 19px;
+  font-weight: 700;
+  border-bottom: 1px solid #dddddd;
 }
 
 .closeModal {
-  background: #eee;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 34px;
+  height: 34px;
   border: none;
-  font-size: 18px;
-  width: 36px;
-  height: 36px;
   border-radius: 50%;
-  float: right;
+  background: #eeeeee;
+  color: #222222;
+  font-size: 17px;
+  cursor: pointer;
 }
 
-@keyframes slideUp {
+.closeModal:hover {
+  background: #dddddd;
+}
+
+@keyframes aparecerDesdeIzquierda {
   from {
-    transform: translateY(100%);
+    transform: translateX(-100%);
   }
+
   to {
-    transform: translateY(0);
+    transform: translateX(0);
   }
 }
 
-/* ===== MOBILE ===== */
+/* Pantallas medianas */
+@media (max-width: 1300px) {
+  .containerCatalogo {
+    grid-template-columns: repeat(
+      4,
+      minmax(0, 1fr)
+    );
+  }
+}
+
+@media (max-width: 1050px) {
+  .containerCatalogo {
+    grid-template-columns: repeat(
+      3,
+      minmax(0, 1fr)
+    );
+  }
+}
+
+/* Tablets y celulares */
 @media (max-width: 768px) {
+  .divCatalogo {
+    --espacio-header: 90px;
+  }
+
+  .filtroMobileWrapper {
+    position: sticky;
+    top: var(--espacio-header);
+    z-index: 20;
+    display: block;
+    padding: 10px 0;
+    background: #ffffff;
+    border-bottom: 1px solid #dddddd;
+  }
+
+  .catalogoLayout {
+    display: block;
+    min-height: auto;
+  }
+
   .containerFiltradoDesktop {
     display: none;
   }
 
-  .filtroMobileWrapper {
-    display: block;
-    margin-top: 100px;
+  .catalogoMain {
+    padding: 12px;
   }
 
   .containerCatalogo {
-    margin-left: 0;
-    margin-top: 0;
-    width: 100%;
-    justify-content: center;
+    grid-template-columns: repeat(
+      2,
+      minmax(0, 1fr)
+    );
+    gap: 10px;
+  }
+
+  .paginacion {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 430px) {
+  .catalogoMain {
+    padding: 9px;
+  }
+
+  .containerCatalogo {
+    gap: 8px;
+  }
+
+  .botonPaginacionTexto {
+    font-size: 12px;
   }
 }

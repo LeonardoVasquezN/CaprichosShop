@@ -1,302 +1,685 @@
 .noPrint {
   display: block;
+  width: 100%;
+  min-height: 100vh;
+  padding: 24px;
+  box-sizing: border-box;
+  background: #f3f6f8;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.comprobanteCard {
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 20px 12px 22px;
+  box-sizing: border-box;
+  background: #f8fafb;
+  border: 1px solid #d5dce2;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-top: 100px; 
+}
+
+.encabezado {
+  margin-bottom: 10px;
 }
 
 .title {
-  margin-top: 120px;
-  margin-left: 40px;
-  font-weight: bold;
-}
-
-.contentComprobanteCliente {
-  width: 300px;
-  height: 300px;
-  margin-left: 40px;
-}
-
-.contentBotones {
-  margin-top: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  margin: 0;
+  color: #080808;
+  font-size: 27px;
+  line-height: 1.2;
+  font-weight: 700;
 }
 
 .tituloComprobante {
-  color: red;
+  margin: 6px 0 10px;
+  color: #777f86;
+  font-size: 17px;
+  font-weight: 400;
 }
 
-.buttons {
-  border: 2px solid black;
-  border-radius: 7px;
-  padding: 5px;
-  width: 200px;
-  font-size: 15px;
-  background: white;
-}
-
-.buttons:hover {
-  cursor: pointer;
-}
-
-.buttonActive {
-  background-color: rgba(0, 128, 0, 0.8);
-  color: white;
-  border: 2px solid rgba(0, 128, 0, 0.8);
-}
-
-.imagenInput {
-  margin-top: 10px;
+.contentBotones {
   display: flex;
   align-items: center;
   gap: 10px;
-  border: 2px solid black;
-  width: 200px;
-  border-radius: 8px;
-  padding: 5px;
+  margin-bottom: 24px;
+}
+
+.buttons {
+  width: 196px;
+  min-height: 45px;
+  padding: 8px 16px;
+  border: 1px solid #aeb7be;
+  border-radius: 14px;
+  background: #f6f8f9;
+  color: #737a80;
+  font-size: 17px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.buttons:hover {
+  background: #eef2f4;
+  border-color: #8f9aa2;
+}
+
+.buttons:active {
+  transform: scale(0.98);
+}
+
+.buttonActive {
+  background: #2f8f31;
+  color: #ffffff;
+  border-color: #2f8f31;
+}
+
+.buttonActive:hover {
+  background: #287b2a;
+  border-color: #287b2a;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: 215px minmax(450px, 1fr) 315px;
+  gap: 20px;
+  align-items: start;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.imagenInput,
+.contentBuscarProducto {
   position: relative;
+  width: 100%;
+  min-height: 45px;
+  box-sizing: border-box;
+  background: #ffffff;
+  border: 1px solid #d3dbe1;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+.imagenInput {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 11px;
 }
 
 .inputCliente {
-  width: 150px;
+  min-width: 0;
+  width: 100%;
+  padding: 0;
   border: none;
-  font-size: 14px;
+  outline: none;
   background: transparent;
+  color: #3d4348;
+  font-size: 16px;
 }
 
-.inputCliente:focus {
-  outline: none;
-  border: none;
+.inputCliente::placeholder {
+  color: #8c949a;
 }
 
 .contentBuscarProducto {
-  margin-top: 10px;
-  border: 2px solid black;
-  border-radius: 8px;
-  width: 200px;
-  padding: 3px;
-  position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .buscarProducto {
-  border: none;
-  background: transparent;
   width: 100%;
+  min-height: 43px;
+  padding: 8px 11px;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #747c82;
   text-align: left;
-  font-size: 14px;
+  font-size: 16px;
   cursor: pointer;
 }
 
 .listaClientes,
 .listaProductos {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 6px);
   left: 0;
-  background: white;
-  border: 1px solid #ccc;
-  max-height: 200px;
-  overflow-y: auto;
-  width: 250px;
   z-index: 100;
-  border-radius: 5px;
+  width: 280px;
+  max-height: 230px;
+  overflow-y: auto;
+  background: #ffffff;
+  border: 1px solid #d5dce1;
+  border-radius: 9px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.14);
 }
 
 .itemCliente,
 .itemProducto {
-  padding: 8px;
+  padding: 10px 12px;
+  color: #33393e;
+  font-size: 14px;
   cursor: pointer;
+  border-bottom: 1px solid #edf0f2;
+}
+
+.itemCliente:last-child,
+.itemProducto:last-child {
+  border-bottom: none;
 }
 
 .itemCliente:hover,
 .itemProducto:hover {
-  background: #f5f5f5;
+  background: #f1f5f7;
+}
+
+.productosSection {
+  min-width: 0;
+}
+
+.tablaWrapper {
+  width: 100%;
+  max-height: 207px;
+  overflow: auto;
+  background: #ffffff;
+  border: 1px solid #d6dde2;
+  border-radius: 11px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.09);
 }
 
 .tabla {
   width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
+  min-width: 570px;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #ffffff;
 }
 
 .tabla th {
-  border-bottom: 2px solid #ccc;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding: 12px 15px;
+  background: #e9edf0;
+  color: #25292d;
   text-align: left;
-  padding: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+  border-bottom: 1px solid #d7dde1;
+}
+
+.tabla th:first-child {
+  width: 52%;
+}
+
+.tabla th:nth-child(2) {
+  width: 18%;
+}
+
+.tabla th:nth-child(3) {
+  width: 12%;
+}
+
+.tabla th:nth-child(4) {
+  width: 18%;
+  text-align: right;
 }
 
 .tabla td {
-  padding: 8px;
-  border-bottom: 1px solid #eee;
+  padding: 10px 15px;
+  color: #30353a;
+  font-size: 15px;
+  vertical-align: middle;
+  border-bottom: 1px solid #e2e7ea;
+}
+
+.tabla tbody tr:nth-child(even) {
+  background: #f4f7f9;
+}
+
+.tabla tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.tabla td:last-child {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.productNameTable {
+  display: block;
+  max-width: 330px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .inputTabla {
-  width: 60px;
-  padding: 4px;
-  text-align: center;
+  width: 72px;
+  padding: 5px 6px;
+  box-sizing: border-box;
+  background: transparent;
+  color: #30353a;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  text-align: left;
+  font-size: 15px;
 }
 
-.totalContainer {
-  display: flex;
-  justify-content: flex-end;
-  width: auto;
+.inputTabla:hover {
+  border-color: #c7d0d6;
+  background: #ffffff;
 }
 
-.totalContainer h2 {
-  font-size: 16px;
-  font-weight: normal;
+.inputTabla:focus {
+  outline: none;
+  border-color: #2f8f31;
+  background: #ffffff;
+}
+
+.emptyTable {
+  padding: 35px 16px !important;
+  color: #8b9297 !important;
+  text-align: center !important;
 }
 
 .btnCrear {
-  border: 2px solid rgba(0, 128, 0, 0.803);
-  background-color: rgba(0, 128, 0, 0.803);
-  border-radius: 5px;
-  color: white;
-  width: 300px;
-  height: 30px;
-  padding: 5px;
-  margin-bottom: 10px;
+  width: 100%;
+  height: 43px;
+  margin-top: 18px;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 7px;
+  background: #2f8f31;
+  color: #ffffff;
+  font-size: 17px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
 }
 
 .btnCrear:hover {
-  cursor: pointer;
-  background-color: rgba(0, 128, 0, 0.8);
+  background: #287b2a;
+}
+
+.btnCrear:active {
+  transform: scale(0.99);
+}
+
+.resumenOrden {
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #d8dfe4;
+  border-radius: 11px;
+  box-shadow: 0 3px 9px rgba(0, 0, 0, 0.11);
+}
+
+.resumenTitulo {
+  margin: 0;
+  padding: 17px 16px 14px;
+  color: #24282c;
+  font-size: 18px;
+  font-weight: 700;
+  border-bottom: 1px solid #e0e5e8;
+}
+
+.resumenProductos {
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+.resumenFila {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 10px 16px;
+  box-sizing: border-box;
+  color: #2d3236;
+  font-size: 15px;
+  border-bottom: 1px solid #e4e8eb;
+}
+
+.resumenNombre {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.resumenPrecio {
+  flex-shrink: 0;
+  white-space: nowrap;
+  color: #33383c;
+}
+
+.resumenVacio {
+  padding: 30px 16px;
+  color: #8b9297;
+  text-align: center;
+  font-size: 14px;
+  border-bottom: 1px solid #e4e8eb;
+}
+
+.resumenTotal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 15px 16px 17px;
+}
+
+.resumenTotal span {
+  color: #111416;
+  font-size: 21px;
+  font-weight: 700;
 }
 
 .modalOverlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.6);
+  inset: 0;
+  z-index: 999;
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 999;
+  overflow-y: auto;
+  padding: 20px;
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.6);
 }
 
-/* Vista previa del ticket en pantalla */
+/* Vista previa del ticket */
 .ticket {
-  background: white;
-  color: black;
-  padding: 15px;
-  width: 260px;
+  width: 270px;
+  padding: 12px;
+  background: #ffffff;
+  color: #000000;
   font-family: monospace;
-  font-size: 13px;
+  font-size: 11px;
+  font-weight: 700;
+  box-shadow: none;
 }
 
-.ticket h3 {
+/* Diseño tipo ticket POS */
+.ticketContent {
+  width: 100%;
+  color: #000000;
+  font-family: monospace;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.ticketCenter {
   text-align: center;
-  margin: 0 0 6px 0;
-  font-size: 15px;
 }
 
-.ticket p {
-  margin: 4px 0;
-}
-
-.ticketItem {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  margin: 3px 0;
-}
-
-.ticketItem span:first-child {
-  max-width: 150px;
-  word-break: break-word;
-}
-
-.ticketTotal {
-  margin-top: 8px;
-  padding-top: 6px;
-  border-top: 1px dashed black;
-  font-weight: bold;
+.ticketRight {
+  margin-top: 4px;
+  margin-bottom: 4px;
   text-align: right;
 }
 
+.ticketTitle {
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.ticketLine {
+  width: 100%;
+  overflow: hidden;
+  color: #000000;
+  font-family: monospace;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  white-space: pre;
+}
+
+.ticketHeader {
+  display: grid;
+  grid-template-columns: 30px 55px 43px 1fr;
+  column-gap: 2px;
+  margin-top: 2px;
+  color: #000000;
+  font-family: monospace;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.ticketRow {
+  display: grid;
+  grid-template-columns: 30px 55px 43px 1fr;
+  column-gap: 2px;
+  color: #000000;
+  font-family: monospace;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.ticketHeader span,
+.ticketRow span {
+  text-align: right;
+}
+
+.ticketHeader span:first-child,
+.ticketRow span:first-child {
+  text-align: center;
+}
+
+.ticketProduct {
+  margin-top: 4px;
+}
+
+.productName {
+  color: #000000;
+  font-family: monospace;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: left;
+  text-transform: uppercase;
+  word-break: break-word;
+}
+
+.ticketSummary {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: #000000;
+  font-family: monospace;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.ticketSpace {
+  height: 10px;
+}
+
+/* Botones del modal */
 .modalButtons {
-  margin-top: 10px;
   display: flex;
   gap: 10px;
+  margin-top: 10px;
+}
+
+.btnPrint,
+.btnClose {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  font-family: monospace;
+  font-weight: 700;
 }
 
 .btnPrint {
   background: green;
-  color: white;
-  flex: 1;
-  border: none;
-  padding: 4px;
-  cursor: pointer;
 }
 
 .btnClose {
   background: red;
-  color: white;
-  flex: 1;
-  border: none;
-  padding: 4px;
-  cursor: pointer;
 }
 
-/* Ajustes locales para impresión */
-@media print {
-  .noPrint {
-    display: none !important;
+/* Pantallas medianas */
+@media (max-width: 1050px) {
+  .workspace {
+    grid-template-columns: 210px minmax(420px, 1fr);
   }
 
-  .modalButtons {
+  .resumenOrden {
+    grid-column: 1 / -1;
+  }
+
+  .resumenProductos {
+    max-height: 180px;
+  }
+}
+
+/* Tablets */
+@media (max-width: 760px) {
+  .noPrint {
+    padding: 12px;
+  }
+
+  .comprobanteCard {
+    padding: 18px 12px;
+  }
+
+  .contentBotones {
+    flex-wrap: wrap;
+  }
+
+  .buttons {
+    flex: 1;
+    min-width: 170px;
+  }
+
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar,
+  .productosSection,
+  .resumenOrden {
+    grid-column: 1;
+  }
+
+  .listaClientes,
+  .listaProductos {
+    width: 100%;
+  }
+}
+
+/* Celulares */
+@media (max-width: 500px) {
+  .title {
+    font-size: 23px;
+  }
+
+  .tituloComprobante {
+    font-size: 15px;
+  }
+
+  .contentBotones {
+    flex-direction: column;
+  }
+
+  .buttons {
+    width: 100%;
+  }
+
+  .tablaWrapper {
+    max-height: 260px;
+  }
+}
+
+/* Impresión térmica desde navegador */
+@media print {
+  @page {
+    size: 58mm auto;
+    margin: 0;
+  }
+
+  .noPrint {
     display: none !important;
+    visibility: hidden !important;
+  }
+
+  .noPrint * {
+    display: none !important;
+    visibility: hidden !important;
   }
 
   .modalOverlay {
-    position: static !important;
-    width: 58mm !important;
-    height: auto !important;
-    background: white !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
     display: block !important;
-    padding: 0 !important;
+    width: 58mm !important;
+    min-width: 58mm !important;
+    max-width: 58mm !important;
+    height: auto !important;
     margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
   }
 
   .ticket {
-    width: 48mm !important;
-    padding: 2mm !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 54mm !important;
+    min-width: 54mm !important;
+    max-width: 54mm !important;
     margin: 0 !important;
-    background: white !important;
-    color: black !important;
-    font-family: monospace !important;
-    font-size: 10px !important;
-    box-shadow: none !important;
+    padding: 2mm !important;
+    background: #ffffff !important;
+    color: #000000 !important;
     border: none !important;
+    box-shadow: none !important;
+    font-family: monospace !important;
+    font-size: 10.5px !important;
+    font-weight: 700 !important;
+    line-height: 1.25 !important;
   }
 
-  .ticket h3 {
-    text-align: center !important;
-    font-size: 12px !important;
-    margin: 0 0 4px 0 !important;
+  .ticketContent,
+  .ticketLine,
+  .ticketHeader,
+  .ticketRow,
+  .productName,
+  .ticketSummary,
+  .ticketTitle {
+    color: #000000 !important;
+    font-family: monospace !important;
+    font-size: 10.5px !important;
+    font-weight: 700 !important;
   }
 
-  .ticket p {
-    margin: 2px 0 !important;
+  .ticketLine {
+    line-height: 1.15 !important;
   }
 
-  .ticketItem {
-    display: flex !important;
-    justify-content: space-between !important;
-    gap: 4px !important;
-    margin: 2px 0 !important;
-  }
-
-  .ticketItem span:first-child {
-    max-width: 30mm !important;
-    word-break: break-word !important;
-  }
-
-  .ticketTotal {
-    margin-top: 5px !important;
-    padding-top: 5px !important;
-    border-top: 1px dashed black !important;
-    font-weight: bold !important;
-    text-align: right !important;
+  .modalButtons,
+  .modalButtons * {
+    display: none !important;
+    visibility: hidden !important;
   }
 }

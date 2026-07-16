@@ -1,58 +1,128 @@
-.contentAutocompletado {
-  border: 2px solid black;
-  border-radius: 5px;
-  background-color: #ffff;
-  /* width: 550px; */
-  width: 545px;
-  height: auto;
+.containerProductAuto {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 
-  position: absolute;
-  /* top: 70px; */
-  top: 65px;
-  left: 550px;
-  
+  padding: 10px;
+  border-radius: 12px;
+  background-color: #f5f5f5;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.containerProductAuto:hover {
+  background-color: #eeeeee;
+}
+
+/* IMAGEN */
+.estiloContainerImagen {
+  width: 60px;
+  height: 60px;
+  min-width: 60px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.estiloImagen {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* DESCRIPCIÓN */
+.estiloContentDescripcion {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 4px;
+  margin-left: 12px;
+}
+
+/* MARCA */
+.estiloContentMarca {
+}
+
+.estiloMarca {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* NOMBRE */
+.estiloContentNombre {
+}
+
+.estiloNombre {
+  font-size: 13px;
+  color: #666;
+}
+
+/* PRECIO */
+.estiloContentPrecio {
+}
+
+.estiloPrecio {
+  font-size: 14px;
+  font-weight: bold;
+  color: #000;
+}
+
+/* BOTÓN */
+.estiloContentBoton {
+  margin-left: 10px;
+}
+
+.estiloBoton {
+  background-color: #7b1fa2;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  transition: all 0.2s ease;
+}
+
+.estiloBoton:hover {
+  background-color: #6a1b9a;
+}
+
+.estiloTextoBoton {
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.contentAutocompletado {
+  border: none;
+  border-radius: 12px;
+  background-color: #ffffff;
+  width: 545px;
+
+  position: absolute;
+  top: 65px;
+  left: 550px;
+
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+
+  padding: 10px;
 }
 
 .containerProducts {
-  /* border: 2px solid blue; */
-  width: 100%;
-  height: auto;
-  max-height: 600px;
+  max-height: 400px;
   overflow-y: auto;
+
   display: flex;
   flex-direction: column;
   gap: 10px;
-}
-
-@media (max-width:768px) {
-    .contentAutocompletado {
-    /* border: 2px solid red; */
-    border: none;
-    background-color: #ffff;
-    width: 100%;
-    height: auto;
-    height: 100vh;
-
-    position: absolute;
-    top: 90px;
-    left: 1px;
-    
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .containerProducts {
-    /* border: 2px solid blue; */
-    width: 100%;
-    height: auto;
-    max-height: 600px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
 }
