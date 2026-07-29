@@ -131,6 +131,7 @@ function obtenerPaginasVisibles(
 export default function Catalogo() {
   const params = useParams();
   const router = useRouter();
+  const busquedaActiva = useBusquedaStore((s) => s.busquedaActiva);
 
   const generoParametro = Array.isArray(
     params?.genero
@@ -194,12 +195,6 @@ export default function Catalogo() {
     (estado) => estado.textoBusqueda
   );
 
-  /*
-   * Carga de productos desde tu API.
-   *
-   * Marcas, colores y variantes se consultan
-   * directamente desde Supabase.
-   */
   useEffect(() => {
     const cargarDatos = async () => {
       try {
@@ -335,14 +330,7 @@ export default function Catalogo() {
     cargarDatos();
   }, [setProductos]);
 
-  /*
-   * Relacionamos:
-   *
-   * id_producto -> colores del producto
-   *
-   * Ejemplo:
-   * producto 5 -> color 1 y color 2
-   */
+
   const coloresPorProducto = useMemo(() => {
     const mapa = new Map();
 
@@ -398,7 +386,7 @@ export default function Catalogo() {
     const precios = productosActivos.map(
       (producto) =>
         convertirNumero(
-          producto.precioVenta ??
+            producto.precioVenta ??
             producto.precio_venta ??
             producto.precio
         )
@@ -444,9 +432,6 @@ export default function Catalogo() {
   const productosFiltrados = useMemo(() => {
     let lista = [...productosActivos];
 
-    /*
-     * Buscador.
-     */
     if (textoBusqueda?.trim()) {
       const texto =
         normalizarTexto(textoBusqueda);
@@ -458,9 +443,6 @@ export default function Catalogo() {
       );
     }
 
-    /*
-     * Género.
-     */
     lista = lista.filter((producto) => {
       const idCategoria =
         producto.subCategoria?.categoria?.id ??
@@ -471,9 +453,6 @@ export default function Catalogo() {
       );
     });
 
-    /*
-     * Subcategoría.
-     */
     if (subcategoriaParametro) {
       lista = lista.filter((producto) => {
         const idSubcategoria =
@@ -487,12 +466,6 @@ export default function Catalogo() {
       });
     }
 
-    /*
-     * Marca.
-     *
-     * El checkbox guarda id_marca.
-     * Producto contiene marcaId.
-     */
     if (
       Array.isArray(filtros.marcas) &&
       filtros.marcas.length > 0
@@ -515,13 +488,6 @@ export default function Catalogo() {
       });
     }
 
-    /*
-     * Color.
-     *
-     * El botón guarda el ID del color.
-     * Después buscamos ese ID dentro
-     * de las variantes del producto.
-     */
     if (
       Array.isArray(filtros.colores) &&
       filtros.colores.length > 0
@@ -552,9 +518,6 @@ export default function Catalogo() {
       });
     }
 
-    /*
-     * Precio.
-     */
     const minimo = Number(
       filtros.precioMin ?? 0
     );
@@ -565,7 +528,7 @@ export default function Catalogo() {
 
     lista = lista.filter((producto) => {
       const precio = convertirNumero(
-        producto.precioVenta ??
+          producto.precioVenta ??
           producto.precio_venta ??
           producto.precio
       );
@@ -658,7 +621,7 @@ export default function Catalogo() {
           Styles.filtroMobileWrapper
         }
       >
-        <button
+        {!busquedaActiva && (<button
           type="button"
           className={
             Styles.btnFiltroMobile
@@ -666,10 +629,11 @@ export default function Catalogo() {
           onClick={() =>
             setOpenFiltro(true)
           }
-        >
-          <span>☰</span>
-          Filtrar por
-        </button>
+          >
+            <span>☰</span>
+            Filtrar por
+          </button>
+        )}
       </div>
 
       <div className={Styles.catalogoLayout}>
