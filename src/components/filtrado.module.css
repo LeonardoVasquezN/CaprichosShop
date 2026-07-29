@@ -244,6 +244,7 @@
     width: 100%;
     min-height: auto;
     padding: 0 5px 25px;
+    border: 2px solid red;
   }
 
   .contentTitulo {

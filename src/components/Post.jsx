@@ -19,10 +19,6 @@ export default function Post() {
 
   const [productos, setProductos] = useState([]);
 
-  /*
-   * NV se encuentra seleccionado inicialmente,
-   * como aparece en el diseño de referencia.
-   */
   const [tipoComprobante, setTipoComprobante] = useState('NV');
   const [mostrarPreview, setMostrarPreview] = useState(false);
   const [clienteSeleccionado, setClienteSeleccionado] = useState(null);

@@ -149,9 +149,6 @@ export default function Filtrado({
     )
   );
 
-  /*
-   * Para marcas y colores guardamos IDs.
-   */
   const marcasSeleccionadas = Array.isArray(
     filtros?.marcas
   )
