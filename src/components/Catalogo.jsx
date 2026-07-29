@@ -430,7 +430,7 @@ export default function Catalogo() {
   }, [precioMaximo]);
 
   const productosFiltrados = useMemo(() => {
-    let lista = [...productosActivos];
+    let lista = [...productosActivos];  
 
     if (textoBusqueda?.trim()) {
       const texto =
@@ -550,6 +550,27 @@ export default function Catalogo() {
     coloresPorProducto,
   ]);
 
+  // para filtrar marcas dependiendo de los productos filtrados
+
+  const marcasDisponibles = useMemo(() => {
+  const mapa = new Map();
+
+  productosFiltrados.forEach((producto) => {
+    const marca = producto.marca;
+
+    if (marca) {
+      const marcaId =
+        marca.id_marca ??
+        marca.idMarca ??
+        marca.id;
+
+      mapa.set(String(marcaId), marca);
+    }
+  });
+
+  return Array.from(mapa.values());
+}, [productosFiltrados]);
+
   useEffect(() => {
     setPagina(1);
   }, [
@@ -643,7 +664,7 @@ export default function Catalogo() {
           }
         >
           <Filtrado
-            marcas={marcas}
+            marcas={marcasDisponibles}
             colores={colores}
             filtros={
               filtrosParaComponente
@@ -855,7 +876,7 @@ export default function Catalogo() {
             </div>
 
             <Filtrado
-              marcas={marcas}
+              marcas={marcasDisponibles}
               colores={colores}
               filtros={
                 filtrosParaComponente
