@@ -45,6 +45,8 @@ export default function Header() {
   const [mostrarMenuUsuario, setMostrarMenuUsuario] = useState(false);
   const [showAutoComplete, setShowAutoComplete] = useState(false);
   const productos = useProductosStore((s) => s.productos);
+
+  const setBusquedaActiva = useBusquedaStore((s) => s.setBusquedaActiva);
   
   useEffect(() => {
     cargarUsuario();
@@ -56,9 +58,14 @@ export default function Header() {
     setTextoBusquedaTemporalStore(valor);
     setShowAutoComplete(true);
 
-    if (valor === "") {
+    if (valor.trim() === "") {
+      setBusquedaActiva(false);
       setTextoBusqueda("");
+      setProductosFiltrados([]);
+      return;
     }
+
+    setBusquedaActiva(true);
 
     const filtrados = productos.filter((p) =>
       p.nombre.toLowerCase().includes(valor.toLowerCase())
