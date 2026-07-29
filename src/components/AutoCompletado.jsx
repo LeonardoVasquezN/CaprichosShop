@@ -18,7 +18,6 @@ export default function Autocompletado({
   );
   const router = useRouter();
 
-  /* FILTRAR MARCAS ACTIVAS */
   const productosVisibles = useMemo(() => {
     return Array.isArray(productos)
       ? productos.filter(
@@ -43,7 +42,7 @@ export default function Autocompletado({
             if (Number(categoriaId) === 2) return "Caballeros";
             if (Number(categoriaId) === 1) return "Damas";
 
-            return "General"; // fallback
+            return "General"; 
           })();
 
           return (
@@ -72,7 +71,6 @@ export default function Autocompletado({
               marca={producto.marca?.nombre ?? ""}
               nombre={producto.nombre}
 
-              // 🔥 AQUÍ ESTÁ LA MAGIA
               categoria={generoCorrecto}
 
               precio={`S/. ${producto.precioVenta}`}

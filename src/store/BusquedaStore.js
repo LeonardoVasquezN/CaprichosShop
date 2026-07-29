@@ -12,4 +12,8 @@ export const useBusquedaStore = create((set) => ({
   buscadorActivo: false,
   setBuscadorActivo: (value) =>
     set({ buscadorActivo: value }),
+
+  busquedaActiva: false,
+  setBusquedaActiva: (value) => 
+    set({ busquedaActiva: value }),
 }));
