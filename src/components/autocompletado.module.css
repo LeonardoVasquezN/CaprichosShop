@@ -45,27 +45,15 @@
   margin-left: 12px;
 }
 
-/* MARCA */
-.estiloContentMarca {
-}
-
 .estiloMarca {
   font-size: 14px;
   font-weight: 600;
   color: #333;
 }
 
-/* NOMBRE */
-.estiloContentNombre {
-}
-
 .estiloNombre {
   font-size: 13px;
   color: #666;
-}
-
-/* PRECIO */
-.estiloContentPrecio {
 }
 
 .estiloPrecio {
@@ -123,7 +111,17 @@
     width: 95%;
     left: 50%;
     transform: translateX(-50%);
-    top: 65px;
+    top: 87px;
+  }
+
+  .containerProducts {
+    max-height: 400px;
+    overflow-y: auto;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
   }
 }
 
