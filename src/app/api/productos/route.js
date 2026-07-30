@@ -51,7 +51,12 @@ export async function POST(req) {
 
       const upload = await new Promise((resolve, reject) => {
         cloudinary.uploader.upload_stream(
-          { folder: "productos" },
+          {
+            folder: "productos",
+            transformation: [
+              { fetch_format: "auto", quality: "auto" } // WebP/AVIF si soporta, JPG/PNG si no
+            ]
+          },
           (err, result) => {
             if (err) reject(err);
             else resolve(result);
