@@ -404,33 +404,23 @@ export default function Catalogo() {
   }, [productosActivos]);
 
   useEffect(() => {
-    setFiltros((filtrosAnteriores) => {
-      if (
-        filtrosAnteriores.precioMax ===
-        null
-      ) {
-        return {
-          ...filtrosAnteriores,
-          precioMax: precioMaximo,
-        };
-      }
+    if (productosActivos.length === 0) return;
 
-      if (
-        filtrosAnteriores.precioMax >
-        precioMaximo
-      ) {
-        return {
-          ...filtrosAnteriores,
-          precioMax: precioMaximo,
-        };
-      }
-
-      return filtrosAnteriores;
-    });
-  }, [precioMaximo]);
+    setFiltros((filtrosAnteriores) => ({
+      ...filtrosAnteriores,
+      precioMax:
+        filtrosAnteriores.precioMax === null
+          ? precioMaximo
+          : Math.min(
+              filtrosAnteriores.precioMax,
+              precioMaximo
+            ),
+    }));
+  }, [precioMaximo, productosActivos]);
 
   const productosFiltrados = useMemo(() => {
     let lista = [...productosActivos];  
+    console.log("Productos activos:", productosActivos.length);
 
     if (textoBusqueda?.trim()) {
       const texto =
