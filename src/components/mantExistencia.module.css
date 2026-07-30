@@ -1,209 +1,195 @@
 .mantExistencia {
-  /* border: 2px solid red; */
-  width: 1230px;
-  height: 600px;
-
-  margin-top: 120px;
-  margin-left: 250px;
-
-   user-select: none;
--webkit-user-select: none;
--moz-user-select: none;
--ms-user-select: none;
+  width: 1250px;
+  margin: 120px auto 0 auto;
+  user-select: none;
 }
 
 .titulo {
-  font-size: 22px;
+  color: #6b1d4d;
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 25px;
 }
 
 .formulario {
-  margin-top: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  background: #f8f8f8;
+  border-radius: 18px;
+  padding: 25px 30px;
+  box-shadow: 0 8px 20px rgba(0,0,0,.12);
+
+  display: grid;
+
+  grid-template-columns:
+    1fr
+    1fr
+    1fr;
+
+  grid-template-areas:
+    "categoria subcategoria producto"
+    "color talla cantidad"
+    "botones botones botones";
+
+  gap: 22px 20px;
 }
 
-.divProducto {
-  display: flex;
-  gap: 120px;
+.divCategoria{
+  grid-area:categoria;
 }
 
-.divAddExistencia {
-  display: flex;
-  gap: 30px;
+.divSubCategoria{
+  grid-area:subcategoria;
 }
 
-.divCategoria {
-  display: flex;
-  gap: 105px;
-  /* height: 30px; */
+.divProducto{
+  grid-area:producto;
 }
 
-.divSubCategoria {
-  display: flex;
-  gap: 70px;
-  /* height: 30px; */
+.divColor{
+  grid-area:color;
 }
 
-.divColor {
-  display: flex;
-  gap: 135px;
+.divTalla{
+  grid-area:talla;
 }
 
-.divTalla {
-  display: flex;
-  gap: 140px;
+.divCantidad{
+  grid-area:cantidad;
 }
 
-.divCantidad {
-  display: flex;
-  gap: 115px;
+.divBotones{
+  grid-area:botones;
 }
 
-.inputCantidad {
-  border: 2px solid black;
-  border-radius: 5px;
-  width: 210px;
-  height: 20px;
-  /* padding: 10px; */
-  margin-bottom: 20px;
+.divCategoria,
+.divSubCategoria,
+.divProducto,
+.divColor,
+.divTalla,
+.divCantidad{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
 }
 
-.divBotones {
-  display: flex;
-  gap: 50px;
+.divCategoria label,
+.divSubCategoria label,
+.divProducto label,
+.divColor label,
+.divTalla label,
+.divCantidad label{
+  font-size:17px;
+  color:#333;
+  font-weight:500;
 }
 
-.btnGuardarCambios {
-  border: 2px solid black;
-  border-radius: 5px;
-  padding: 3px;
+.selectCategoria,
+.selectSubCategoria,
+.comboProductos,
+.selectColores,
+.selectTallas{
+
+  width:100%;
+  height:42px;
+  border-radius:10px;
+  border:1px solid #cfcfcf;
+  padding:0 15px;
+  background:white;
+  font-size:16px;
+  outline:none;
+  transition:.25s;
 }
 
-.btnGuardarCambios:hover {
-  cursor: pointer;
+.selectCategoria:focus,
+.selectSubCategoria:focus,
+.comboProductos:focus,
+.selectColores:focus,
+.selectTallas:focus{
+
+  border-color:#7d295c;
 }
 
-.btnVerExistencias {
-  border: 2px solid black;
-  border-radius: 5px;
-  padding: 3px;
-  width: 120px;
+.inputCantidad{
+
+  width:100%;
+  height:42px;
+  border-radius:10px;
+  border:1px solid #cfcfcf;
+  padding:0 15px;
+  font-size:16px;
+  outline:none;
+  transition:.25s;
 }
 
-.btnVerExistencias:hover {
-  cursor: pointer;
+.inputCantidad:focus{
+  border-color:#7d295c;
 }
 
-.selectColores {
-  border: 2px solid black;
-  border-radius: 5px;
-  width: 210px;
+.divBotones{
+  display:flex;
+  gap:18px;
+  margin-top:5px;
 }
 
-.selectTallas {
-  border: 2px solid black;
-  border-radius: 5px;
-  width: 210px;
+.btnGuardarCambios{
+  background:#7b2457;
+  color:white;
+  border:none;
+  border-radius:10px;
+  padding:13px 24px;
+  font-size:15px;
+  cursor:pointer;
+  transition:.25s;
+  width:180px;
+  height:45px;
 }
 
-.comboProductos {
-  border: 2px solid black;
-  border-radius: 5px;
-  width: 210px;
-  height: 30px;
-  margin-bottom: 20px;
+.btnGuardarCambios:hover{
+  background:#611942;
 }
 
-.textSelectTalla {
-  text-align: center;
+.btnVerExistencias{
+  background:white;
+  color:#5a5a5a;
+  border:1px solid #bfc7d3;
+  border-radius:10px;
+  padding:13px 22px;
+  font-size:15px;
+  cursor:pointer;
+  transition:.25s;
+  width:170px;
+  height:45px;
 }
 
-.textSelectColor {
-  text-align: center;
+.btnVerExistencias:hover{
+  background:#f3f3f3;
 }
 
-.textSelectProducto {
-  text-align: center;
-}
-
-.selectCategoria {
-  border: 2px solid black;
-  border-radius: 5px;
-  width: 210px;
-  height: 30px;
-  margin-bottom: 20px;
-}
-
-.selectSubCategoria {
-  border: 2px solid black;
-  border-radius: 5px;
-  width: 210px;
-  height: 30px;
-  margin-bottom: 20px;
-}
-
-@media (max-width: 768px) {
-  .mantExistencia {
-    width: 100%;
-    height: auto;
-    margin: 80px auto 0 auto;
-    padding: 16px;
+@media(max-width:900px){
+  .mantExistencia{
+    width:100%;
+    padding:0 18px;
+    margin:100px auto 0 auto;
   }
 
-  .titulo {
-    text-align: center;
-    font-size: 20px;
+  .formulario{
+    grid-template-columns:1fr;
+    grid-template-areas:
+      "categoria"
+      "subcategoria"
+      "producto"
+      "color"
+      "talla"
+      "cantidad"
+      "botones";
   }
 
-  .formulario {
-    gap: 16px;
-  }
-
-  /* labels solo dentro del form */
-  .formulario label {
-    font-size: 14px;
-    font-weight: 500;
-  }
-
-  /* TODOS los bloques en columna */
-  .divCategoria,
-  .divSubCategoria,
-  .divProducto,
-  .divColor,
-  .divTalla,
-  .divCantidad {
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  /* selects e inputs full width */
-  .selectCategoria,
-  .selectSubCategoria,
-  .comboProductos,
-  .selectColores,
-  .selectTallas,
-  .inputCantidad {
-    width: 100%;
-    height: 40px;
-    font-size: 16px;
-  }
-
-  .inputCantidad {
-    margin-bottom: 10px;
-  }
-
-  /* botones */
-  .divBotones {
-    flex-direction: column;
-    gap: 12px;
-    margin-top: 10px;
+  .divBotones{
+    flex-direction:column;
   }
 
   .btnGuardarCambios,
-  .btnVerExistencias {
-    width: 100%;
-    height: 40px;
-    font-size: 15px;
+  .btnVerExistencias{
+    width:100%;
   }
+
 }

@@ -1,209 +1,222 @@
 .mantProductos {
-  /* border: 2px solid red; */
-  width: 1230px;
-  height: 600px;
-
-  margin-top: 120px;
-  margin-left: 250px;
-
-   user-select: none;
--webkit-user-select: none;
--moz-user-select: none;
--ms-user-select: none;
+  width: 1250px;
+  margin: 120px auto 0 auto;
+  user-select: none;
 }
 
 .titulo {
-  font-size: 22px;
+  color: #6b1d4d;
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 25px;
 }
 
 .formulario {
-  /* border: 2px solid red; */
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin-top: 20px;
+  background: #f8f8f8;
+  border-radius: 18px;
+  padding: 25px 30px;
+  box-shadow: 0 8px 20px rgba(0,0,0,.12);
+
+  display: grid;
+
+  grid-template-columns:
+      1fr
+      1fr
+      1fr;
+
+  grid-template-areas:
+      "categoria subcategoria marca"
+      "producto producto imagen"
+      "compra venta imagen"
+      "botones botones botones";
+
+  gap: 22px 20px;
 }
 
-.divCategoria {
-  display: flex;
-  gap: 51px;
+.grupoCategoria{
+    grid-area:categoria;
 }
 
-.marca {
-  /* border: 2px solid red; */
-  display: flex;
-  gap: 61px;
-  margin-right: 25px;
+.grupoSubCategoria{
+    grid-area:subcategoria;
 }
 
-.categoria {
-  font-size: 17px;
+.grupoMarca{
+    grid-area:marca;
 }
 
-.selectCategoria {
-  border: 2px solid black;
-  border-radius: 5px;
-  width: 150px;
-  font-size: 17px;
+.grupoProducto{
+    grid-area:producto;
 }
 
-.selectSubCategoria {
-  border: 2px solid black;
-  border-radius: 5px;
-  width: 150px;
-  font-size: 17px;
+.grupoCompra{
+    grid-area:compra;
 }
 
-.divSubCategoria {
-  display: flex;
-  gap: 20px;
+.grupoVenta{
+    grid-area:venta;
 }
 
-.divProducto {
-  display: flex;
-  gap: 60px;
+.grupoImagen{
+    grid-area:imagen;
 }
 
-.inputProducto {
-  border: 2px solid black;
-  width: 150px;
-  height: 25px;
-  border-radius: 5px;
-  padding: 5px;
+.botones{
+    grid-area:botones;
 }
 
-.divPrecioCompra {
-  display: flex;
-  gap: 22px;
+.grupoCategoria,
+.grupoSubCategoria,
+.grupoMarca,
+.grupoProducto,
+.grupoCompra,
+.grupoVenta,
+.grupoImagen{
+
+    display:flex;
+    flex-direction:column;
+    gap:8px;
 }
 
-.divPrecioVenta {
-  display: flex;
-  gap: 38px;
+.grupoCategoria label,
+.grupoSubCategoria label,
+.grupoMarca label,
+.grupoProducto label,
+.grupoCompra label,
+.grupoVenta label,
+.grupoImagen label {
+
+    font-size:17px;
+    color:#333;
+    font-weight:500;
 }
 
-.divStockActual {
-  display: flex;
-  gap: 95px;
+.select{
+
+    width:100%;
+    height:42px;
+    border-radius:10px;
+    border:1px solid #cfcfcf;
+    padding:0 15px;
+    background:white;
+    font-size:16px;
+    outline:none;
+    transition:.25s;
 }
 
-.stockActualSpan {
-  font-size: 15px;
-  /* color: red; */
+.select:focus{
+
+    border-color:#7d295c;
 }
 
-.divImagen {
-  display: flex;
-  gap: 75px;
-  margin-bottom: 50px;
+.input{
+    width:100%;
+    height:42px;
+    border-radius:10px;
+    border:1px solid #cfcfcf;
+    padding:0 15px;
+    font-size:16px;
+    outline:none;
+    transition:.25s;
 }
 
-.inputImagen {
-  border: 2px solid black;
-  border-radius: 5px;
-  width: 145px;
+.input:focus{
+    border-color:#7d295c;
 }
 
-.divBotones {
-  display: flex;
-  gap: 20px;
+.dropZone{
+    height:190px;
+    border:2px dashed #cfcfcf;
+    border-radius:15px;
+    background:white;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    cursor:pointer;
+    transition:.25s;
 }
 
-.btnAgregarProducto {
-  border: 2px solid black;
-  border-radius: 5px;
-  width: 150px;
-  height: 30px;
+.dropZone:hover{
+    border-color:#7d295c;
 }
 
-.btnverProductos {
-  border: 2px solid black;
-  border-radius: 5px;
-  width: 150px;
-  height: 30px;
+.inputFile{
+    display:none;
 }
 
-.btnAñadirExistencia {
-  border: 2px solid black;
-  border-radius: 5px;
-  width: 150px;
-  height: 30px;
+.icono{
+    font-size:55px;
+    margin-bottom:12px;
 }
 
-.btnverProductos:hover {
-  background-color: #f0f0f0;
-  cursor: pointer;
+.dropZone p{
+    text-align:center;
+    color:#666;
+    line-height:24px;
 }
 
-.btnAgregarProducto:hover {
-  background-color: #f0f0f0;
-  cursor: pointer;
+.botones{
+    display:flex;
+    gap:18px;
+    margin-top:5px;
 }
 
-.btnAñadirExistencia:hover {
-  background-color: #f0f0f0;
-  cursor: pointer;
+.btnPrincipal{
+    background:#7b2457;
+    color:white;
+    border:none;
+    border-radius:10px;
+    padding:13px 24px;
+    font-size:15px;
+    cursor:pointer;
+    transition:.25s;
+    width:190px;
+    height:45px;
 }
 
-/* .disabled {
-  display: none;
-} */
+.btnPrincipal:hover{
+    background:#611942;
+}
 
-@media (max-width: 768px) {
-  .mantProductos {
-    width: 100%;
-    height: auto;
-    margin: 80px auto 0 auto; /* centrado */
-    padding: 16px;
-  }
+.btnSecundario{
+    background:white;
+    color:#5a5a5a;
+    border:1px solid #bfc7d3;
+    border-radius:10px;
+    padding:13px 22px;
+    font-size:15px;
+    cursor:pointer;
+    transition:.25s;
+    height:45px;
+}
 
-  .titulo {
-    text-align: center;
-    font-size: 20px;
-  }
+.btnSecundario:hover{
+    background:#f3f3f3;
+}
 
-  .formulario {
-    gap: 16px;
-  }
+@media(max-width:900px){
 
-  /* Labels solo dentro del formulario (válido en CSS Modules) */
-  .formulario label {
-    font-size: 14px;
-    font-weight: 500;
-  }
+.formulario{
+  grid-template-columns:1fr;
+  grid-template-areas:
+  "categoria"
+  "subcategoria"
+  "marca"
+  "producto"
+  "imagen"
+  "compra"
+  "venta"
+  "botones";
+}
 
-  /* Todos los bloques en columna */
-  .divCategoria,
-  .divSubCategoria,
-  .divProducto,
-  .divPrecioCompra,
-  .divPrecioVenta,
-  .divImagen {
-    flex-direction: column;
-    gap: 6px;
-  }
+.botones{
+  flex-direction:column;
+}
 
-  /* Inputs y selects full width */
-  .selectCategoria,
-  .selectSubCategoria,
-  .inputProducto,
-  .inputImagen {
-    width: 100%;
-    font-size: 16px;
-  }
+.btnPrincipal,
+.btnSecundario{
+  width:100%;
+}
 
-  /* Botones */
-  .divBotones {
-    flex-direction: column;
-    gap: 12px;
-    margin-top: 10px;
-  }
-
-  .btnAgregarProducto,
-  .btnverProductos,
-  .btnAñadirExistencia {
-    width: 100%;
-    height: 40px;
-    font-size: 15px;
-  }
 }

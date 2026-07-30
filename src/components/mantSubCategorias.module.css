@@ -1,198 +1,231 @@
 .contentSubCategoria {
-  /* border: 2px solid red; */
-  width: 1200px;
-  height: 600px;
-
-  margin-top: 120px;
-  margin-left: 250px;
-
-   user-select: none;
--webkit-user-select: none;
--moz-user-select: none;
--ms-user-select: none;
+  width: 1250px;
+  margin: 120px auto 0 auto;
+  user-select: none;
 }
 
 .titulo {
-  font-size: 22px;
-  margin-bottom: 20px;
+  color: #6b1d4d;
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 25px;
 }
 
 .formulario {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+  background: #f8f8f8;
+  border-radius: 18px;
+  padding: 25px 30px;
+  box-shadow: 0 8px 20px rgba(0,0,0,.12);
+
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  grid-template-areas:
+    "categoria subcategoria"
+    "botones botones";
+
+  gap: 22px 20px;
 }
 
-.divSubCategorias {
-  display: flex;
-  gap: 20px;
+
+.divCategorias{
+  grid-area:categoria;
 }
 
-.inputSubCategoria {
-  border: 2px solid black;
-  border-radius: 5px;
-  padding: 3px;
-  width: 170px;
-  height: 25px;
+.divSubCategorias{
+  grid-area:subcategoria;
 }
 
-.divImagen {
-  display: flex;
-  gap: 25px;
-
-  /* margin-bottom: 25px; */
+.contentBotones{
+  grid-area:botones;
 }
 
-.divCategorias {
-  display: flex;
-  gap: 25px;
-
-  margin-bottom: 25px;
-  border: 2px solid black;
-  border-radius: 5px;
-  width: 245px;
-  height: 30px;
+.divCategorias,
+.divSubCategorias{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  width:100%;
+  border:none;
+  margin:0;
+  height:auto;
 }
 
-.inputImagen {
-  border: 2px solid black;
-  border-radius: 5px;
-  padding: 3px;
-  width: 170px;
-  height: 25px;
+.divCategorias label,
+.divSubCategorias label{
+  font-size:17px;
+  color:#333;
+  font-weight:500;
 }
 
-.contentBotones {
-  display: flex;
-  gap: 20px;
+.divCategorias select{
+  width:100%;
+  height:42px;
+  border-radius:10px;
+  border:1px solid #cfcfcf;
+  padding:0 15px;
+  background:white;
+  font-size:16px;
+  outline:none;
+  transition:.25s;
 }
 
-.btnGuardar {
-  border: 2px solid black;
-  border-radius: 5px;
-  padding: 5px;
+.divCategorias select:focus{
+  border-color:#7d295c;
 }
 
-.btnGuardar:hover {
-  cursor: pointer;
+.inputSubCategoria{
+  width:100%;
+  height:42px;
+  border-radius:10px;
+  border:1px solid #cfcfcf;
+  padding:0 15px;
+  font-size:16px;
+  outline:none;
+  transition:.25s;
 }
 
-.formSubCategorias {
-  /* border: 2px solid red; */
-  width: 1200px;
-  height: 600px;
-  margin-top: 120px;
-  margin-left: 250px;
+.inputSubCategoria:focus{
+  border-color:#7d295c;
 }
 
-.titulo {
-  font-size: 22px;
-  margin-bottom: 20px;
+.contentBotones{
+  display:flex;
+  gap:18px;
+  margin-top:5px;
 }
 
-.buscadorSubCategoria {
-  border: 2px solid black;
-  border-radius: 7px;
-  width: 150px;
-  height: 35px;
-  padding: 5px;
+.btnGuardar{
+  background:#7b2457;
+  color:white;
+  border:none;
+  border-radius:10px;
+  padding:13px 24px;
+  font-size:15px;
+  cursor:pointer;
+  transition:.25s;
+  width:220px;
+  height:45px;
 }
 
-.contentAddFind {
-  display: flex;
-  gap: 10px;
+.btnGuardar:hover{
+  background:#611942;
 }
 
-/* formCategorias.module.css */
+.contentBotones .btnGuardar:last-child{
+  background:white;
+  color:#5a5a5a;
+  border:1px solid #bfc7d3;
+}
 
-.tablaSubCategorias {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
+.contentBotones .btnGuardar:last-child:hover{
+  background:#f3f3f3;
+}
+
+.formSubCategorias{
+  width:1250px;
+  margin:120px auto 0 auto;
+}
+
+.buscadorSubCategoria{
+  width:220px;
+  height:42px;
+  border-radius:10px;
+  border:1px solid #cfcfcf;
+  padding:0 15px;
+  outline:none;
+  font-size:16px;
+}
+
+.buscadorSubCategoria:focus{
+  border-color:#7d295c;
+}
+
+.contentAddFind{
+  display:flex;
+  gap:15px;
+  align-items:center;
+}
+
+.btnAddSubCategorias{
+  background:#7b2457;
+  color:white;
+  border:none;
+  border-radius:10px;
+  width:190px;
+  height:42px;
+  cursor:pointer;
+  transition:.25s;
+}
+
+.btnAddSubCategorias:hover{
+  background:#611942;
+}
+
+.tablaSubCategorias{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:25px;
+  background:white;
+  border-radius:12px;
+  overflow:hidden;
 }
 
 .tablaSubCategorias th,
-.tablaSubCategorias td {
-  border: 1px solid #ccc;
-  padding: 10px;
-  text-align: center;
+.tablaSubCategorias td{
+  border:1px solid #e3e3e3;
+  padding:12px;
+  text-align:center;
 }
 
-.tablaSubCategorias th {
-  background-color: #f4f4f4;
+.tablaSubCategorias th{
+  background:#f4f4f4;
+  font-weight:600;
 }
 
-.btnAddSubCategorias {
-  border: 2px solid black;
-  border-radius: 5px;
-  width: 180px;
-  height: 35px;
+.btnEditar{
+  background:#28a745;
+  color:white;
+  border:none;
+  padding:7px 12px;
+  border-radius:7px;
+  cursor:pointer;
 }
 
-.btnAddSubCategorias:hover {
-  cursor: pointer;
-}
-
-.btnEditar {
-  background-color: #28a745;
-  color: white;
-  border: none;
-  padding: 6px 10px;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-right: 5px;
-}
-
-@media (max-width: 768px) {
-  .contentSubCategoria {
-    width: 100%;
-    height: auto;
-    margin: 80px auto 0 auto;
-    padding: 16px;
+@media(max-width:900px){
+  .contentSubCategoria,
+  .formSubCategorias{
+    width:100%;
+    padding:0 18px;
+    margin:100px auto 0 auto;
   }
 
-  .titulo {
-    text-align: center;
-    font-size: 20px;
+  .formulario{
+    grid-template-columns:1fr;
+
+    grid-template-areas:
+      "categoria"
+      "subcategoria"
+      "botones";
   }
 
-  .formulario {
-    gap: 16px;
+  .contentBotones{
+    flex-direction:column;
   }
 
-  /* bloques en columna */
-  .divCategorias,
-  .divSubCategorias,
-  .divImagen {
-    flex-direction: column;
-    gap: 6px;
-    width: 100%;
+  .btnGuardar{
+    width:100%;
   }
 
-  /* select categoría */
-  .divCategorias {
-    border: none;
-    padding: 0;
-    height: auto;
+  .contentAddFind{
+    flex-direction:column;
+    align-items:stretch;
   }
 
-  /* inputs full width */
-  .inputSubCategoria,
-  .inputImagen {
-    width: 100%;
-    height: 40px;
-    font-size: 16px;
+  .btnAddSubCategorias,
+  .buscadorSubCategoria{
+    width:100%;
   }
 
-  .contentBotones {
-    flex-direction: column;
-    gap: 12px;
-    margin-top: 10px;
-  }
-
-  .btnGuardar {
-    width: 100%;
-    height: 40px;
-    font-size: 15px;
-  }
 }
