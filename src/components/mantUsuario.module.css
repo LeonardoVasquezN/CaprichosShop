@@ -1,141 +1,151 @@
 .contentUsuario {
-  /* border: 2px solid red; */
-  width: 1100px;
-  height: 600px;
-  margin-top: 120px;
-  margin-left: 250px;
-
-   user-select: none;
--webkit-user-select: none;
--moz-user-select: none;
--ms-user-select: none;
-}
-
-.contentTalla {
-  /* border: 2px solid red; */
-  width: 1100px;
-  height: 600px;
-
-  margin-top: 100px;
-  margin-left: 250px;
-}
-
-.contentSubCategoria {
-  /* border: 2px solid red; */
-  width: 1200px;
-  height: 600px;
-
-  margin-top: 100px;
-  margin-left: 250px;
+  width: 1250px;
+  margin: 120px auto 0 auto;
+  user-select: none;
 }
 
 .titulo {
-  font-size: 22px;
-  margin-bottom: 20px;
-}
-
-.formulario {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.divUsuarios {
-  display: flex;
-  gap: 20px;
-}
-
-.divClaves {
-  display: flex;
-  gap: 38px;
+  color: #6b1d4d;
+  font-size: 28px;
+  font-weight: bold;
   margin-bottom: 25px;
 }
 
-.inputNombre {
-  border: 2px solid black;
-  border-radius: 5px;
-  padding: 3px;
-  width: 170px;
-  height: 25px;
+
+.formulario {
+  background:#f8f8f8;
+  border-radius:18px;
+  padding:25px 30px;
+  box-shadow:0 8px 20px rgba(0,0,0,.12);
+  display:grid;
+  grid-template-columns:1fr 1fr;
+
+  grid-template-areas:
+
+    "nombre cargo"
+    "clave clave"
+    "botones botones";
+  gap:22px 20px;
 }
 
-.divComboUsuarios {
-  display: flex;
-  gap: 35px;
+.divUsuarios{
+  grid-area:nombre;
 }
 
-.comboUsuarios {
-  border: 2px solid black;
-  border-radius: 5px;
-  padding: 3px;
-  width: 170px;
-  height: 30px;
+.divComboUsuarios{
+  grid-area:cargo;
 }
 
-.contentBotones {
-  display: flex;
-  gap: 20px;
+.divClaves{
+  grid-area:clave;
 }
 
-.btnGuardar {
-  border: 2px solid black;
-  border-radius: 5px;
-  padding: 5px;
+.contentBotones{
+  grid-area:botones;
 }
 
-.btnGuardar:hover {
-  cursor: pointer;
+.divUsuarios,
+.divComboUsuarios,
+.divClaves{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
 }
 
-.inputTallas {
-  border: 2px solid black;
-  border-radius: 5px;
-  width: 170px;
-  height: 28px;
-  padding: 3px;
+.divUsuarios label,
+.divComboUsuarios label,
+.divClaves label{
+  font-size:17px;
+  color:#333;
+  font-weight:500;
 }
 
-@media (max-width: 768px) {
-  .contentUsuario {
-    width: 100%;
-    height: auto;
-    margin: 80px auto 0 auto;
-    padding: 16px;
+.inputNombre,
+.inputTallas{
+  width:100%;
+  height:42px;
+  border-radius:10px;
+  border:1px solid #cfcfcf;
+  padding:0 15px;
+  font-size:16px;
+  outline:none;
+  transition:.25s;
+}
+
+.inputNombre:focus,
+.inputTallas:focus{
+  border-color:#7d295c;
+}
+
+.comboUsuarios{
+  width:100%;
+  height:42px;
+  border-radius:10px;
+  border:1px solid #cfcfcf;
+  padding:0 15px;
+  background:white;
+  font-size:16px;
+  outline:none;
+  transition:.25s;
+}
+
+
+.comboUsuarios:focus{
+  border-color:#7d295c;
+}
+
+.contentBotones{
+  display:flex;
+  gap:18px;
+  margin-top:5px;
+}
+
+.btnGuardar{
+  background:#7b2457;
+  color:white;
+  border:none;
+  border-radius:10px;
+  padding:13px 24px;
+  font-size:15px;
+  cursor:pointer;
+  transition:.25s;
+  width:170px;
+  height:45px;
+}
+
+.btnGuardar:hover{
+  background:#611942;
+}
+
+.contentBotones .btnGuardar:last-child{
+  background:white;
+  color:#5a5a5a;
+  border:1px solid #bfc7d3;
+}
+
+.contentBotones .btnGuardar:last-child:hover{
+  background:#f3f3f3;
+}
+
+@media(max-width:900px){
+  .contentUsuario{
+    width:100%;
+    margin:100px auto 0 auto;
+    padding:0 18px;
   }
 
-  .titulo {
-    text-align: center;
-    font-size: 20px;
+  .formulario{
+    grid-template-columns:1fr;
+    grid-template-areas:
+      "nombre"
+      "cargo"
+      "clave"
+      "botones";
   }
-
-  .formulario {
-    gap: 16px;
+  .contentBotones{
+    flex-direction:column;
   }
-
-  .divUsuarios,
-  .divComboUsuarios,
-  .divClaves {
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .inputNombre,
-  .inputTallas,
-  .comboUsuarios {
-    width: 100%;
-    height: 40px;
-    font-size: 15px;
-  }
-
-  .contentBotones {
-    flex-direction: column;
-    gap: 12px;
-    margin-top: 10px;
-  }
-
-  .btnGuardar {
-    width: 100%;
-    height: 42px;
-    font-size: 15px;
+  .btnGuardar{
+    width:100%;
   }
 }

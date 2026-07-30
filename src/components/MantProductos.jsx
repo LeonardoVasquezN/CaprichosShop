@@ -119,150 +119,191 @@ export default function MantProductos() {
   };
 
   return (
-    <div className={Style.mantProductos}>
-      <h1 className={Style.titulo}>
-        {id ? "EDITAR PRODUCTO" : "AGREGAR PRODUCTO"}
-      </h1>
+  <div className={Style.mantProductos}>
+    <h1 className={Style.titulo}>
+      {id ? "EDITAR PRODUCTO" : "AGREGAR PRODUCTO"}
+    </h1>
 
-      <form className={Style.formulario} onSubmit={submitProductos}>
+    <form className={Style.formulario} onSubmit={submitProductos}>
 
-        {/* CATEGORIA */}
-        <div className={Style.divCategoria}>
-          <label>Categoría</label>
-          {!id ? (
-            <select
-              className={Style.selectCategoria}
-              onChange={manejoCategoriaFiltro}
-              required
-            >
-              <option value="">Seleccionar</option>
-              {categorias.map(c => (
-                <option key={c.id} value={c.id}>
-                  {c.nombre}
-                </option>
-              ))}
-            </select>
-          ) : (
-            <select className={Style.selectCategoria} disabled>
-              <option>{nombreCategoriaEdit}</option>
-            </select>
-          )}
-        </div>
+      {/* Categoría */}
+      <div className={Style.grupoCategoria}>
+        <label>Categoría</label>
 
-        {/* SUBCATEGORIA */}
-        <div className={Style.divSubCategoria}>
-          <label>Subcategoría</label>
-          {!id ? (
-            <select
-              className={Style.selectSubCategoria}
-              value={idSubCategorias}
-              onChange={e => setIdSubCategorias(e.target.value)}
-              required
-            >
-              <option value="">Seleccionar</option>
-              {subCategoriaFiltrada.map(sc => (
-                <option key={sc.id} value={sc.id}>
-                  {sc.nombre}
-                </option>
-              ))}
-            </select>
-          ) : (
-            <select className={Style.selectSubCategoria} disabled>
-              <option>{nombreSubCategoriaEdit}</option>
-            </select>
-          )}
-        </div>
-
-        {/* MARCA */}
-        <div className={Style.divCategoria}>
-          <label>Marca</label>
-          {!id ? (
-            <select
-              className={Style.selectCategoria}
-              value={idMarca}
-              onChange={e => setIdMarca(e.target.value)}
-              required
-            >
-              <option value="">Seleccionar</option>
-              {marcas.map(m => (
-                <option key={m.idMarca} value={m.idMarca}>
-                  {m.nombre}
-                </option>
-              ))}
-            </select>
-          ) : (
-            <select className={Style.selectCategoria} disabled>
-              <option>{nombreMarcaEdit}</option>
-            </select>
-          )}
-        </div>
-
-        {/* PRODUCTO */}
-        <div className={Style.divProducto}>
-          <label>Producto</label>
-          <input
-            className={Style.inputProducto}
-            value={nombre}
-            onChange={e => setNombre(e.target.value)}
+        {!id ? (
+          <select
+            className={Style.select}
+            onChange={manejoCategoriaFiltro}
             required
-          />
-        </div>
+          >
+            <option value="">Seleccionar</option>
 
-        <div className={Style.divPrecioCompra}>
-          <label>Precio Compra</label>
-          <input
-            className={Style.inputProducto}
-            type="number"
-            value={precioCompra}
-            onChange={e => setPrecioCompra(e.target.value)}
+            {categorias.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.nombre}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <select className={Style.select} disabled>
+            <option>{nombreCategoriaEdit}</option>
+          </select>
+        )}
+      </div>
+
+      {/* Subcategoria */}
+
+      <div className={Style.grupoSubCategoria}>
+        <label>Subcategoría</label>
+
+        {!id ? (
+          <select
+            className={Style.select}
+            value={idSubCategorias}
+            onChange={(e) => setIdSubCategorias(e.target.value)}
             required
-          />
-        </div>
+          >
+            <option value="">Seleccionar</option>
 
-        <div className={Style.divPrecioVenta}>
-          <label>Precio Venta</label>
-          <input
-            className={Style.inputProducto}
-            type="number"
-            value={precioVenta}
-            onChange={e => setPrecioVenta(e.target.value)}
+            {subCategoriaFiltrada.map((sc) => (
+              <option key={sc.id} value={sc.id}>
+                {sc.nombre}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <select className={Style.select} disabled>
+            <option>{nombreSubCategoriaEdit}</option>
+          </select>
+        )}
+      </div>
+
+      {/* Marca */}
+
+      <div className={Style.grupoMarca}>
+        <label>Marca</label>
+
+        {!id ? (
+          <select
+            className={Style.select}
+            value={idMarca}
+            onChange={(e) => setIdMarca(e.target.value)}
             required
-          />
-        </div>
+          >
+            <option value="">Seleccionar</option>
 
-        <div className={Style.divImagen}>
-          <label>Imagen</label>
+            {marcas.map((m) => (
+              <option key={m.idMarca} value={m.idMarca}>
+                {m.nombre}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <select className={Style.select} disabled>
+            <option>{nombreMarcaEdit}</option>
+          </select>
+        )}
+      </div>
+
+      {/* Producto */}
+
+      <div className={Style.grupoProducto}>
+        <label>Producto</label>
+
+        <input
+          className={Style.input}
+          placeholder="Nombre de producto"
+          value={nombre}
+          onChange={(e) => setNombre(e.target.value)}
+          required
+        />
+      </div>
+
+      {/* Imagen */}
+
+      <div className={Style.grupoImagen}>
+        <label>Imagen</label>
+
+        <label className={Style.dropZone}>
+
           <input
-            className={Style.inputImagen}
             type="file"
-            onChange={e => setImagen(e.target.files[0])}
+            className={Style.inputFile}
+            onChange={(e) => setImagen(e.target.files[0])}
           />
-        </div>
 
-        {/* BOTONES */}
-        <div className={Style.divBotones}>
-          <button className={Style.btnAgregarProducto} type="submit">
-            {id ? "Actualizar Producto" : "Agregar Producto"}
-          </button>
+          <div className={Style.icono}>📷</div>
 
-          <button
-            type="button"
-            className={Style.btnverProductos}
-            onClick={() => router.push("/FormProductos")}
-          >
-            Ver Productos
-          </button>
+          <p>
+            Arrastra y suelta tu imagen
+            <br />
+            aquí o haz clic
+          </p>
 
-          <button
-            type="button"
-            className={Style.btnAñadirExistencia}
-            onClick={irAMantenimientoExistencia}
-          >
-            Añadir Existencia
-          </button>
-        </div>
+        </label>
+      </div>
 
-      </form>
-    </div>
-  );
+      {/* Precio Compra */}
+
+      <div className={Style.grupoCompra}>
+        <label>Precio Compra</label>
+
+        <input
+          type="number"
+          className={Style.input}
+          placeholder="S/ Precio Compra"
+          value={precioCompra}
+          onChange={(e) => setPrecioCompra(e.target.value)}
+          required
+        />
+      </div>
+
+      {/* Precio Venta */}
+
+      <div className={Style.grupoVenta}>
+        <label>Precio Venta</label>
+
+        <input
+          type="number"
+          className={Style.input}
+          placeholder="S/ Precio Venta"
+          value={precioVenta}
+          onChange={(e) => setPrecioVenta(e.target.value)}
+          required
+        />
+      </div>
+
+      {/* Botones */}
+
+      <div className={Style.botones}>
+
+        <button
+          type="submit"
+          className={Style.btnPrincipal}
+        >
+          {id ? "Actualizar Producto" : "Agregar Producto"}
+        </button>
+
+        <button
+          type="button"
+          className={Style.btnSecundario}
+          onClick={() => router.push("/FormProductos")}
+        >
+          Ver Productos
+        </button>
+
+        <button
+          type="button"
+          className={Style.btnSecundario}
+          onClick={irAMantenimientoExistencia}
+        >
+          Añadir Existencia
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+);
 }
