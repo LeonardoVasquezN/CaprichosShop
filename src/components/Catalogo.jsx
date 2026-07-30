@@ -420,30 +420,27 @@ export default function Catalogo() {
 
   const productosFiltrados = useMemo(() => {
     let lista = [...productosActivos];  
-    console.log("Productos activos:", productosActivos.length);
+    const hayBusqueda = textoBusqueda?.trim().length > 0;
 
-    if (textoBusqueda?.trim()) {
-      const texto =
-        normalizarTexto(textoBusqueda);
+    if (hayBusqueda) {
+      const texto = normalizarTexto(textoBusqueda);
 
       lista = lista.filter((producto) =>
-        normalizarTexto(
-          producto.nombre
-        ).includes(texto)
+        normalizarTexto(producto.nombre).includes(texto)
       );
     }
 
-    lista = lista.filter((producto) => {
-      const idCategoria =
-        producto.subCategoria?.categoria?.id ??
-        producto.subCategoria?.categoriaId;
+    if (!hayBusqueda) {
+      lista = lista.filter((producto) => {
+        const idCategoria =
+          producto.subCategoria?.categoria?.id ??
+          producto.subCategoria?.categoriaId;
 
-      return (
-        Number(idCategoria) === categoriaId
-      );
-    });
+        return Number(idCategoria) === categoriaId;
+      });
+    }
 
-    if (subcategoriaParametro) {
+    if (!hayBusqueda && subcategoriaParametro) {
       lista = lista.filter((producto) => {
         const idSubcategoria =
           producto.subCategoriaId ??
