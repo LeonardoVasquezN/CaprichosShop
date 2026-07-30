@@ -41,6 +41,13 @@ export default function Header() {
   const abrirLogin = useLoginStore((s) => s.abrirLogin);
   const toggleMenu = useMenuStore((s) => s.toggleMenu);
   const abrirCarrito = useCarritoStore((s) => s.abrirCarrito);
+
+  const productosCarrito = useCarritoStore((s) => s.productos);
+
+  const totalProductos = productosCarrito.reduce(
+    (total, producto) => total + (producto.cantidad || 1),
+    0
+  );
   
   const [mostrarMenuUsuario, setMostrarMenuUsuario] = useState(false);
   const [showAutoComplete, setShowAutoComplete] = useState(false);
@@ -149,15 +156,25 @@ export default function Header() {
       )}
 
       <div className={Style.contenedorHeaderOpciones}>
+
+      <div
+        className={Style.contenedorCarrito}
+        onClick={abrirCarrito}
+      >
         <Image
           src="/images/lastCarritoCompras.png"
           className={Style.iconCarrito}
           alt="Carrito"
           width={40}
           height={40}
-          onClick={abrirCarrito}
-          style={{ cursor: "pointer" }}
         />
+
+        {totalProductos > 0 && (
+          <span className={Style.badgeCarrito}>
+            {totalProductos}
+          </span>
+        )}
+      </div>
 
         {usuario ? (
           <div className={Style.usuarioInfo}>
