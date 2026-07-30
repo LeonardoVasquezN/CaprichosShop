@@ -126,6 +126,7 @@
 
 .dropZone{
     height:190px;
+    width:100%;
     border:2px dashed #cfcfcf;
     border-radius:15px;
     background:white;
@@ -192,7 +193,24 @@
 }
 
 .btnSecundario:hover{
-    background:#f3f3f3;
+  background:#f3f3f3;
+}
+
+.dropZoneContainer {
+  /* border: 2px solid blue; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.preview {
+  /* border: 2px solid red; */
+  height: 160px;
+  width: 160px;
+
+  display: flex;
+  justify-content: center;
 }
 
 @media(max-width:900px){

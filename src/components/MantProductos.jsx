@@ -25,6 +25,8 @@ export default function MantProductos() {
   const [nombreSubCategoriaEdit, setNombreSubCategoriaEdit] = useState("");
   const [nombreMarcaEdit, setNombreMarcaEdit] = useState("");
 
+  const [imagenActual, setImagenActual] = useState("");
+
   useEffect(() => {
     Promise.all([
       fetch("/api/categorias").then(r => r.json()),
@@ -57,6 +59,7 @@ export default function MantProductos() {
         data.subCategoria?.categoria?.nombre ?? ""
       );
       setNombreMarcaEdit(data.marca?.nombre ?? "");
+      setImagenActual(data.imagen ?? "");
     };
 
     cargarProducto();
@@ -222,25 +225,41 @@ export default function MantProductos() {
       {/* Imagen */}
 
       <div className={Style.grupoImagen}>
-        <label>Imagen</label>
-
-        <label className={Style.dropZone}>
-
-          <input
-            type="file"
-            className={Style.inputFile}
-            onChange={(e) => setImagen(e.target.files[0])}
-          />
-
-          <div className={Style.icono}>📷</div>
-
-          <p>
-            Arrastra y suelta tu imagen
-            <br />
-            aquí o haz clic
-          </p>
-
-        </label>
+        <div className={Style.dropZoneContainer}>
+          <label className={Style.dropZone}>
+            <input
+              type="file"
+              className={Style.inputFile}
+              onChange={(e) => setImagen(e.target.files[0])}
+            />
+            <div className={Style.icono}>📷</div>
+            <p>
+              Arrastra y suelta tu imagen
+              <br />
+              aquí o haz clic
+            </p>
+          </label>
+          {/* Preview de imagen nueva seleccionada */}
+            {imagen && (
+              <div className={Style.preview}>
+                <img
+                  src={URL.createObjectURL(imagen)}
+                  alt="Preview"
+                  style={{ maxWidth: "100px", marginTop: "10px" }}
+                />
+              </div>
+            )}
+            {/* Preview de imagen existente en edición */}
+            {!imagen && imagenActual && (
+              <div className={Style.preview}>
+                <img
+                  src={imagenActual}
+                  alt="Imagen actual"
+                  style={{ maxWidth: "200px", marginTop: "10px" }}
+                />
+              </div>
+            )}
+        </div>
       </div>
 
       {/* Precio Compra */}
