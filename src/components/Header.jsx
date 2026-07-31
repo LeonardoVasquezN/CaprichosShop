@@ -73,9 +73,12 @@ export default function Header() {
     }
 
     setBusquedaActiva(true);
+    
+    const texto = valor.toLowerCase();
 
     const filtrados = productos.filter((p) =>
-      p.nombre.toLowerCase().includes(valor.toLowerCase())
+      p.nombre.toLowerCase().includes(texto) ||
+      p.marca?.nombre.toLowerCase().includes(texto)
     );
 
     setProductosFiltrados(filtrados);
