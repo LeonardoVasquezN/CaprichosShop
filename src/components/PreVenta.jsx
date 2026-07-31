@@ -229,7 +229,7 @@ export default function PreVenta() {
                     </table>
 
                     <div className={Style.contentMetodoAddDelete}>
-                      <div className={Style.metodoPago}>
+                      {/* <div className={Style.metodoPago}>
                         <h3>Método de pago:</h3>
 
                         {["Yape", "Tarjeta", "Efectivo"].map((metodo) => (
@@ -258,6 +258,42 @@ export default function PreVenta() {
                             )}
                           </div>
                         ))}
+                      </div> */}
+
+                      <div className={Style.metodoPago}>
+                        <span className={Style.tituloMetodo}>Método de pago:</span>
+
+                        <div className={Style.opcionesPago}>
+                          {["Yape", "Tarjeta", "Efectivo"].map((metodo) => (
+                            <div key={metodo} className={Style.opcionPago}>
+                              
+                              <label className={Style.labelPago}>
+                                <input
+                                  type="checkbox"
+                                  checked={MPagosElegidos[key]?.[metodo] !== undefined}
+                                  onChange={(e) =>
+                                    handlePagoChange(key, metodo, e.target.checked)
+                                  }
+                                />
+                                {metodo}
+                              </label>
+
+                              {MPagosElegidos[key]?.[metodo] !== undefined && (
+                                <input
+                                  type="number"
+                                  min="0"
+                                  step="0.01"
+                                  placeholder="S/"
+                                  className={Style.inputMonto}
+                                  value={MPagosElegidos[key][metodo]}
+                                  onChange={(e) =>
+                                    handleMontoChange(key, metodo, e.target.value)
+                                  }
+                                />
+                              )}
+                            </div>
+                          ))}
+                        </div>
                       </div>
 
                       <div className={Style.accionesPreVenta}>
