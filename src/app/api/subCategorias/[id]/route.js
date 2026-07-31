@@ -43,6 +43,7 @@ export async function PUT(req, { params }) {
     const actualizado = await prisma.subCategoria.update({
       where: { id: subCategoriaId },
       data: {
+        nombre: body.nombre,
         estado: body.estado,
       },
     });
