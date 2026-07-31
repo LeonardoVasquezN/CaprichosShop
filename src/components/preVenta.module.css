@@ -22,7 +22,6 @@
   font-weight: bold;
 }
 
-
 .tablaGeneral {
   width: 100%;
   border-collapse: collapse;
@@ -42,7 +41,6 @@
   background-color: #ddd;
 }
 
-
 .subTabla {
   width: 100%;
   border-collapse: collapse;
@@ -60,9 +58,22 @@
   background-color: #eee;
 }
 
+.metodoPago {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
 .metodoPago input[type="checkbox"] {
   margin-right: 5px;
+}
+
+.metodoPago input[type="number"] {
+  width: 80px;
+  padding: 4px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin: 5px;
 }
 
 .eliminar {
@@ -86,10 +97,6 @@
   flex-direction: row;
   justify-content: end;
   gap: 10px; 
-}
-
-.metodoPago {
-  display: flex;
 }
 
 .contentMetodoAddDelete {
@@ -116,7 +123,6 @@
 .encabezadoTabla {
   background-color: yellow;
 }
-
 
 @media (max-width: 768px) {
   .contentPreVenta {
@@ -160,17 +166,14 @@
     margin-top: 15px;
   }
 
-  
   .tablaGeneral {
     display: none;
   }
 
-  
   .ventaCard {
     display: block;
   }
 
- 
   .metodoPago input[type="number"] {
     width: 100px; 
     padding: 5px;

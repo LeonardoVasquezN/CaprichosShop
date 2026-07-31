@@ -27,46 +27,49 @@ export async function POST(req) {
       );
     }
 
-    await prisma.$transaction(async (tx) => {
-      const venta = await tx.venta.create({
-        data: {
-          fecha: new Date(fecha),
-          total,
-          metodoDePago: metodo_de_pago,
-          clienteId: Number(id_cliente),
-        },
+    const venta = await prisma.venta.create({
+      data: {
+        fecha: new Date(fecha),
+        total,
+        metodoDePago: metodo_de_pago,
+        clienteId: Number(id_cliente),
+      },
+    });
+
+    const operaciones = [];
+    const productosAActualizar = new Set();
+
+    for (const d of detalles) {
+      const productoId = Number(d.productoId);
+      const colorId = Number(d.colorId);
+      const tallaId = Number(d.tallaId);
+      const cantidad = Number(d.cantidad);
+
+      const variante = await prisma.variante.findFirst({
+        where: { productoId, colorId, tallaId },
       });
 
-      const productosAActualizar = new Set();
+      if (!variante) {
+        throw new Error(
+          `Variante no encontrada (producto ${productoId}, color ${colorId}, talla ${tallaId})`
+        );
+      }
 
-      for (const d of detalles) {
-        const productoId = Number(d.productoId);
-        const colorId = Number(d.colorId);
-        const tallaId = Number(d.tallaId);
-        const cantidad = Number(d.cantidad);
+      if (variante.stock < cantidad) {
+        throw new Error(
+          `Stock insuficiente para producto ${productoId}. Stock: ${variante.stock}, solicitado: ${cantidad}`
+        );
+      }
 
-        const variante = await tx.variante.findFirst({
-          where: { productoId, colorId, tallaId },
-        });
-
-        if (!variante) {
-          throw new Error(
-            `Variante no encontrada (producto ${productoId}, color ${colorId}, talla ${tallaId})`
-          );
-        }
-
-        if (variante.stock < cantidad) {
-          throw new Error(
-            `Stock insuficiente para producto ${productoId}. Stock: ${variante.stock}, solicitado: ${cantidad}`
-          );
-        }
-
-        await tx.variante.update({
+      operaciones.push(
+        prisma.variante.update({
           where: { id: variante.id },
           data: { stock: { decrement: cantidad } },
-        });
+        })
+      );
 
-        await tx.detalleVenta.create({
+      operaciones.push(
+        prisma.detalleVenta.create({
           data: {
             ventaId: venta.id,
             productoId,
@@ -75,40 +78,52 @@ export async function POST(req) {
             precioUnitario: d.precioUnitario,
             total: d.subTotal,
           },
-        });
+        })
+      );
 
-        productosAActualizar.add(productoId);
-      }
+      productosAActualizar.add(productoId);
+    }
 
-      for (const productoId of productosAActualizar) {
-        const totalStock = await tx.variante.aggregate({
-          where: { productoId },
-          _sum: { stock: true },
-        });
+    for (const productoId of productosAActualizar) {
+      const totalStock = await prisma.variante.aggregate({
+        where: { productoId },
+        _sum: { stock: true },
+      });
 
-        await tx.producto.update({
+      operaciones.push(
+        prisma.producto.update({
           where: { id: productoId },
           data: {
             stockTotal: totalStock._sum.stock || 0,
           },
-        });
-      }
+        })
+      );
+    }
 
-      await tx.detallePreVenta.deleteMany({
-        where: { preVentaId: Number(preVentaId) },
-      });
+    await prisma.$transaction(operaciones);
 
-      await tx.preVenta.delete({
-        where: { id: Number(preVentaId) },
-      });
+    await prisma.detallePreVenta.deleteMany({
+      where: { preVentaId: Number(preVentaId) },
     });
 
+    await prisma.preVenta.delete({
+      where: { id: Number(preVentaId) },
+    });
+
+    const preVenta = await prisma.preVenta.findUnique({
+      where: {
+        id: Number(preVentaId),
+      },
+    });
+
+    console.log("Preventa encontrada:", preVenta);
+
     return NextResponse.json(
-      { message: " Venta registrada correctamente y stock actualizado" },
+      { message: "Venta registrada correctamente y stock actualizado" },
       { status: 201 }
     );
   } catch (error) {
-    console.error(" ERROR VENTA:", error);
+    console.error(error.stack);
 
     return NextResponse.json(
       {
