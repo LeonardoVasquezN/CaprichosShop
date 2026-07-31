@@ -22,8 +22,6 @@ export default function FormUsuarios() {
     router.push(`/MantUsuario/${id}`);
   };
 
-  console.log("usuarios:", usuarios);
-
   return (
     <div className={Style.contentUsuarios}>
       <h1 className={Style.titulo}>Usuarios</h1>
