@@ -84,7 +84,7 @@ export default function MantExistencia() {
       }
 
       alert(data.mensaje);
-      router.push("/FormExistencias");
+      // router.push("/FormExistencias");
     } catch (error) {
       console.error(error);
       alert("Error interno al guardar existencia");
@@ -151,7 +151,6 @@ export default function MantExistencia() {
             className={Style.selectColores}
             value={idColor}
             onChange={e => setIdColor(e.target.value)}
-            required
           >
             <option value="">-- Selecciona un color --</option>
             {colores.map(c => (
@@ -167,7 +166,6 @@ export default function MantExistencia() {
             className={Style.selectTallas}
             value={idTalla}
             onChange={e => setIdTalla(e.target.value)}
-            required
           >
             <option value="">-- Selecciona una talla --</option>
             {tallas.map(t => (
