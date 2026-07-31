@@ -13,7 +13,7 @@ app.post("/print", async (req, res) => {
     await imprimir(data)
     res.json({ ok: true })
   } catch (error) {
-    console.log(error)
+    console.error("Error al imprimir", error)
     res.status(500).json({ ok: false })
   }
 })

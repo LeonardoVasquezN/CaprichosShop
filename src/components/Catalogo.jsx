@@ -288,25 +288,7 @@ export default function Catalogo() {
             : []
         );
 
-        console.log(
-          "PRODUCTOS:",
-          listaProductos
-        );
-
-        console.log(
-          "MARCAS:",
-          respuestaMarcas.data
-        );
-
-        console.log(
-          "COLORES:",
-          respuestaColores.data
-        );
-
-        console.log(
-          "VARIANTES:",
-          respuestaVariantes.data
-        );
+        
       } catch (error) {
         console.error(
           "Error al cargar catálogo:",

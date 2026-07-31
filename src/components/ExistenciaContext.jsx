@@ -17,7 +17,7 @@ export const ExistenciaProvider = ({ children }) => {
         setExistencias(data);
       });
     } catch (error) {
-      console.log("Error al obtener existencias:", error);
+      console.error("Error al obtener existencias:", error);
     }
   };
 

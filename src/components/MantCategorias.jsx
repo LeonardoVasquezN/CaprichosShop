@@ -7,8 +7,6 @@ import Style from "./mantCategorias.module.css";
 export default function MantCategorias({ id }) {
   const router = useRouter();
   const [nombreCategoria, setNombreCategoria] = useState("");
-
-  console.log("ID RECIBIDO EN COMPONENTE:", id);
  
   useEffect(() => {
     if (!id) return;
@@ -23,7 +21,6 @@ export default function MantCategorias({ id }) {
         }
 
         const data = await res.json();
-        console.log("Categoría cargada:", data);
 
         setNombreCategoria(data.nombre ?? "");
       } catch (error) {
