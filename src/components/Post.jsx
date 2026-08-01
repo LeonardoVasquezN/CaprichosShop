@@ -18,6 +18,22 @@ export default function Post() {
   const [mostrarProductos, setMostrarProductos] = useState(false);
 
   const [productos, setProductos] = useState([]);
+  const [variantes, setVariantes] = useState([]);
+  const [colores, setColores] = useState([]);
+  const [tallas, setTallas] = useState([]);
+
+  const [productoSeleccionado, setProductoSeleccionado] = useState(null);
+
+  const [colorSeleccionado, setColorSeleccionado] = useState("");
+  const [tallaSeleccionada, setTallaSeleccionada] = useState("");
+
+  const [cantidadSeleccionada, setCantidadSeleccionada] = useState(1);
+
+  const [metodosPago, setMetodosPago] = useState({
+    Yape:"",
+    Tarjeta:"",
+    Efectivo:""
+  });
 
   const [tipoComprobante, setTipoComprobante] = useState('NV');
   const [mostrarPreview, setMostrarPreview] = useState(false);
@@ -75,38 +91,83 @@ export default function Post() {
     setMostrarProductos(true);
   };
 
-  const agregarProducto = (producto) => {
-    const productoExistente = productos.find(
-      (item) => item.id === producto.id
-    );
+  const obtenerVariantes = async () => {
 
-    if (productoExistente) {
-      const nuevosProductos = productos.map((item) => {
-        if (item.id === producto.id) {
-          return {
-            ...item,
-            cantidad: Number(item.cantidad || 0) + 1,
-          };
-        }
+  const res = await fetch("/api/variantes");
+  const data = await res.json();
 
-        return item;
-      });
+  setVariantes(data);
+};
 
-      setProductos(nuevosProductos);
-    } else {
-      setProductos([
-        ...productos,
-        {
-          id: producto.id,
-          nombre: producto.nombre,
-          precio: Number(producto.precio_venta || 0),
-          cantidad: 1,
-        },
-      ]);
-    }
+const obtenerColores = async () => {
+  const res = await fetch("/api/colores");
+  const data = await res.json();
+  setColores(data);
+};
 
-    setMostrarProductos(false);
-  };
+const obtenerTallas = async () => {
+  const res = await fetch("/api/tallas");
+  const data = await res.json();
+  setTallas(data);
+};
+
+ const seleccionarProducto = (producto)=>{
+  setProductoSeleccionado(producto);
+  setColorSeleccionado("");
+  setTallaSeleccionada("");
+  setCantidadSeleccionada(1);
+  setMostrarProductos(false);
+};
+
+const agregarProductoFinal = ()=>{
+
+  if(!productoSeleccionado){
+    alert("Selecciona un producto");
+    return;
+  }
+
+  if(!colorSeleccionado || !tallaSeleccionada){
+    alert("Selecciona color y talla");
+    return;
+}
+
+const variante = variantes.find((v)=>
+  v.productoId === productoSeleccionado.id &&
+  v.colorId === Number(colorSeleccionado) &&
+  v.tallaId === Number(tallaSeleccionada)
+);
+
+if(!variante){
+ alert("No existe esa combinación");
+ return;
+}
+
+if(variante.stock < cantidadSeleccionada){
+ alert("Stock insuficiente");
+ return;
+}
+
+const nuevoProducto={
+ productoId:productoSeleccionado.id,
+ varianteId:variante.id,
+ nombre:productoSeleccionado.nombre,
+ precio:Number(productoSeleccionado.precio_venta),
+ cantidad:Number(cantidadSeleccionada),
+ total:
+ Number(productoSeleccionado.precio_venta) *
+ Number(cantidadSeleccionada)
+};
+
+setProductos([
+ ...productos,
+ nuevoProducto
+]);
+
+setProductoSeleccionado(null);
+setColorSeleccionado("");
+setTallaSeleccionada("");
+setCantidadSeleccionada(1);
+};
 
   const handleChange = (index, field, value) => {
     const nuevosProductos = productos.map((producto, productoIndex) => {
@@ -142,6 +203,10 @@ export default function Post() {
 
     document.addEventListener('mousedown', handleClickOutside);
 
+    obtenerVariantes();
+    obtenerColores();
+    obtenerTallas();
+
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
@@ -151,19 +216,76 @@ export default function Post() {
     window.print();
   };
 
-  const crearComprobante = () => {
-    if (!tipoComprobante) {
-      alert('Selecciona un tipo de comprobante');
-      return;
-    }
+  const crearComprobante = async()=>{
 
-    if (productos.length === 0) {
-      alert('Agrega al menos un producto');
-      return;
-    }
+if(productos.length===0){
+  alert("Agrega productos");
+  return;
+}
 
-    setMostrarPreview(true);
-  };
+if(!clienteSeleccionado){
+  alert("Selecciona cliente");
+  return;
+}
+
+const pagosSeleccionados={};
+  Object.entries(metodosPago).forEach(([key,value])=>{
+    if(Number(value)>0){
+    pagosSeleccionados[key]=Number(value);
+  }
+});
+
+if(Object.keys(pagosSeleccionados).length===0){
+  alert("Selecciona método de pago");
+  return;
+}
+
+const detalles=productos.map((p)=>(
+{
+  productoId:p.productoId,
+  varianteId:p.varianteId,
+  cantidad:p.cantidad,
+  precioUnitario:p.precio,
+  total:p.total
+}
+));
+
+const respuesta=await fetch("/api/ventas",{
+  method:"POST",
+  headers:{
+  "Content-Type":"application/json"
+  },
+
+
+  body:JSON.stringify({
+    fecha:new Date(),
+    total,
+    metodo_de_pago:
+    JSON.stringify(pagosSeleccionados),
+    id_cliente:
+    clienteSeleccionado.id,
+    preVentaId:null,
+    detalles
+  })
+});
+
+const data=await respuesta.json();
+
+if(!respuesta.ok){
+  alert(data.detail || "Error");
+  return;
+}
+
+alert("Venta registrada correctamente");
+setMostrarPreview(true);
+};
+
+const cambiarMetodoPago=(metodo,valor)=>{
+  setMetodosPago({
+    ...metodosPago,
+    [metodo]:valor
+  });
+};
 
   return (
     <>
@@ -279,6 +401,100 @@ export default function Post() {
                   Buscar Producto
                 </button>
 
+                {productoSeleccionado && (
+                  <div className={Style.selectorVariante}>
+                    <h3>
+                      {productoSeleccionado.nombre}
+                    </h3>
+                    <label>
+                      Color
+                    </label>
+                    <select
+                      value={colorSeleccionado}
+                      onChange={(e)=>setColorSeleccionado(e.target.value)}
+                    >
+                    <option value="">
+                      Seleccione color
+                    </option>
+
+                    {
+                      colores
+                      .filter(
+                      (c)=>
+                      variantes.some(
+                      (v)=>
+                      v.productoId===productoSeleccionado.id &&
+                      v.colorId===c.id
+                      )
+                      )
+                      .map((color)=>(
+
+                      <option
+                      key={color.id}
+                      value={color.id}
+                      >
+                      {color.nombre}
+                      </option>
+                      ))
+                    }
+
+                    </select>
+
+                    <label>
+                    Talla
+                    </label>
+
+                    <select
+                    value={tallaSeleccionada}
+                    onChange={(e)=>setTallaSeleccionada(e.target.value)}
+                    >
+                    <option value="">
+                      Seleccione talla
+                    </option>
+                    {
+                    tallas
+                    .filter(
+                    (t)=>
+                    variantes.some(
+                    (v)=>
+                    v.productoId===productoSeleccionado.id &&
+                    v.tallaId===t.id
+                    )
+                    )
+                    .map((talla)=>(
+
+                    <option
+                    key={talla.id}
+                    value={talla.id}
+                    >
+                    {talla.nombre}
+                    </option>
+                    ))
+                    }
+                    </select>
+
+                    <label>
+                      Cantidad
+                    </label>
+
+                    <input
+                    type="number"
+                    min="1"
+                    value={cantidadSeleccionada}
+                    onChange={(e)=>
+                    setCantidadSeleccionada(Number(e.target.value))
+                    }
+                    />
+
+                    <button
+                    type="button"
+                    onClick={agregarProductoFinal}
+                    >
+                    Agregar
+                    </button>
+                  </div>
+                  )}
+
                 {mostrarProductos && (
                   <div className={Style.listaProductos}>
                     {productosBD.length > 0 ? (
@@ -286,7 +502,7 @@ export default function Post() {
                         <div
                           key={producto.id}
                           className={Style.itemProducto}
-                          onClick={() => agregarProducto(producto)}
+                          onClick={() => seleccionarProducto(producto)}
                         >
                           {producto.nombre} - S/{' '}
                           {formatMoney(producto.precio_venta)}
@@ -422,6 +638,35 @@ export default function Post() {
                 )}
               </div>
 
+              <div className={Style.metodosPago}>
+                <h3>
+                  Método de pago
+                </h3>
+                {
+                ["Yape","Tarjeta","Efectivo"].map((metodo)=>(
+
+                <div key={metodo}>
+                <label>
+                  {metodo}
+                </label>
+
+                <input
+                  type="number"
+                  min="0"
+                  placeholder="S/"
+                  value={metodosPago[metodo]}
+                  onChange={(e)=>
+                  cambiarMetodoPago(
+                  metodo,
+                  e.target.value
+                  )
+                  }
+                />
+                </div>
+                ))
+                }
+              </div>
+
               <div className={Style.resumenTotal}>
                 <span>Total</span>
                 <span>S/ {formatMoney(total)}</span>
@@ -495,7 +740,7 @@ export default function Post() {
 
                 {productos.map((producto) => (
                   <div
-                    key={producto.id}
+                    key={producto.varianteId}
                     className={Style.ticketProduct}
                   >
                     <div className={Style.productName}>
