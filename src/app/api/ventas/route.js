@@ -17,7 +17,6 @@ export async function POST(req) {
       total === undefined ||
       !metodo_de_pago ||
       !id_cliente ||
-      !preVentaId ||
       !Array.isArray(detalles) ||
       detalles.length === 0
     ) {
@@ -40,31 +39,56 @@ export async function POST(req) {
     const productosAActualizar = new Set();
 
     for (const d of detalles) {
+
       const productoId = Number(d.productoId);
-      const colorId = Number(d.colorId);
-      const tallaId = Number(d.tallaId);
       const cantidad = Number(d.cantidad);
 
-      const variante = await prisma.variante.findFirst({
-        where: { productoId, colorId, tallaId },
-      });
+      let variante;
+
+      if (d.varianteId) {
+
+        variante = await prisma.variante.findUnique({
+          where: {
+            id: Number(d.varianteId),
+          },
+        });
+
+      } 
+
+      else {
+
+        variante = await prisma.variante.findFirst({
+          where: {
+            productoId,
+            colorId: Number(d.colorId),
+            tallaId: Number(d.tallaId),
+          },
+        });
+
+      }
 
       if (!variante) {
         throw new Error(
-          `Variante no encontrada (producto ${productoId}, color ${colorId}, talla ${tallaId})`
+          `Variante no encontrada para producto ${productoId}`
         );
       }
 
       if (variante.stock < cantidad) {
         throw new Error(
-          `Stock insuficiente para producto ${productoId}. Stock: ${variante.stock}, solicitado: ${cantidad}`
+          `Stock insuficiente. Disponible: ${variante.stock}, solicitado: ${cantidad}`
         );
       }
 
       operaciones.push(
         prisma.variante.update({
-          where: { id: variante.id },
-          data: { stock: { decrement: cantidad } },
+          where: {
+            id: variante.id,
+          },
+          data: {
+            stock: {
+              decrement: cantidad,
+            },
+          },
         })
       );
 
@@ -75,8 +99,10 @@ export async function POST(req) {
             productoId,
             varianteId: variante.id,
             cantidad,
-            precioUnitario: d.precioUnitario,
-            total: d.subTotal,
+            precioUnitario: Number(d.precioUnitario),
+            total: Number(
+              d.subTotal ?? d.total
+            ),
           },
         })
       );
@@ -85,16 +111,24 @@ export async function POST(req) {
     }
 
     for (const productoId of productosAActualizar) {
+
       const totalStock = await prisma.variante.aggregate({
-        where: { productoId },
-        _sum: { stock: true },
+        where:{
+          productoId,
+        },
+        _sum:{
+          stock:true,
+        },
       });
 
       operaciones.push(
         prisma.producto.update({
-          where: { id: productoId },
-          data: {
-            stockTotal: totalStock._sum.stock || 0,
+          where:{
+            id:productoId,
+          },
+          data:{
+            stockTotal:
+              totalStock._sum.stock || 0,
           },
         })
       );
@@ -102,66 +136,84 @@ export async function POST(req) {
 
     await prisma.$transaction(operaciones);
 
-    await prisma.detallePreVenta.deleteMany({
-      where: { preVentaId: Number(preVentaId) },
-    });
+    if(preVentaId){
+      await prisma.detallePreVenta.deleteMany({
+        where:{
+          preVentaId:Number(preVentaId),
+        },
+      });
 
-    await prisma.preVenta.delete({
-      where: { id: Number(preVentaId) },
-    });
-
-    const preVenta = await prisma.preVenta.findUnique({
-      where: {
-        id: Number(preVentaId),
-      },
-    });
-
-    console.log("Preventa encontrada:", preVenta);
-
-    return NextResponse.json(
-      { message: "Venta registrada correctamente y stock actualizado" },
-      { status: 201 }
-    );
-  } catch (error) {
-    console.error(error.stack);
+      await prisma.preVenta.delete({
+        where:{
+          id:Number(preVentaId),
+        },
+      });
+    }
 
     return NextResponse.json(
       {
-        error: "Error al registrar la venta",
-        detail: error.message,
+        message:
+          "Venta registrada correctamente y stock actualizado",
+        ventaId: venta.id,
       },
-      { status: 500 }
+      {
+        status:201,
+      }
+    );
+
+
+  } catch(error){
+    console.error(error);
+
+    return NextResponse.json(
+      {
+        error:"Error al registrar la venta",
+        detail:error.message,
+      },
+      {
+        status:500,
+      }
     );
   }
 }
 
-export async function GET() {
-  try {
+export async function GET(){
+  try{
     const ventas = await prisma.venta.findMany({
-      orderBy: { id: "desc" },
-      include: {
-        cliente: true,
-        detalleVentas: {
-          include: {
-            producto: true,
-            variante: {
-              include: { color: true, talla: true },
+
+      orderBy:{
+        id:"desc",
+      },
+
+      include:{
+        cliente:true,
+        detalleVentas:{
+          include:{
+            producto:true,
+            variante:{
+              include:{
+                color:true,
+                talla:true,
+              },
             },
           },
         },
       },
     });
-
     return NextResponse.json(ventas);
-  } catch (error) {
-    console.error(" ERROR GET VENTAS:", error);
-
+  }catch(error){
+    console.error(
+      "ERROR GET VENTAS:",
+      error
+    );
     return NextResponse.json(
       {
-        error: "Error al obtener ventas",
-        detail: error.message,
+        error:"Error al obtener ventas",
+        detail:error.message,
       },
-      { status: 500 }
+      {
+        status:500,
+      }
     );
   }
 }
