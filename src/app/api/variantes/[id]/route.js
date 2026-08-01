@@ -23,19 +23,34 @@ export async function GET(_req, { params }) {
 }
 
 export async function PUT(req, { params }) {
+
   const id = Number(params.id);
-  const { stock } = await req.json();
+
+  const {
+    id_color,
+    id_talla,
+    stock
+  } = await req.json();
+
 
   const variante = await prisma.variante.update({
-    where: { id },
-    data: { stock: Number(stock) },
+
+    where: {
+      id
+    },
+
+    data: {
+      colorId: Number(id_color),
+      tallaId: Number(id_talla),
+      stock: Number(stock)
+    }
   });
 
   await actualizarStockProducto(variante.productoId);
 
   return NextResponse.json({
-    mensaje: "Stock actualizado con éxito",
-    variante,
+    mensaje: "Variante actualizada correctamente",
+    variante
   });
 }
 
