@@ -119,7 +119,6 @@ export default function MantExistencia({id}) {
         })
       };
 
-
       const res = await fetch(url, {
         method,
         headers: {
@@ -127,7 +126,6 @@ export default function MantExistencia({id}) {
         },
         body: JSON.stringify(body),
       });
-
 
       const data = await res.json();
 
@@ -137,18 +135,12 @@ export default function MantExistencia({id}) {
         return;
       }
 
-
       alert(data.mensaje);
-
-
-      router.push("/FormExistencias");
-
 
     } catch(error) {
 
       console.error(error);
       alert("Error interno al guardar");
-
     }
   };
 
