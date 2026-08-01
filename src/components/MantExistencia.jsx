@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Style from "./mantExistencia.module.css";
 
-export default function MantExistencia() {
+export default function MantExistencia({id}) {
   const router = useRouter();
   
   const [categorias, setCategorias] = useState([]);
@@ -38,6 +38,40 @@ export default function MantExistencia() {
       setTallas(tal);
     });
   }, []);
+
+  useEffect(() => {
+    if (!id) return;
+
+    fetch(`/api/variantes/${id}`)
+      .then(res => res.json())
+      .then(data => {
+
+        const categoriaId = data.producto.subCategoria.categoria.id;
+        const subCategoriaId = data.producto.subCategoria.id;
+        const productoId = data.producto.id;
+
+        setSubCategoriasFiltradas(
+          subCategorias.filter(
+            sc => sc.categoriaId === categoriaId
+          )
+        );
+
+        setProductosFiltrados(
+          productos.filter(
+            p => p.subCategoriaId === subCategoriaId
+          )
+        );
+
+        setIdCategoria(categoriaId);
+        setIdSubCategoria(subCategoriaId);
+        setIdProducto(productoId);
+        setIdColor(data.color.id);
+        setIdTalla(data.talla.id);
+        setCantidad(data.stock);
+
+      });
+
+  }, [id, subCategorias, productos]);
   
   const cambioCategoria = (e) => {
     const id = Number(e.target.value);
@@ -65,35 +99,64 @@ export default function MantExistencia() {
     e.preventDefault();
 
     try {
-      const res = await fetch("/api/variantes", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id_producto: Number(idProducto),
-          id_color: Number(idColor),
-          id_talla: Number(idTalla),
-          stock: Number(cantidad),
-        }),
+
+      const url = id
+        ? `/api/variantes/${id}`
+        : "/api/variantes";
+
+
+      const method = id
+        ? "PUT"
+        : "POST";
+
+
+      const body = {
+        id_color: Number(idColor),
+        id_talla: Number(idTalla),
+        stock: Number(cantidad),
+        ...( !id && {
+          id_producto: Number(idProducto)
+        })
+      };
+
+
+      const res = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(body),
       });
+
 
       const data = await res.json();
 
+
       if (!res.ok) {
-        alert(data.mensaje || "Error al guardar existencia");
+        alert(data.mensaje || "Error al guardar");
         return;
       }
 
+
       alert(data.mensaje);
-      // router.push("/FormExistencias");
-    } catch (error) {
+
+
+      router.push("/FormExistencias");
+
+
+    } catch(error) {
+
       console.error(error);
-      alert("Error interno al guardar existencia");
+      alert("Error interno al guardar");
+
     }
   };
 
   return (
     <div className={Style.mantExistencia}>
-      <h1 className={Style.titulo}>Añadir Existencia</h1>
+      <h1 className={Style.titulo}>
+        {id ? "Editar Existencia" : "Añadir Existencia"}
+      </h1>
 
       <form className={Style.formulario} onSubmit={submitExistencia}>
         {/* CATEGORIA */}
@@ -135,6 +198,7 @@ export default function MantExistencia() {
             className={Style.comboProductos}
             value={idProducto}
             onChange={e => setIdProducto(e.target.value)}
+            disabled={!!id}
             required
           >
             <option value="">-- Selecciona un producto --</option>
