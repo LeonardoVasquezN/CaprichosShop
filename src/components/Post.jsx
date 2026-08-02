@@ -413,7 +413,10 @@ setCantidadSeleccionada(1);
                     </label>
                     <select
                       value={colorSeleccionado}
-                      onChange={(e)=>setColorSeleccionado(e.target.value)}
+                      onChange={(e) => {
+                        setColorSeleccionado(e.target.value);
+                        setTallaSeleccionada("");
+                      }}
                     >
                     <option value="">
                       Seleccione color
@@ -454,14 +457,16 @@ setCantidadSeleccionada(1);
                       Seleccione talla
                     </option>
                     {
+                    colorSeleccionado &&
                     tallas
                     .filter(
-                    (t)=>
-                    variantes.some(
-                    (v)=>
-                    v.productoId===productoSeleccionado.id &&
-                    v.tallaId===t.id
-                    )
+                      (t)=>
+                      variantes.some(
+                        (v)=>
+                        v.productoId===productoSeleccionado.id &&
+                        v.colorId===Number(colorSeleccionado) &&
+                        v.tallaId===t.id
+                      )
                     )
                     .map((talla)=>(
 
