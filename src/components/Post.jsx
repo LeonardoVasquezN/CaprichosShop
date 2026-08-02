@@ -223,11 +223,6 @@ setCantidadSeleccionada(1);
       return;
     }
 
-    if(!clienteSeleccionado){
-      alert("Selecciona cliente");
-      return;
-    }
-
     const pagosSeleccionados={};
 
     Object.entries(metodosPago).forEach(([key,value])=>{
@@ -270,8 +265,7 @@ setCantidadSeleccionada(1);
         total,
         metodo_de_pago:
         JSON.stringify(pagosSeleccionados),
-        id_cliente:
-        clienteSeleccionado.id,
+        id_cliente: clienteSeleccionado?.id ?? 15,
         preVentaId:null,
         detalles
       })
