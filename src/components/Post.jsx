@@ -218,74 +218,82 @@ setCantidadSeleccionada(1);
 
   const crearComprobante = async()=>{
 
-if(productos.length===0){
-  alert("Agrega productos");
-  return;
-}
+    if(productos.length===0){
+      alert("Agrega productos");
+      return;
+    }
 
-if(!clienteSeleccionado){
-  alert("Selecciona cliente");
-  return;
-}
+    if(!clienteSeleccionado){
+      alert("Selecciona cliente");
+      return;
+    }
 
-const pagosSeleccionados={};
-  Object.entries(metodosPago).forEach(([key,value])=>{
-    if(Number(value)>0){
-    pagosSeleccionados[key]=Number(value);
-  }
-});
+    const pagosSeleccionados={};
 
-if(Object.keys(pagosSeleccionados).length===0){
-  alert("Selecciona método de pago");
-  return;
-}
+    Object.entries(metodosPago).forEach(([key,value])=>{
+      if(Number(value)>0){
+      pagosSeleccionados[key]=Number(value);
+    }
+    });
 
-const detalles=productos.map((p)=>(
-{
-  productoId:p.productoId,
-  varianteId:p.varianteId,
-  cantidad:p.cantidad,
-  precioUnitario:p.precio,
-  total:p.total
-}
-));
+    if(Object.keys(pagosSeleccionados).length===0){
+      alert("Selecciona método de pago");
+      return;
+    }
 
-const respuesta=await fetch("/api/ventas",{
-  method:"POST",
-  headers:{
-  "Content-Type":"application/json"
-  },
+    const totalPagado = Object.values(pagosSeleccionados).reduce((acc, val) => acc + Number(val), 0);
+
+    if(Math.abs(totalPagado - total) > 0.01){
+      alert("El total pagado no coincide con el total de la venta");
+      return;
+    }
+
+    const detalles=productos.map((p)=>(
+    {
+      productoId:p.productoId,
+      varianteId:p.varianteId,
+      cantidad:p.cantidad,
+      precioUnitario:p.precio,
+      total:p.total
+    }
+    ));
+
+    const respuesta=await fetch("/api/ventas",{
+      method:"POST",
+      headers:{
+      "Content-Type":"application/json"
+      },
 
 
-  body:JSON.stringify({
-    fecha:new Date(),
-    total,
-    metodo_de_pago:
-    JSON.stringify(pagosSeleccionados),
-    id_cliente:
-    clienteSeleccionado.id,
-    preVentaId:null,
-    detalles
-  })
-});
+      body:JSON.stringify({
+        fecha:new Date(),
+        total,
+        metodo_de_pago:
+        JSON.stringify(pagosSeleccionados),
+        id_cliente:
+        clienteSeleccionado.id,
+        preVentaId:null,
+        detalles
+      })
+    });
 
-const data=await respuesta.json();
+    const data=await respuesta.json();
 
-if(!respuesta.ok){
-  alert(data.detail || "Error");
-  return;
-}
+    if(!respuesta.ok){
+      alert(data.detail || "Error");
+      return;
+    }
 
-alert("Venta registrada correctamente");
-setMostrarPreview(true);
-};
+    alert("Venta registrada correctamente");
+    setMostrarPreview(true);
+  };
 
-const cambiarMetodoPago=(metodo,valor)=>{
-  setMetodosPago({
-    ...metodosPago,
-    [metodo]:valor
-  });
-};
+  const cambiarMetodoPago=(metodo,valor)=>{
+    setMetodosPago({
+      ...metodosPago,
+      [metodo]:valor
+    });
+  };
 
   return (
     <>
@@ -652,6 +660,7 @@ const cambiarMetodoPago=(metodo,valor)=>{
 
                 <input
                   type="number"
+                  className={Style.inputMetodoPago}
                   min="0"
                   placeholder="S/"
                   value={metodosPago[metodo]}
