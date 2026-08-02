@@ -537,6 +537,39 @@
   background: red;
 }
 
+.metodosPago {
+  padding: 15px;
+}
+
+.inputMetodoPago {
+  width: 100px;
+  padding-left: 5px;
+}
+
+.selectorVariante {
+  margin-top: 15px;
+  padding: 18px;
+  background: #fff;
+  border: 1px solid #dbe3ea;
+  border-radius: 12px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  box-shadow: 0 6px 18px rgba(0,0,0,.08);
+}
+
+.inputBuscarProducto {
+  width: 100%;
+  padding: 8px 12px;
+  box-sizing: border-box;
+  background: #f6f8f9;
+  border: 1px solid #dbe3ea;
+  border-radius: 10px;
+  margin-right: 10px;
+}
+
 /* Pantallas medianas */
 @media (max-width: 1050px) {
   .workspace {
@@ -579,6 +612,7 @@
   .productosSection,
   .resumenOrden {
     grid-column: 1;
+    grid-column: 1 / -1;
   }
 
   .listaClientes,
