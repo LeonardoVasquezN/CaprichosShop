@@ -28,6 +28,7 @@ export default function Post() {
   const [tallaSeleccionada, setTallaSeleccionada] = useState("");
 
   const [cantidadSeleccionada, setCantidadSeleccionada] = useState(1);
+  const [buscarProducto, setBuscarProducto] = useState("");
 
   const [metodosPago, setMetodosPago] = useState({
     Yape:"",
@@ -116,6 +117,9 @@ const obtenerTallas = async () => {
   setColorSeleccionado("");
   setTallaSeleccionada("");
   setCantidadSeleccionada(1);
+  setMostrarProductos(false);
+
+  setBuscarProducto("");
   setMostrarProductos(false);
 };
 
@@ -406,8 +410,9 @@ setCantidadSeleccionada(1);
                 {productoSeleccionado && (
                   <div className={Style.selectorVariante}>
                     <h3>
-                      {productoSeleccionado.nombre}
+                      {"producto: " + productoSeleccionado.nombre}
                     </h3>
+                    <span>______________________</span>
                     <label>
                       Color
                     </label>
@@ -503,24 +508,45 @@ setCantidadSeleccionada(1);
                   )}
 
                 {mostrarProductos && (
+                  <>
+                  <input
+                    type="text"
+                    className={Style.inputBuscarProducto}
+                    placeholder="🔍"
+                    value={buscarProducto}
+                    onChange={(e) => setBuscarProducto(e.target.value)}
+                  />
+
                   <div className={Style.listaProductos}>
-                    {productosBD.length > 0 ? (
-                      productosBD.map((producto) => (
-                        <div
-                          key={producto.id}
-                          className={Style.itemProducto}
-                          onClick={() => seleccionarProducto(producto)}
-                        >
-                          {producto.nombre} - S/{' '}
-                          {formatMoney(producto.precio_venta)}
-                        </div>
-                      ))
+                    {productosBD
+                      .filter((producto) =>
+                        producto.nombre
+                          .toLowerCase()
+                          .includes(buscarProducto.toLowerCase())
+                      )
+                      .length > 0 ? (
+                      productosBD
+                        .filter((producto) =>
+                          producto.nombre
+                            .toLowerCase()
+                            .includes(buscarProducto.toLowerCase())
+                        )
+                        .map((producto) => (
+                          <div
+                            key={producto.id}
+                            className={Style.itemProducto}
+                            onClick={() => seleccionarProducto(producto)}
+                          >
+                            {producto.nombre} - S/{formatMoney(producto.precio_venta)}
+                          </div>
+                        ))
                     ) : (
                       <div className={Style.itemProducto}>
                         No se encontraron productos
                       </div>
                     )}
                   </div>
+                </>
                 )}
               </div>
             </aside>
