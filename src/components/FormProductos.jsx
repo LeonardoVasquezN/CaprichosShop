@@ -128,7 +128,11 @@ export default function FormProductos() {
                     Editar
                   </button>
                   <button
-                    className={Style.botonEliminar}
+                    className={
+                      producto.estado
+                        ? Style.botonEliminar
+                        : Style.botonHabilitar
+                    }
                     onClick={() =>
                       cambiarEstadoProducto(
                         producto.id,
