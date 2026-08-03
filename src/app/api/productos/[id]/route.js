@@ -102,23 +102,50 @@ export async function PUT(req) {
   }
 }
 
-export async function DELETE(req) {
+export async function PATCH(req) {
   try {
+
     const id = Number(req.nextUrl.pathname.split("/").pop());
 
-    await prisma.producto.update({
-      where: { id },
-      data: { estado: false },
+    if (!id || isNaN(id)) {
+      return NextResponse.json(
+        { mensaje: "ID inválido" },
+        { status: 400 }
+      );
+    }
+
+
+    const { estado } = await req.json();
+
+
+    const producto = await prisma.producto.update({
+      where:{
+        id
+      },
+      data:{
+        estado
+      }
     });
 
+
     return NextResponse.json({
-      mensaje: "Producto eliminado correctamente",
+      mensaje:"Estado actualizado correctamente",
+      producto
     });
-  } catch (error) {
-    console.error("DELETE PRODUCTO ERROR:", error);
+
+
+  } catch(error){
+
+    console.error("PATCH PRODUCTO ERROR:", error);
+
     return NextResponse.json(
-      { mensaje: "Error interno" },
-      { status: 500 }
+      {
+        mensaje:"Error interno"
+      },
+      {
+        status:500
+      }
     );
+
   }
 }

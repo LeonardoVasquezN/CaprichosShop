@@ -34,17 +34,40 @@ export default function FormProductos() {
     router.push(`/MantProductos/${id}`);
   };
 
-  const eliminarProducto = async (id) => {
-    if (!confirm("¿Eliminar producto?")) return;
+  const cambiarEstadoProducto = async (id, estadoActual) => {
+    const nuevoEstado = !estadoActual;
+
+    if (
+      !confirm(
+        nuevoEstado
+          ? "¿Habilitar producto?"
+          : "¿Deshabilitar producto?"
+      )
+    ) return;
 
     const res = await fetch(`/api/productos/${id}`, {
-      method: "DELETE",
+      method: "PATCH",
+      headers:{
+        "Content-Type":"application/json",
+      },
+      body: JSON.stringify({
+        estado: nuevoEstado
+      })
     });
 
     if (res.ok) {
-      setProductos((prev) => prev.filter((p) => p.id != id));
+      setProductos((prev) =>
+        prev.map((p) =>
+          p.id === id
+            ? {
+                ...p,
+                estado: nuevoEstado
+              }
+            : p
+        )
+      );
     } else {
-      alert(" Error al eliminar");
+      alert("Error al cambiar estado");
     }
   };
 
@@ -106,9 +129,14 @@ export default function FormProductos() {
                   </button>
                   <button
                     className={Style.botonEliminar}
-                    onClick={() => eliminarProducto(producto.id)}
+                    onClick={() =>
+                      cambiarEstadoProducto(
+                        producto.id,
+                        producto.estado
+                      )
+                    }
                   >
-                    Deshabilitar
+                    {producto.estado ? "Deshabilitar" : "Habilitar"}
                   </button>
                 </td>
               </tr>

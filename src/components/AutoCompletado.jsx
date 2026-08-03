@@ -21,7 +21,10 @@ export default function Autocompletado({
   const productosVisibles = useMemo(() => {
     return Array.isArray(productos)
       ? productos.filter(
-          (p) => p.marca && p.marca.estado === 1
+          (p) =>
+            p.estado === true &&
+            p.marca &&
+            p.marca.estado === 1
         )
       : [];
   }, [productos]);

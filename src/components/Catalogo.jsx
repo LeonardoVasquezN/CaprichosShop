@@ -26,9 +26,7 @@ function estaActivo(valor) {
   return (
     valor === true ||
     valor === 1 ||
-    valor === "1" ||
-    valor === undefined ||
-    valor === null
+    valor === "1"
   );
 }
 
