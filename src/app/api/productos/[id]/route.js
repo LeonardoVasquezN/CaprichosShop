@@ -5,7 +5,9 @@ import { prisma } from "@/lib/prisma";
 import { v2 as cloudinary } from "cloudinary";
 
 cloudinary.config({
-  cloudinary_url: process.env.CLOUDINARY_URL,
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 export async function GET(req) {
@@ -69,16 +71,22 @@ export async function PUT(req) {
 
     const imagen = formData.get("imagen");
 
-    if (imagen && typeof imagen === "object") {
-      const buffer = Buffer.from(await imagen.arrayBuffer());
+    if (imagen instanceof File && imagen.size > 0) {
+
+      const buffer = Buffer.from(
+        await imagen.arrayBuffer()
+      );
 
       const upload = await new Promise((resolve, reject) => {
-        cloudinary.uploader
-          .upload_stream({ folder: "productos" }, (err, result) => {
+        cloudinary.uploader.upload_stream(
+          {
+            folder: "productos",
+          },
+          (err, result) => {
             if (err) reject(err);
             else resolve(result);
-          })
-          .end(buffer);
+          }
+        ).end(buffer);
       });
 
       data.imagen = upload.secure_url;
@@ -114,9 +122,7 @@ export async function PATCH(req) {
       );
     }
 
-
     const { estado } = await req.json();
-
 
     const producto = await prisma.producto.update({
       where:{
@@ -127,7 +133,6 @@ export async function PATCH(req) {
       }
     });
 
-
     return NextResponse.json({
       mensaje:"Estado actualizado correctamente",
       producto
@@ -135,7 +140,6 @@ export async function PATCH(req) {
 
 
   } catch(error){
-
     console.error("PATCH PRODUCTO ERROR:", error);
 
     return NextResponse.json(
@@ -146,6 +150,5 @@ export async function PATCH(req) {
         status:500
       }
     );
-
   }
 }
