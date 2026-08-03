@@ -105,6 +105,19 @@
   background-color: #c82333;
 }
 
+.botonHabilitar {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.botonHabilitar:hover {
+  background-color: #218838;
+}
+
 @media (max-width: 768px) {
   .contentProductos {
     width: 100%;
@@ -130,7 +143,6 @@
     font-size: 15px;
   }
 
-  /* 🔥 CLAVE: scroll horizontal */
   .tabla {
     display: block;
     width: 100%;
