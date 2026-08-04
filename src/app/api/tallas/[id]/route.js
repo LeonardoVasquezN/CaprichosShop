@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { verificarAdmin } from "@/lib/auth";
 
 export async function GET(req) {
   try {
@@ -34,6 +35,16 @@ export async function GET(req) {
 
 export async function PUT(req) {
   try {
+
+    const usuario = await verificarAdmin();
+
+    if (!usuario) {
+      return NextResponse.json(
+        { mensaje: "No autorizado" },
+        { status: 403 }
+      );
+    }
+
     const id = Number(req.nextUrl.pathname.split("/").pop());
 
     if (!id || isNaN(id)) {

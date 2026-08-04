@@ -53,6 +53,7 @@ export async function POST(req) {
       {
         id: usuario.id,
         nombre: usuario.nombre,
+        cargo: usuario.cargo,
       },
       process.env.JWT_SECRET,
       {

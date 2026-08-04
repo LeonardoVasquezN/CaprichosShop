@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { verificarAdmin } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -44,6 +45,16 @@ export async function GET(req, context) {
 
 export async function PUT(req, context) {
   try {
+
+    const usuario = await verificarAdmin();
+
+    if (!usuario) {
+      return NextResponse.json(
+        { mensaje: "No autorizado" },
+        { status: 403 }
+      );
+    }
+
     const { id } = await context.params;
     const idMarca = Number(id);
 
