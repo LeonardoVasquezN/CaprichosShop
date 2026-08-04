@@ -3,6 +3,7 @@ export const runtime = "nodejs";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { v2 as cloudinary } from "cloudinary";
+import { verificarSesion } from "@/lib/auth";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -48,6 +49,20 @@ export async function GET(req) {
 
 export async function PUT(req) {
   try {
+
+    const usuario = await verificarSesion();
+
+    if (!usuario) {
+      return NextResponse.json(
+        {
+          mensaje: "No autorizado",
+        },
+        {
+          status: 401,
+        }
+      );
+    }
+
     const id = Number(req.nextUrl.pathname.split("/").pop());
 
     if (!id || isNaN(id)) {
@@ -112,6 +127,19 @@ export async function PUT(req) {
 
 export async function PATCH(req) {
   try {
+
+    const usuario = await verificarSesion();
+
+    if (!usuario) {
+      return NextResponse.json(
+        {
+          mensaje: "No autorizado",
+        },
+        {
+          status: 401,
+        }
+      );
+    }
 
     const id = Number(req.nextUrl.pathname.split("/").pop());
 

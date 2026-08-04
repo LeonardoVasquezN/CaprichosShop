@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import jwt from "jsonwebtoken";
 
 export async function POST(req) {
   try {
@@ -41,14 +42,40 @@ export async function POST(req) {
 
     const { clave: _, ...usuarioSeguro } = usuario;
 
-    return NextResponse.json(
+    if (!process.env.JWT_SECRET) {
+      throw new Error("JWT_SECRET no está configurado");
+    }
+
+    const token = jwt.sign(
       {
-        message: "Login exitoso",
-        usuario: usuarioSeguro,
-        token: "fake-token-dev",
+        id: usuario.id,
+        nombre: usuario.nombre,
       },
-      { status: 200 }
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "8h",
+      }
+    )
+
+    const response = NextResponse.json(
+      {
+        message: "Login Exitoso",
+        usuario: usuarioSeguro,
+      },
+      {
+        status: 200,
+      }
     );
+
+    response.cookies.set("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      path: "/",
+      maxAge: 60 * 60 * 8,
+    });
+
+    return response;
   } catch (error) {
     console.error(" LOGIN ERROR COMPLETO ");
   console.error(error);
