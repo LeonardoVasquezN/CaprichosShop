@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 export async function POST(req) {
   try {
@@ -81,9 +81,9 @@ export async function POST(req) {
     return response;
   } catch (error) {
     console.error(" LOGIN ERROR COMPLETO ");
-  console.error(error);
-  console.error("message:", error?.message);
-  console.error("stack:", error?.stack);
+    console.error(error);
+    console.error("message:", error?.message);
+    console.error("stack:", error?.stack);
 
     return NextResponse.json(
       { message: "Error interno del servidor" },
