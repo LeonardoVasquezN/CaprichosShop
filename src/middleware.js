@@ -1,32 +1,41 @@
 import { NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
+import { jwtVerify } from "jose";
 
-export function middleware(request) {
+
+export async function middleware(request) {
   const token = request.cookies.get("token")?.value;
+  console.log("TOKEN DEL MIDDLEWARE:", token);
 
   if (!token) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
   try {
-    jwt.verify(token, process.env.JWT_SECRET);
+    await jwtVerify(
+      token,
+      new TextEncoder().encode(process.env.JWT_SECRET)
+    );
 
     return NextResponse.next();
+
   } catch (error) {
+    console.log("ERROR JWT:", error);
     return NextResponse.redirect(new URL("/", request.url));
   }
 }
 
 export const config = {
   matcher: [
-    "/Dashboard/:path*",
     "/MantProductos/:path*",
-    "/MantUsuarios/:path*",
+    "/MantExistencia/:path*",
+    "/MantUsuario/:path*",
     "/MantCategorias/:path*",
+    "/MantSubCategorias/:path*",
     "/MantMarcas/:path*",
-    "/MantColores/:path*",
-    "/MantTallas/:path*",
+    "/MantColor/:path*",
+    "/MantTalla/:path*",
     "/Ventas/:path*",
-    "/Compras/:path*",
+    "/PreVenta/:path*",
+    "/post/:path*",
   ],
 };
