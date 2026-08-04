@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 
 export async function POST(req) {
   try {
@@ -33,7 +34,9 @@ export async function POST(req) {
       );
     }
 
-    if (clave !== usuario.clave) {
+    const coincide = await bcrypt.compare(clave, usuario.clave);
+
+    if(!coincide){
       return NextResponse.json(
         { message: "Credenciales inválidas" },
         { status: 401 }
