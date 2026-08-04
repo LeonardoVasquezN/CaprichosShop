@@ -24,29 +24,26 @@ export default function Login() {
 
     try {
       const response = await fetch("/api/login", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify({
-    nombre: usuarioSeleccionado,
-    clave: clave,
-  }),
-});
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          nombre: usuarioSeleccionado,
+          clave: clave,
+        }),
+      });
 
-const data = await response.json();
+      const data = await response.json();
 
-if (!response.ok) {
-  alert(data.message || "Credenciales incorrectas");
-  return;
-}
+      if (!response.ok) {
+        alert(data.message || "Credenciales incorrectas");
+        return;
+      }
 
-iniciarSesion(data.usuario);
+      iniciarSesion(data.usuario);
 
-alert("Inicio de sesión exitoso");
-cerrarLogin();
-
-      alert(" Inicio de sesión exitoso");
+      alert("Inicio de sesión exitoso");
       cerrarLogin();
 
     } catch (error) {
