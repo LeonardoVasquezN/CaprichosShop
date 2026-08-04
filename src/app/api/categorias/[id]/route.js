@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-
+import { verificarAdmin } from "@/lib/auth";
 
 export async function GET(_req, context) {
   const params = await context.params; 
@@ -29,6 +29,16 @@ export async function GET(_req, context) {
 
 
 export async function PUT(req, context) {
+
+  const usuario = await verificarAdmin();
+
+    if (!usuario) {
+      return NextResponse.json(
+        { mensaje: "No autorizado" },
+        { status: 403 }
+      );
+    }
+
   const params = await context.params; 
   const id = Number(params.id);
 

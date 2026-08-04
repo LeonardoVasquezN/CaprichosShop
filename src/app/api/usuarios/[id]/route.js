@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { verificarAdmin } from "@/lib/auth";
+import bcrypt from "bcryptjs";
 
 export async function GET(_req, { params }) {
   const id = Number(params.id);
@@ -31,6 +33,16 @@ export async function GET(_req, { params }) {
 }
 
 export async function PUT(req, { params }) {
+
+  const usuario = await verificarAdmin();
+
+  if (!usuario) {
+    return NextResponse.json(
+      { mensaje: "No autorizado" },
+      { status: 403 }
+    );
+  }
+
   const id = Number(params.id);
 
   if (isNaN(id)) {
@@ -43,12 +55,18 @@ export async function PUT(req, { params }) {
   try {
     const body = await req.json();
 
+    let claveNueva = undefined;
+
+    if (body.clave) {
+      claveNueva = await bcrypt.hash(body.clave, 12);
+    }
+
     const usuarioActualizado = await prisma.usuario.update({
       where: { id },
       data: {
         nombre: body.nombre,
         cargo: body.cargo,
-        clave: body.clave,
+        clave: claveNueva,
       },
     });
 

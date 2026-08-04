@@ -21,3 +21,18 @@ export async function verificarSesion() {
     return null;
   }
 }
+
+export async function verificarAdmin() {
+
+  const usuario = await verificarSesion();
+
+  if (!usuario) {
+    return null;
+  }
+
+  if (usuario.cargo !== "Administrador") {
+    return null;
+  }
+
+  return usuario;
+}

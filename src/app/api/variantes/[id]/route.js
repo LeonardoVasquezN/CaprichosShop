@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { verificarAdmin } from "@/lib/auth";
 
 export async function GET(_req, { params }) {
   const id = Number(params.id);
@@ -23,6 +24,15 @@ export async function GET(_req, { params }) {
 }
 
 export async function PUT(req, { params }) {
+
+  const usuario = await verificarAdmin();
+
+  if (!usuario) {
+    return NextResponse.json(
+      { mensaje: "No autorizado" },
+      { status: 403 }
+    );
+  }
 
   const id = Number(params.id);
 
@@ -55,6 +65,16 @@ export async function PUT(req, { params }) {
 }
 
 export async function DELETE(_req, { params }) {
+
+  const usuario = await verificarAdmin();
+
+  if (!usuario) {
+    return NextResponse.json(
+      { mensaje: "No autorizado" },
+      { status: 403 }
+    );
+  }
+
   const id = Number(params.id);
 
   const variante = await prisma.variante.findUnique({
