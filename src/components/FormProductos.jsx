@@ -97,6 +97,7 @@ export default function FormProductos() {
             <th>Nombre</th>
             <th>Categoría</th>
             <th>Subcategoría</th>
+            <th>Marca</th>
             <th>Precio Compra</th>
             <th>Precio Venta</th>
             <th>Stock Actual</th>
@@ -107,7 +108,7 @@ export default function FormProductos() {
         <tbody>
           {productosFiltrados.length === 0 ? (
             <tr>
-              <td colSpan="7" style={{ textAlign: "center" }}>
+              <td colSpan="8" style={{ textAlign: "center" }}>
                 No hay productos registrados
               </td>
             </tr>
@@ -117,6 +118,7 @@ export default function FormProductos() {
                 <td>{producto.nombre}</td>
                 <td>{producto.subCategoria?.categoria?.nombre}</td>
                 <td>{producto.subCategoria?.nombre}</td>
+                <td>{producto.marca?.nombre}</td>
                 <td>S/ {producto.precioCompra}</td>
                 <td>S/ {producto.precioVenta}</td>
                 <td>{producto.stockTotal}</td>
