@@ -15,6 +15,8 @@ import { useCarritoStore } from "@/store/CarritoStore";
 import { useUsuarioStore } from "@/store/UsuarioStore";
 import { useProductosStore } from "@/store/ProductosStore";
 
+import { verificarSesionFront } from "@/lib/verificarSesion";
+
 export default function Header() {
 
   const router = useRouter();
@@ -57,6 +59,13 @@ export default function Header() {
   
   useEffect(() => {
     cargarUsuario();
+    
+    const verificar = async() => {
+      await verificarSesionFront();
+    }
+
+    verificar();
+
   }, [cargarUsuario]);
   
   const handleInputChange = (e) => {
