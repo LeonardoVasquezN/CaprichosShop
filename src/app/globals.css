@@ -42,7 +42,6 @@ body {
   --font-mono: var(--font-geist-mono);
 }
 
-/* Reset básico y fondo consistente */
 html,
 body {
   margin: 0;
@@ -147,6 +146,24 @@ body {
   .printButtons,
   .printButtons * {
     display: none !important;
+    visibility: hidden !important;
+  }
+}
+
+
+@media print {
+  @page {
+    size: 58mm auto;
+    margin: 0;
+  }
+
+  html,
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+  }
+  body * {
     visibility: hidden !important;
   }
 }
