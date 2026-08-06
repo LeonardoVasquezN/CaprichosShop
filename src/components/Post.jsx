@@ -869,7 +869,6 @@ setCantidadSeleccionada(1);
                     --------------------------------
                   </div>
 
-                  <div>10181328849</div>
                   <div>CAPRICHO&apos;S SHOP</div>
 
                   <div className={Style.ticketLine}>
@@ -1026,7 +1025,6 @@ setCantidadSeleccionada(1);
                     --------------------------------
                   </div>
 
-                  <div>10181328894</div>
                   <div>CAPRICHO&apos;S SHOP</div>
 
                   <div className={Style.ticketLine}>

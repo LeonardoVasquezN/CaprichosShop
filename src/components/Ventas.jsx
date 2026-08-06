@@ -171,7 +171,18 @@ export default function Ventas({
         <tbody>
           {ventasFiltradas.map(v => (
             <tr key={v.id}>
-              <td>{v.fecha}</td>
+              <td>
+                {new Date(v.fecha).toLocaleString("es-PE", {
+                  timeZone: "America/Lima",
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: true
+                })}
+              </td>
+
               <td>{showNameCliente(v.clienteId)}</td>
               <td>S/{v.total}</td>
               <td>{v.metodoDePago}</td>
@@ -209,7 +220,15 @@ export default function Ventas({
         {ventasFiltradas.map(v => (
           <div key={v.id} className={Style.ventaCard}>
             <div className={Style.ventaHeader}>
-              {new Date(v.fecha).toLocaleString()}
+              {new Date(v.fecha).toLocaleString("es-PE", {
+                timeZone: "America/Lima",
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true
+              })}
             </div>
 
             <div className={Style.ventaRow}><span>Cliente</span><span>{showNameCliente(v.clienteId)}</span></div>
@@ -273,6 +292,7 @@ export default function Ventas({
           obtenerNombreProducto={obtenerNombreProducto}
           obtenerNombreTallaPorVariante={obtenerNombreTallaPorVariante}
           obtenerNombreColorPorVariante={obtenerNombreColorPorVariante}
+          cerrarModal={() => setVentaSeleccionada(null)}
         />
       )}
     </div>
