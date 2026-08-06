@@ -15,8 +15,6 @@ import Card from "./Card";
 import Filtrado from "./Filtrado";
 import Styles from "./catalogo.module.css";
 
-import { supabase } from "../lib/supabaseClient";
-
 import { useBusquedaStore } from "../store/BusquedaStore";
 import { useProductosStore } from "../store/ProductosStore";
 
@@ -200,40 +198,26 @@ export default function Catalogo() {
         setErrorCarga("");
 
         const [
-          respuestaProductos,
-          respuestaMarcas,
-          respuestaColores,
-          respuestaVariantes,
+        respuestaProductos,
+        respuestaMarcas,
+        respuestaColores,
+        respuestaVariantes,
         ] = await Promise.all([
           fetch("/api/productos", {
             cache: "no-store",
           }),
 
-          supabase
-            .from("marcas")
-            .select(
-              "id_marca, nombre, estado"
-            )
-            .eq("estado", 1)
-            .order("id_marca", {
-              ascending: true,
-            }),
+          fetch("/api/marcas", {
+            cache: "no-store",
+          }),
 
-          supabase
-            .from("color")
-            .select(
-              "id, nombre, hexadecimal, estado"
-            )
-            .eq("estado", 1)
-            .order("id", {
-              ascending: true,
-            }),
+          fetch("/api/colores", {
+            cache: "no-store",
+          }),
 
-          supabase
-            .from("variante")
-            .select(
-              "id, id_producto, id_color, id_talla, stock"
-            ),
+          fetch("/api/variantes", {
+            cache: "no-store",
+          }),
         ]);
 
         if (!respuestaProductos.ok) {
@@ -242,49 +226,29 @@ export default function Catalogo() {
           );
         }
 
-        if (respuestaMarcas.error) {
-          throw new Error(
-            `Error al obtener marcas: ${respuestaMarcas.error.message}`
-          );
+        if (!respuestaMarcas.ok) {
+          throw new Error("No se pudieron obtener las marcas");
         }
 
-        if (respuestaColores.error) {
-          throw new Error(
-            `Error al obtener colores: ${respuestaColores.error.message}`
-          );
+        if (!respuestaColores.ok) {
+          throw new Error("No se pudieron obtener los colores");
         }
 
-        if (respuestaVariantes.error) {
-          throw new Error(
-            `Error al obtener variantes: ${respuestaVariantes.error.message}`
-          );
+        if (!respuestaVariantes.ok) {
+          throw new Error("No se pudieron obtener las variantes");
         }
 
-        const dataProductos =
-          await respuestaProductos.json();
+        const dataProductos = await respuestaProductos.json();
+        const dataMarcas = await respuestaMarcas.json();
+        const dataColores = await respuestaColores.json();
+        const dataVariantes = await respuestaVariantes.json();
 
-        const listaProductos =
-          obtenerListaProductos(dataProductos);
+        const listaProductos = obtenerListaProductos(dataProductos);
 
         setProductos(listaProductos);
-
-        setMarcas(
-          Array.isArray(respuestaMarcas.data)
-            ? respuestaMarcas.data
-            : []
-        );
-
-        setColores(
-          Array.isArray(respuestaColores.data)
-            ? respuestaColores.data
-            : []
-        );
-
-        setVariantes(
-          Array.isArray(respuestaVariantes.data)
-            ? respuestaVariantes.data
-            : []
-        );
+        setMarcas(Array.isArray(dataMarcas) ? dataMarcas : []);
+        setColores(Array.isArray(dataColores) ? dataColores : []);
+        setVariantes(Array.isArray(dataVariantes) ? dataVariantes : []);
 
         
       } catch (error) {

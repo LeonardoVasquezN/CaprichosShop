@@ -4,7 +4,6 @@ import Style from './Post.module.css';
 import Image from 'next/image';
 import Icognito from '../../public/images/icognito.png';
 import { useEffect, useRef, useState } from 'react';
-import { supabase } from '../lib/supabaseClient';
 
 export default function Post() {
   const contenedorRef = useRef(null);
@@ -65,31 +64,43 @@ export default function Post() {
   const descuento = 0;
 
   const obtenerClientes = async () => {
-    const { data, error } = await supabase
-      .from('clientes')
-      .select('*');
+    try {
+      const res = await fetch("/api/clientes", {
+        cache: "no-store",
+      });
 
-    if (error) {
-      console.error('Error al obtener clientes:', error);
-      return;
+      if (!res.ok) {
+        throw new Error("No se pudieron obtener los clientes");
+      }
+
+      const data = await res.json();
+
+      setClientes(data);
+      setMostrarLista(true);
+
+    } catch (error) {
+      console.error(error);
     }
-
-    setClientes(data || []);
-    setMostrarLista(true);
   };
 
   const obtenerProductos = async () => {
-    const { data, error } = await supabase
-      .from('producto')
-      .select('*');
+    try {
+      const res = await fetch("/api/productos", {
+        cache: "no-store",
+      });
 
-    if (error) {
-      console.error('Error al obtener productos:', error);
-      return;
+      if (!res.ok) {
+        throw new Error("No se pudieron obtener los productos");
+      }
+
+      const data = await res.json();
+
+      setProductosBD(data);
+      setMostrarProductos(true);
+
+    } catch (error) {
+      console.error(error);
     }
-
-    setProductosBD(data || []);
-    setMostrarProductos(true);
   };
 
   const obtenerVariantes = async () => {
@@ -155,10 +166,10 @@ const nuevoProducto={
  productoId:productoSeleccionado.id,
  varianteId:variante.id,
  nombre:productoSeleccionado.nombre,
- precio:Number(productoSeleccionado.precio_venta),
+ precio:Number(productoSeleccionado.precioVenta),
  cantidad:Number(cantidadSeleccionada),
  total:
- Number(productoSeleccionado.precio_venta) *
+ Number(productoSeleccionado.precioVenta) *
  Number(cantidadSeleccionada)
 };
 
@@ -537,7 +548,7 @@ setCantidadSeleccionada(1);
                             className={Style.itemProducto}
                             onClick={() => seleccionarProducto(producto)}
                           >
-                            {producto.nombre} - S/{formatMoney(producto.precio_venta)}
+                            {producto.nombre} - S/{formatMoney(producto.precioVenta)}
                           </div>
                         ))
                     ) : (
