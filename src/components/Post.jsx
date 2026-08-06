@@ -304,6 +304,15 @@ setCantidadSeleccionada(1);
     });
   };
 
+  const productosFiltrados = productosBD.filter((producto) => {
+    const texto = buscarProducto.toLowerCase();
+
+    return (
+      producto.nombre.toLowerCase().includes(texto) ||
+      producto.marca?.nombre?.toLowerCase().includes(texto)
+    );
+  });
+
   return (
     <>
       <div className={`${Style.noPrint} noPrint`}>
@@ -529,31 +538,19 @@ setCantidadSeleccionada(1);
                   />
 
                   <div className={Style.listaProductos}>
-                    {productosBD
-                      .filter((producto) =>
-                        producto.nombre
-                          .toLowerCase()
-                          .includes(buscarProducto.toLowerCase())
-                      )
-                      .length > 0 ? (
-                      productosBD
-                        .filter((producto) =>
-                          producto.nombre
-                            .toLowerCase()
-                            .includes(buscarProducto.toLowerCase())
-                        )
-                        .map((producto) => (
-                          <div
-                            key={producto.id}
-                            className={Style.itemProducto}
-                            onClick={() => seleccionarProducto(producto)}
-                          >
-                            {producto.nombre} - S/{formatMoney(producto.precioVenta)}
-                          </div>
-                        ))
+                    {productosFiltrados.length > 0 ? (
+                      productosFiltrados.map((producto) => (
+                        <div
+                          key={producto.id}
+                          className={Style.itemProducto}
+                          onClick={() => seleccionarProducto(producto)}
+                        >
+                          {producto.nombre} - {producto?.marca?.nombre} - S/{formatMoney(producto.precioVenta)}
+                        </div>
+                      ))
                     ) : (
-                      <div className={Style.itemProducto}>
-                        No se encontraron productos
+                      <div className={Style.sinResultados}>
+                        No se encontraron productos.
                       </div>
                     )}
                   </div>
