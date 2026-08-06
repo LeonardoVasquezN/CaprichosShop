@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Style from "./mantProductos.module.css";
+import { fetchSeguro } from "@/lib/fetchSeguro";
 
 export default function MantProductos() {
   const router = useRouter();
@@ -43,7 +44,10 @@ export default function MantProductos() {
     if (!id) return;
 
     const cargarProducto = async () => {
-      const res = await fetch(`/api/productos/${id}`);
+      // Vamos a implementar el fetchSeguro
+      const res = await fetchSeguro(`/api/productos/${id}`);
+
+      if(!res) return;
       if (!res.ok) return;
 
       const data = await res.json();
@@ -98,13 +102,16 @@ export default function MantProductos() {
 
     if (imagen) formData.append("imagen", imagen);
 
-    const res = await fetch(
+    // Aca vamos a implementar el fetchSeguro
+    const res = await fetchSeguro(
       id ? `/api/productos/${id}` : "/api/productos",
       {
         method: id ? "PUT" : "POST",
         body: formData,
       }
     );
+
+    if(!res) return;
 
     if (!res.ok) {
       const err = await res.json();
