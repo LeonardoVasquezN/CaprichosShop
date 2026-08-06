@@ -29,6 +29,8 @@ export default function Post() {
   const [cantidadSeleccionada, setCantidadSeleccionada] = useState(1);
   const [buscarProducto, setBuscarProducto] = useState("");
 
+  const [ventaPreview, setVentaPreview] = useState(null);
+
   const [metodosPago, setMetodosPago] = useState({
     Yape:"",
     Tarjeta:"",
@@ -293,8 +295,19 @@ setCantidadSeleccionada(1);
       return;
     }
 
+    setVentaPreview({
+      cliente,
+      clienteSeleccionado,
+      productos,
+      metodosPago,
+      total,
+      fechaActual,
+      tipoComprobante
+    });
+
     alert("Venta registrada correctamente");
     setMostrarPreview(true);
+    limpiarFormulario();
   };
 
   const cambiarMetodoPago=(metodo,valor)=>{
@@ -312,6 +325,38 @@ setCantidadSeleccionada(1);
       producto.marca?.nombre?.toLowerCase().includes(texto)
     );
   });
+
+  const limpiarFormulario = () => {
+    // Cliente
+    setCliente("");
+    setClienteSeleccionado(null);
+    setClientes([]);
+    setMostrarLista(false);
+
+    // Productos agregados
+    setProductos([]);
+
+    // Buscador de productos
+    setBuscarProducto("");
+    setMostrarProductos(false);
+    setProductosBD([]);
+
+    // Producto seleccionado
+    setProductoSeleccionado(null);
+    setColorSeleccionado("");
+    setTallaSeleccionada("");
+    setCantidadSeleccionada(1);
+
+    // Métodos de pago
+    setMetodosPago({
+      Yape: "",
+      Tarjeta: "",
+      Efectivo: ""
+    });
+
+    // Tipo de comprobante
+    setTipoComprobante("NV");
+  };
 
   return (
     <>
@@ -721,7 +766,7 @@ setCantidadSeleccionada(1);
       {mostrarPreview && (
         <div className={`${Style.modalOverlay} printOverlay`}>
           <div className={`${Style.ticket} printTicket`}>
-            {tipoComprobante === 'NV' && (
+            {ventaPreview?.tipoComprobante === 'NV' && (
               <div className={Style.ticketContent}>
                 <div className={Style.ticketCenter}>
                   <div className={Style.ticketLine}>
@@ -748,7 +793,7 @@ setCantidadSeleccionada(1);
                     --------------------------------
                   </div>
 
-                  <div>{fechaActual}</div>
+                  <div>{ventaPreview?.fechaActual}</div>
                   <div>NV01-00000094</div>
 
                   <div className={Style.ticketLine}>
@@ -756,11 +801,11 @@ setCantidadSeleccionada(1);
                   </div>
 
                   <div>
-                    {(cliente || 'CLIENTE GENÉRICO').toUpperCase()}
+                    {(ventaPreview?.cliente || 'CLIENTE GENÉRICO').toUpperCase()}
                   </div>
 
                   <div>
-                    {clienteSeleccionado?.documento || ''}
+                    {ventaPreview?.clienteSeleccionado?.documento || ''}
                   </div>
 
                   <div className={Style.ticketLine}>
@@ -779,7 +824,7 @@ setCantidadSeleccionada(1);
                   ================================
                 </div>
 
-                {productos.map((producto) => (
+                {ventaPreview?.productos.map((producto) => (
                   <div
                     key={producto.varianteId}
                     className={Style.ticketProduct}
@@ -818,7 +863,7 @@ setCantidadSeleccionada(1);
 
                 <div className={Style.ticketSummary}>
                   <span>Total</span>
-                  <span>S/ {formatMoney(total)}</span>
+                  <span>S/ {formatMoney(ventaPreview?.total)}</span>
                 </div>
 
                 <div className={Style.ticketSummary}>
@@ -851,7 +896,7 @@ setCantidadSeleccionada(1);
               </div>
             )}
 
-            {tipoComprobante === 'B' && (
+            {ventaPreview?.tipoComprobante === 'B' && (
               <div className={Style.ticketContent}>
                 <div className={Style.ticketCenter}>
                   <div className={Style.ticketLine}>
@@ -1007,7 +1052,7 @@ setCantidadSeleccionada(1);
               </div>
             )}
 
-            {tipoComprobante === 'F' && (
+            {ventaPreview?.tipoComprobante === 'F' && (
               <div className={Style.ticketContent}>
                 <div className={Style.ticketCenter}>
                   <div className={Style.ticketLine}>
