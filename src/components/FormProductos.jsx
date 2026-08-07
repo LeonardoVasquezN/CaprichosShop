@@ -21,8 +21,12 @@ export default function FormProductos() {
   }, [refrescarProductos]);
 
   const productosFiltrados = findProduct.trim()
-    ? productos.filter((p) =>
-        p.nombre.toLowerCase().includes(findProduct.toLowerCase())
+    ? productos.filter((p) =>{
+      return(
+        p.nombre.toLowerCase().includes(findProduct.toLowerCase()) ||
+        p.marca?.nombre.toLowerCase().includes(findProduct.toLowerCase())
+      );
+    }
       )
     : productos;
 
@@ -94,10 +98,10 @@ export default function FormProductos() {
       <table className={Style.tabla}>
         <thead>
           <tr>
+            <th>Marca</th>
             <th>Nombre</th>
             <th>Categoría</th>
             <th>Subcategoría</th>
-            <th>Marca</th>
             <th>Precio Compra</th>
             <th>Precio Venta</th>
             <th>Stock Actual</th>
@@ -115,14 +119,14 @@ export default function FormProductos() {
           ) : (
             productosFiltrados.map((producto) => (
               <tr key={producto.id}>
+                <td>{producto.marca?.nombre}</td>
                 <td>{producto.nombre}</td>
                 <td>{producto.subCategoria?.categoria?.nombre}</td>
                 <td>{producto.subCategoria?.nombre}</td>
-                <td>{producto.marca?.nombre}</td>
                 <td>S/ {producto.precioCompra}</td>
                 <td>S/ {producto.precioVenta}</td>
                 <td>{producto.stockTotal}</td>
-                <td>
+                <td> 
                   <button
                     className={Style.botonEditar}
                     onClick={() => editarProducto(producto.id)}
