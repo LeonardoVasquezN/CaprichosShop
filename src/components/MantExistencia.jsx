@@ -195,7 +195,9 @@ export default function MantExistencia({id}) {
           >
             <option value="">-- Selecciona un producto --</option>
             {productosFiltrados.map(p => (
-              <option key={p.id} value={p.id}>{p.nombre}</option>
+              <>
+                <option key={p.id} value={p.id}>{p.nombre} - {p.marca?.nombre}</option>
+              </>
             ))}
           </select>
         </div>

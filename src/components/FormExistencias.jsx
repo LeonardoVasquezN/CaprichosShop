@@ -75,6 +75,7 @@ export default function FormExistencias() {
             <th>Nombre</th>
             <th>Categoría</th>
             <th>Subcategoría</th>
+            <th>marca</th>
             <th>Color</th>
             <th>Talla</th>
             <th>Cantidad</th>
@@ -94,7 +95,8 @@ export default function FormExistencias() {
               <td>
                 {existencia.producto.subCategoria?.nombre || "-"}
               </td>
-
+              
+              <td>{existencia.producto.marca?.nombre}</td>
               <td>{existencia.color.nombre}</td>
               <td>{existencia.talla.nombre}</td>
               <td>{existencia.stock}</td>
