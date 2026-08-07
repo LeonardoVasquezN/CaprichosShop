@@ -42,7 +42,9 @@ export default function MantTalla() {
         }
       );
 
-      if (!res.ok) throw new Error();
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.mensaje || "Error al guardar la talla");
 
       alert(
         id
@@ -51,8 +53,8 @@ export default function MantTalla() {
       );
 
       router.push("/FormTalla");
-    } catch {
-      alert(" Error al guardar la talla");
+    } catch(error) {
+      alert(error.message);
     }
   };
 

@@ -25,9 +25,24 @@ export async function POST(req) {
       );
     }
 
+    const nombreLimpio = nombre.trim();
+
+    const tallaExistente = await prisma.talla.findFirst({
+      where: {
+        nombre: nombreLimpio,
+      },
+    });
+
+    if (tallaExistente) {
+      return NextResponse.json(
+        { mensaje: "La talla ya existe" },
+        { status: 409 }
+      );
+    }
+
     const talla = await prisma.talla.create({
       data: {
-        nombre,
+        nombre: nombreLimpio,
         isActivo: true,
       },
     });
@@ -35,7 +50,7 @@ export async function POST(req) {
     return NextResponse.json(
       {
         mensaje: "Talla guardada con éxito",
-        categoria: talla, 
+        talla,
       },
       { status: 201 }
     );
