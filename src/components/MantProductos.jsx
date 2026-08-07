@@ -125,7 +125,7 @@ export default function MantProductos() {
   };
 
   const irAMantenimientoExistencia = () => {
-    router.push("/MantExistencia");
+    router.push(`/MantExistencia?productoId=${id}`);
   };
 
   return (
