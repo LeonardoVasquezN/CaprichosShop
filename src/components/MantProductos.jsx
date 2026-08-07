@@ -318,13 +318,15 @@ export default function MantProductos() {
           Ver Productos
         </button>
 
-        <button
-          type="button"
-          className={Style.btnSecundario}
-          onClick={irAMantenimientoExistencia}
-        >
-          Añadir Existencia
-        </button>
+       { id && (
+          <button
+            type="button"
+            className={Style.btnSecundario}
+            onClick={irAMantenimientoExistencia}
+          >
+            Añadir Existencia
+          </button>
+        )}
 
       </div>
 
