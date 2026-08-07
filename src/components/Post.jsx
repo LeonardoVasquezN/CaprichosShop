@@ -215,6 +215,10 @@ setCantidadSeleccionada(1);
         !contenedorProductosRef.current.contains(event.target)
       ) {
         setMostrarProductos(false);
+
+        setProductoSeleccionado(null);
+        setColorSeleccionado("");
+        setTallaSeleccionada("");
       }
     };
 
@@ -474,100 +478,100 @@ setCantidadSeleccionada(1);
 
                 {productoSeleccionado && (
                   <div className={Style.selectorVariante}>
-                    <h3>
-                      {"producto: " + productoSeleccionado.nombre}
-                    </h3>
-                    <span>______________________</span>
-                    <label>
-                      Color
-                    </label>
-                    <select
-                      value={colorSeleccionado}
-                      onChange={(e) => {
-                        setColorSeleccionado(e.target.value);
-                        setTallaSeleccionada("");
-                      }}
-                    >
-                    <option value="">
-                      Seleccione color
-                    </option>
+                    <div className={Style.productoHeader}>
+                        <span className={Style.productoLabel}>Producto</span>
 
-                    {
-                      colores
-                      .filter(
-                      (c)=>
-                      variantes.some(
-                      (v)=>
-                      v.productoId===productoSeleccionado.id &&
-                      v.colorId===c.id
-                      )
-                      )
-                      .map((color)=>(
+                        <h3 className={Style.productoNombre}>
+                            {productoSeleccionado.nombre}
+                        </h3>
+                    </div>
 
-                      <option
-                      key={color.id}
-                      value={color.id}
-                      >
-                      {color.nombre}
-                      </option>
-                      ))
-                    }
+                    <div className={Style.formGroup}>
+                        <label>Color</label>
 
-                    </select>
+                        <select
+                            className={Style.selectVariante}
+                            value={colorSeleccionado}
+                            onChange={(e)=>{
+                                setColorSeleccionado(e.target.value);
+                                setTallaSeleccionada("");
+                            }}
+                        >
+                            <option value="">Seleccione un color</option>
 
-                    <label>
-                    Talla
-                    </label>
+                            {
+                                colores
+                                .filter(c=>
+                                    variantes.some(v=>
+                                        v.productoId===productoSeleccionado.id &&
+                                        v.colorId===c.id
+                                    )
+                                )
+                                .map(color=>(
+                                    <option
+                                        key={color.id}
+                                        value={color.id}
+                                    >
+                                        {color.nombre}
+                                    </option>
+                                ))
+                            }
+                        </select>
+                    </div>
 
-                    <select
-                    value={tallaSeleccionada}
-                    onChange={(e)=>setTallaSeleccionada(e.target.value)}
-                    >
-                    <option value="">
-                      Seleccione talla
-                    </option>
-                    {
-                    colorSeleccionado &&
-                    tallas
-                    .filter(
-                      (t)=>
-                      variantes.some(
-                        (v)=>
-                        v.productoId===productoSeleccionado.id &&
-                        v.colorId===Number(colorSeleccionado) &&
-                        v.tallaId===t.id
-                      )
-                    )
-                    .map((talla)=>(
+                    <div className={Style.formGroup}>
+                        <label>Talla</label>
 
-                    <option
-                    key={talla.id}
-                    value={talla.id}
-                    >
-                    {talla.nombre}
-                    </option>
-                    ))
-                    }
-                    </select>
+                        <select
+                            className={Style.selectVariante}
+                            value={tallaSeleccionada}
+                            onChange={(e)=>setTallaSeleccionada(e.target.value)}
+                        >
+                            <option value="">Seleccione una talla</option>
 
-                    <label>
-                      Cantidad
-                    </label>
+                            {
+                                colorSeleccionado &&
+                                tallas
+                                .filter(t=>
+                                    variantes.some(v=>
+                                        v.productoId===productoSeleccionado.id &&
+                                        v.colorId===Number(colorSeleccionado) &&
+                                        v.tallaId===t.id
+                                    )
+                                )
+                                .map(talla=>(
+                                    <option
+                                        key={talla.id}
+                                        value={talla.id}
+                                    >
+                                        {talla.nombre}
+                                    </option>
+                                ))
+                            }
 
-                    <input
-                    type="number"
-                    min="1"
-                    value={cantidadSeleccionada}
-                    onChange={(e)=>
-                    setCantidadSeleccionada(Number(e.target.value))
-                    }
-                    />
+                        </select>
+                    </div>
+
+                    <div className={Style.formGroup}>
+                        <label>Cantidad</label>
+
+                        <input
+                            className={Style.inputCantidad}
+                            type="number"
+                            min="1"
+                            value={cantidadSeleccionada}
+                            onChange={(e)=>
+                                setCantidadSeleccionada(Number(e.target.value))
+                            }
+                        />
+                    </div>
 
                     <button
-                    type="button"
-                    onClick={agregarProductoFinal}
+                        type="button"
+                        className={Style.btnAgregarProducto}
+                        onClick={agregarProductoFinal}
                     >
-                    Agregar
+                        Agregar producto
                     </button>
                   </div>
                   )}
