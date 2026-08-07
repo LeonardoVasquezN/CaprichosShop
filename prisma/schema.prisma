@@ -230,11 +230,11 @@ model DetalleVenta {
 
   productoId Int @map("id_producto")
   ventaId Int @map("id_venta")
-  varianteId Int @map("id_variante")
+  varianteId Int? @map("id_variante")
 
   producto Producto @relation(fields: [productoId], references: [id])
   venta Venta @relation(fields: [ventaId], references: [id])
-  variante Variante @relation(fields: [varianteId], references: [id])
+  variante Variante? @relation(fields: [varianteId], references: [id])
 
   @@map("detalle_venta")
 }
