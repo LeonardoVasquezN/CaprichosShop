@@ -10,6 +10,7 @@ export async function GET(_req, { params }) {
     include: {
       producto: {
         include: {
+          marca: true,
           subCategoria: {
             include: { categoria: true },
           },

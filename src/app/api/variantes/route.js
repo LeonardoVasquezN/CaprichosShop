@@ -6,6 +6,7 @@ export async function GET() {
     include: {
       producto: {
         include: {
+          marca: true,
           subCategoria: {
             include: { categoria: true },
           },
