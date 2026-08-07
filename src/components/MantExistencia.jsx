@@ -1,11 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams  } from "next/navigation";
 import Style from "./mantExistencia.module.css";
 
 export default function MantExistencia({id}) {
   const router = useRouter();
+   const searchParams = useSearchParams();
+
+    const productoIdDesdeURL = searchParams.get("productoId");
   
   const [categorias, setCategorias] = useState([]);
   const [subCategorias, setSubCategorias] = useState([]);
@@ -38,6 +41,43 @@ export default function MantExistencia({id}) {
       setTallas(tal);
     });
   }, []);
+
+  useEffect(() => {
+    if (!productoIdDesdeURL || productos.length === 0 || subCategorias.length === 0) {
+      return;
+    }
+
+    const producto = productos.find(
+      p => p.id === Number(productoIdDesdeURL)
+    );
+
+    if (!producto) return;
+
+    const subCategoria = subCategorias.find(
+      sc => sc.id === producto.subCategoriaId
+    );
+
+    if (!subCategoria) return;
+
+    const categoriaId = subCategoria.categoriaId;
+
+    setIdCategoria(categoriaId);
+    setIdSubCategoria(subCategoria.id);
+    setIdProducto(producto.id);
+
+    setSubCategoriasFiltradas(
+      subCategorias.filter(
+        sc => sc.categoriaId === categoriaId
+      )
+    );
+
+    setProductosFiltrados(
+      productos.filter(
+        p => p.subCategoriaId === subCategoria.id
+      )
+    );
+
+  }, [productoIdDesdeURL, productos, subCategorias]);
 
   useEffect(() => {
     if (!id) return;
@@ -158,6 +198,7 @@ export default function MantExistencia({id}) {
             className={Style.selectCategoria}
             value={idCategoria}
             onChange={cambioCategoria}
+            disabled={!!productoIdDesdeURL}
             required
           >
             <option value="">Seleccionar</option>
@@ -174,6 +215,7 @@ export default function MantExistencia({id}) {
             className={Style.selectSubCategoria}
             value={idSubCategoria}
             onChange={cambioSubCategoria}
+            disabled={!!productoIdDesdeURL}
             required
           >
             <option value="">Seleccionar sub categoría</option>
@@ -190,7 +232,7 @@ export default function MantExistencia({id}) {
             className={Style.comboProductos}
             value={idProducto}
             onChange={e => setIdProducto(e.target.value)}
-            disabled={!!id}
+             disabled={!!id || !!productoIdDesdeURL}
             required
           >
             <option value="">-- Selecciona un producto --</option>
