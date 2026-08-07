@@ -31,10 +31,12 @@ export default function FormExistencias() {
   }, [setExistencias]);
   
   const existenciasFiltradas = findExistencia.trim()
-    ? existencias.filter((existencia) =>
-        existencia.producto.nombre
-          .toLowerCase()
-          .includes(findExistencia.toLowerCase())
+    ? existencias.filter((existencia) =>{
+      return(
+        existencia.producto.nombre.toLowerCase().includes(findExistencia.toLowerCase()) ||
+        existencia.producto.marca?.nombre.toLowerCase().includes(findExistencia.toLowerCase())
+      );
+    }
       )
     : existencias;
 
@@ -72,10 +74,10 @@ export default function FormExistencias() {
       <table className={Style.tabla}>
         <thead>
           <tr>
+            <th>marca</th>
             <th>Nombre</th>
             <th>Categoría</th>
             <th>Subcategoría</th>
-            <th>marca</th>
             <th>Color</th>
             <th>Talla</th>
             <th>Cantidad</th>
@@ -86,6 +88,7 @@ export default function FormExistencias() {
         <tbody>
           {existenciasFiltradas.map((existencia) => (
             <tr key={existencia.id}>
+              <td>{existencia.producto.marca?.nombre}</td>
               <td>{existencia.producto.nombre}</td>
 
               <td>
@@ -95,8 +98,7 @@ export default function FormExistencias() {
               <td>
                 {existencia.producto.subCategoria?.nombre || "-"}
               </td>
-              
-              <td>{existencia.producto.marca?.nombre}</td>
+            
               <td>{existencia.color.nombre}</td>
               <td>{existencia.talla.nombre}</td>
               <td>{existencia.stock}</td>
