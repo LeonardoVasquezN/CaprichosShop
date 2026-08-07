@@ -32,50 +32,85 @@ export async function PUT(req, context) {
 
   const usuario = await verificarAdmin();
 
-    if (!usuario) {
+  if (!usuario) {
+    return NextResponse.json(
+      { mensaje: "No autorizado" },
+      { status: 403 }
+    );
+  }
+
+  try {
+
+    const params = await context.params;
+    const id = Number(params.id);
+
+    if (isNaN(id)) {
       return NextResponse.json(
-        { mensaje: "No autorizado" },
-        { status: 403 }
+        { mensaje: "ID inválido" },
+        { status: 400 }
       );
     }
 
-  const params = await context.params; 
-  const id = Number(params.id);
+    const categoria = await prisma.categoria.findUnique({
+      where: { id },
+    });
 
-  if (isNaN(id)) {
+    if (!categoria) {
+      return NextResponse.json(
+        { mensaje: "Categoría no encontrada" },
+        { status: 404 }
+      );
+    }
+
+    const { nombre } = await req.json();
+
+    if (!nombre || typeof nombre !== "string") {
+      return NextResponse.json(
+        { mensaje: "El nombre es obligatorio" },
+        { status: 422 }
+      );
+    }
+
+    const nombreLimpio = nombre.trim();
+
+    const categoriaExistente = await prisma.categoria.findFirst({
+      where: {
+        nombre: {
+          equals: nombreLimpio,
+          mode: "insensitive",
+        },
+        NOT: {
+          id: id,
+        },
+      },
+    });
+
+    if (categoriaExistente) {
+      return NextResponse.json(
+        { mensaje: "Ya existe otra categoría con ese nombre" },
+        { status: 409 }
+      );
+    }
+
+    const categoriaActualizada = await prisma.categoria.update({
+      where: { id },
+      data: {
+        nombre: nombreLimpio,
+      },
+    });
+
+    return NextResponse.json({
+      mensaje: "Categoría actualizada con éxito",
+      categoria: categoriaActualizada,
+    });
+
+  } catch (error) {
+
+    console.error("PUT /api/categorias/[id] error:", error);
+
     return NextResponse.json(
-      { mensaje: "ID inválido" },
-      { status: 400 }
+      { mensaje: "Error al actualizar categoría" },
+      { status: 500 }
     );
   }
-
-  const categoria = await prisma.categoria.findUnique({
-    where: { id },
-  });
-
-  if (!categoria) {
-    return NextResponse.json(
-      { mensaje: "Categoría no encontrada" },
-      { status: 404 }
-    );
-  }
-
-  const { nombre } = await req.json();
-
-  if (!nombre || typeof nombre !== "string") {
-    return NextResponse.json(
-      { mensaje: "El nombre es obligatorio" },
-      { status: 422 }
-    );
-  }
-
-  const categoriaActualizada = await prisma.categoria.update({
-    where: { id },
-    data: { nombre },
-  });
-
-  return NextResponse.json({
-    mensaje: "Categoría actualizada con éxito",
-    categoria: categoriaActualizada,
-  });
 }

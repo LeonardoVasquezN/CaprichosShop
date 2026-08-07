@@ -48,27 +48,49 @@ export async function POST(req) {
       );
     }
 
+    const nombreLimpio = nombre.trim();
+    const categoriaId = Number(id_categorias);
+
+    const subCategoriaExistente = await prisma.subCategoria.findFirst({
+      where: {
+        nombre: {
+          equals: nombreLimpio,
+          mode: "insensitive",
+        },
+        categoriaId: categoriaId,
+      },
+    });
+
+    if (subCategoriaExistente) {
+      return NextResponse.json(
+        {
+          mensaje: "Ya existe una subcategoría con ese nombre en esta categoría",
+        },
+        { status: 409 }
+      );
+    }
+
     const subCategoria = await prisma.subCategoria.create({
       data: {
-        nombre,
+        nombre: nombreLimpio,
         estado: 1,
-        categoriaId: Number(id_categorias),
+        categoriaId: categoriaId,
       },
     });
 
     return NextResponse.json(
       {
-        mensaje: "subCategoria guardada con éxito",
+        mensaje: "Subcategoría guardada con éxito",
         subCategoria,
       },
       { status: 201 }
     );
+
   } catch (error) {
+    console.error("POST /api/subCategorias error:", error);
+
     return NextResponse.json(
-      {
-        error: "Error interno",
-        mensaje: error.message,
-      },
+      { mensaje: "Error al guardar subcategoría" },
       { status: 500 }
     );
   }

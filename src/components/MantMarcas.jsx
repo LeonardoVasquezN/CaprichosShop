@@ -10,6 +10,7 @@ export default function MantMarcas() {
 
   const [nombreMarca, setNombreMarca] = useState("");
   const [loading, setLoading] = useState(false);
+  const [guardando, setGuardando] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -40,6 +41,10 @@ export default function MantMarcas() {
   const submitMarcas = async (e) => {
     e.preventDefault();
 
+    if (guardando) return;
+
+    setGuardando(true);
+
     const url = id ? `/api/marcas/${id}` : `/api/marcas`;
     const method = id ? "PUT" : "POST";
 
@@ -50,12 +55,18 @@ export default function MantMarcas() {
         body: JSON.stringify({ nombre: nombreMarca }),
       });
 
-      if (!res.ok) throw new Error();
+      const data = await res.json();
 
-      alert(id ? " Marca actualizada" : " Marca creada");
+      if (!res.ok) {
+        alert(data.mensaje || "Error al guardar la marca");
+        return;
+      }
+
+      alert(id ? "Marca actualizada" : "Marca creada");
       router.push("/FormMarcas");
-    } catch {
-      alert(" Error al guardar la marca");
+    } catch(error) {
+      console.error(" Error al guardar la marca", error);
+      alert("Error interno al guardar la marca");
     }
   };
 
@@ -79,8 +90,12 @@ export default function MantMarcas() {
         </div>
 
         <div className={Style.contentBotones}>
-          <button type="submit" className={Style.btnGuardar}>
-            Guardar Marca
+          <button
+            type="submit"
+            className={Style.btnGuardar}
+            disabled={guardando}
+          >
+            {guardando ? "Guardando..." : "Guardar Marca"}
           </button>
 
           <button

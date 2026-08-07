@@ -67,6 +67,34 @@ export async function PUT(req, context) {
 
     const body = await req.json();
 
+    if (!body.nombre || typeof body.nombre !== "string") {
+      return NextResponse.json(
+        { mensaje: "El nombre es obligatorio" },
+        { status: 422 }
+      );
+    }
+
+    const nombreLimpio = body.nombre.trim();
+
+    const marcaExistente = await prisma.marca.findFirst({
+      where: {
+        nombre: {
+          equals: nombreLimpio,
+          mode: "insensitive",
+        },
+        NOT: {
+          idMarca: idMarca,
+        },
+      },
+    });
+
+    if (marcaExistente) {
+      return NextResponse.json(
+        { mensaje: "Ya existe otra marca con ese nombre" },
+        { status: 409 }
+      );
+    }
+
     const marcaActualizada = await prisma.marca.update({
       where: { idMarca },
       data: {
@@ -78,6 +106,7 @@ export async function PUT(req, context) {
     return NextResponse.json(marcaActualizada);
   } catch (error) {
     console.error("PUT /api/marcas/[id] error:", error);
+    
     return NextResponse.json(
       { mensaje: "Error al actualizar marca" },
       { status: 500 }

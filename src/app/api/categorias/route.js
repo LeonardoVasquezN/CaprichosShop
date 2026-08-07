@@ -33,21 +33,42 @@ export async function POST(req) {
       );
     }
 
+    const nombreLimpio = nombre.trim();
+
+    const categoriaExistente = await prisma.categoria.findFirst({
+      where: {
+        nombre: {
+          equals: nombreLimpio,
+          mode: "insensitive",
+        },
+      },
+    });
+
+    if (categoriaExistente) {
+      return NextResponse.json(
+        { mensaje: "Ya existe una categoría con ese nombre" },
+        { status: 409 }
+      );
+    }
+
     const categoria = await prisma.categoria.create({
       data: {
-        nombre,
+        nombre: nombreLimpio,
         estado: 1,
       },
     });
 
     return NextResponse.json(
       {
-        mensaje: "Categoria guardada con éxito",
+        mensaje: "Categoría guardada con éxito",
         categoria,
       },
       { status: 201 }
     );
+
   } catch (error) {
+    console.error("POST /api/categorias error:", error);
+
     return NextResponse.json(
       { mensaje: "Error al guardar categoría" },
       { status: 500 }

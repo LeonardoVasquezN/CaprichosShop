@@ -10,6 +10,7 @@ export default function MantColor() {
 
   const [nombreColor, setNombreColor] = useState("");
   const [hexadecimal, setHexadecimal] = useState("");
+  const [guardando, setGuardando] = useState(false);
   
   useEffect(() => {
     if (!id) return;
@@ -37,6 +38,9 @@ export default function MantColor() {
   const submitColor = async (e) => {
     e.preventDefault();
 
+     if (guardando) return;
+    setGuardando(true);
+
     try {
       const res = await fetch(
         id ? `/api/colores/${id}` : "/api/colores",
@@ -50,17 +54,24 @@ export default function MantColor() {
         }
       );
 
-      if (!res.ok) throw new Error();
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.mensaje || "Error al guardar el color");
+        return;
+      }
 
       alert(
         id
-          ? " Color actualizado con éxito"
-          : " Color registrado con éxito"
+          ? "Color actualizado con éxito"
+          : "Color registrado con éxito"
       );
 
       router.push("/FormColores");
-    } catch {
-      alert(" Error al guardar el color");
+
+    } catch (error) {
+      console.error("Error al guardar color:", error);
+      alert("Error interno al guardar el color");
     }
   };
 
@@ -92,8 +103,8 @@ export default function MantColor() {
         </div>
 
         <div className={Style.contentBotones}>
-          <button type="submit" className={Style.btnGuardar}>
-            Guardar Color
+          <button type="submit" className={Style.btnGuardar} disabled={guardando}>
+            {guardando ? "Guardando..." : "Guardar Color"}
           </button>
           <button
             type="button"

@@ -6,7 +6,8 @@ import Style from "./mantTalla.module.css";
 
 export default function MantTalla() {
   const router = useRouter();
-  const { id } = useParams(); 
+  const { id } = useParams();
+  const [guardando, setGuardando] = useState(false); 
 
   const [guardarTalla, setGuardarTalla] = useState("");
 
@@ -31,6 +32,9 @@ export default function MantTalla() {
 
   const submitNombresTalla = async (e) => {
     e.preventDefault();
+
+    if (guardando) return;
+    setGuardando(true);
 
     try {
       const res = await fetch(
@@ -77,8 +81,8 @@ export default function MantTalla() {
         </div>
 
         <div className={Style.contentBotones}>
-          <button type="submit" className={Style.btnGuardar}>
-            Guardar Talla
+          <button type="submit" className={Style.btnGuardar} disabled={guardando}>
+            {guardando ? "Guardando..." : "Guardar Talla"}
           </button>
           <button
             type="button"

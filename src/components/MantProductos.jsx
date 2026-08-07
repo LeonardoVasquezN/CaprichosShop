@@ -27,6 +27,7 @@ export default function MantProductos() {
   const [nombreMarcaEdit, setNombreMarcaEdit] = useState("");
 
   const [imagenActual, setImagenActual] = useState("");
+  const [guardando, setGuardando] = useState(false);
 
   useEffect(() => {
     Promise.all([
@@ -83,6 +84,8 @@ export default function MantProductos() {
   const submitProductos = async (e) => {
     e.preventDefault();
 
+    if (guardando) return;
+
     if (!idSubCategorias) {
       alert(" Debes seleccionar una subcategoría");
       return;
@@ -92,6 +95,8 @@ export default function MantProductos() {
       alert(" Debes seleccionar una marca");
       return;
     }
+
+    setGuardando(true);
 
     const formData = new FormData();
     formData.append("id_sub_categorias", idSubCategorias);
@@ -306,8 +311,13 @@ export default function MantProductos() {
         <button
           type="submit"
           className={Style.btnPrincipal}
+          disabled={guardando}
         >
-          {id ? "Actualizar Producto" : "Agregar Producto"}
+          {guardando
+            ? "Guardando..."
+            : id
+              ? "Actualizar Producto"
+              : "Agregar Producto"}
         </button>
 
         <button
