@@ -7,6 +7,7 @@ import Style from "./mantCategorias.module.css";
 export default function MantCategorias({ id }) {
   const router = useRouter();
   const [nombreCategoria, setNombreCategoria] = useState("");
+  const [guardando, setGuardando] = useState(false);
  
   useEffect(() => {
     if (!id) return;
@@ -36,20 +37,28 @@ export default function MantCategorias({ id }) {
   const submitCategories = async (e) => {
     e.preventDefault();
 
+    if (guardando) return;
+    setGuardando(true);
+
     const url = id ? `/api/categorias/${id}` : `/api/categorias`;
     const method = id ? "PUT" : "POST";
 
     try {
       const res = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nombre: nombreCategoria }),
-      });
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nombre: nombreCategoria }),
+    });
 
-      if (!res.ok) throw new Error();
+    const data = await res.json();
 
-      alert(id ? " Categoría actualizada" : " Categoría creada");
-      router.push("/FormCategorias");
+    if (!res.ok) {
+      alert(data.mensaje || "Error al guardar la categoría");
+      return;
+    }
+
+    alert(id ? "Categoría actualizada" : "Categoría creada");
+    router.push("/FormCategorias");
     } catch {
       alert(" Error al guardar la categoría");
     }
@@ -73,8 +82,12 @@ export default function MantCategorias({ id }) {
         </div>
 
         <div className={Style.contentBotones}>
-          <button type="submit" className={Style.btnGuardar}>
-            Guardar Categoría
+          <button
+            type="submit"
+            className={Style.btnGuardar}
+            disabled={guardando}
+          >
+            {guardando ? "Guardando..." : "Guardar Categoría"}
           </button>
 
           <button

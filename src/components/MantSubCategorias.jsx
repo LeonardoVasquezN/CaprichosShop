@@ -11,6 +11,7 @@ export default function MantSubCategorias() {
   const [subCategoria, setSubCategoria] = useState("");
   const [categorias, setCategorias] = useState([]);
   const [idCategoria, setIdCategoria] = useState("");
+  const [guardando, setGuardando] = useState(false);
 
   const irAFormSubCategorias = () => {
     router.push("/FormSubCategorias");
@@ -54,6 +55,9 @@ export default function MantSubCategorias() {
   const submitSubCategorias = async (e) => {
     e.preventDefault();
 
+    if (guardando) return;
+    setGuardando(true);
+
     const url = id
       ? `/api/subCategorias/${id}`
       : "/api/subCategorias";
@@ -70,18 +74,24 @@ export default function MantSubCategorias() {
         }),
       });
 
-      if (!res.ok) throw new Error();
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.mensaje || "Error al guardar la subcategoría");
+        return;
+      }
 
       alert(
         id
-          ? " Subcategoría actualizada correctamente"
-          : " Subcategoría creada correctamente"
+          ? "Subcategoría actualizada correctamente"
+          : "Subcategoría creada correctamente"
       );
 
       router.push("/FormSubCategorias");
+
     } catch (error) {
       console.error("Error al guardar subcategoría:", error);
-      alert(" Error al guardar la subcategoría");
+      alert("Error interno al guardar la subcategoría");
     }
   };
 
@@ -123,8 +133,16 @@ export default function MantSubCategorias() {
 
         {/* Botones */}
         <div className={Style.contentBotones}>
-          <button type="submit" className={Style.btnGuardar}>
-            {id ? "Actualizar Subcategoría" : "Guardar Subcategoría"}
+          <button
+            type="submit"
+            className={Style.btnGuardar}
+            disabled={guardando}
+          >
+            {guardando
+              ? "Guardando..."
+              : id
+                ? "Actualizar Subcategoría"
+                : "Guardar Subcategoría"}
           </button>
 
           <button
