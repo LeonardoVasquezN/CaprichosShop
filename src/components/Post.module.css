@@ -10,6 +10,7 @@
 
 .comprobanteCard {
   width: 100%;
+  min-height: 620px;
   max-width: 1240px;
   margin: 0 auto;
   padding: 20px 12px 22px;
@@ -18,7 +19,7 @@
   border: 1px solid #d5dce2;
   border-radius: 14px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  margin-top: 100px; 
+  margin-top: 70px; 
 }
 
 .encabezado {
@@ -135,6 +136,7 @@
 .contentBuscarProducto {
   display: flex;
   align-items: center;
+  position: relative;
 }
 
 .buscarProducto {
@@ -547,27 +549,97 @@
 }
 
 .selectorVariante {
-  margin-top: 15px;
-  padding: 18px;
-  background: #fff;
-  border: 1px solid #dbe3ea;
-  border-radius: 12px;
-
+  padding: 8px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 6px;
 
-  box-shadow: 0 6px 18px rgba(0,0,0,.08);
+  background: #fff;
+  border: 1px solid #dde5eb;
+  border-radius: 10px;
+  box-shadow: 0 8px 18px rgba(0,0,0,.08);
+
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  width: 220px;
+  z-index: 999;
 }
 
-.inputBuscarProducto {
-  width: 100%;
-  padding: 8px 12px;
-  box-sizing: border-box;
-  background: #f6f8f9;
-  border: 1px solid #dbe3ea;
-  border-radius: 10px;
-  margin-right: 10px;
+.productoHeader{
+    padding-bottom:14px;
+    border-bottom:1px solid #eceff2;
+}
+
+.productoLabel{
+    display:block;
+    font-size:12px;
+    color:#7a848d;
+    margin-bottom:6px;
+    text-transform:uppercase;
+    letter-spacing:.8px;
+}
+
+.productoNombre{
+    margin:0;
+    font-size:18px;
+    color:#202428;
+    font-weight:600;
+    line-height:1.4;
+}
+
+.formGroup{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+}
+
+.formGroup label{
+    font-size:14px;
+    font-weight:600;
+    color:#42484e;
+}
+
+.selectVariante,
+.inputCantidad{
+    width:100%;
+    height:44px;
+    padding:0 14px;
+    border:1px solid #ccd5dc;
+    border-radius:10px;
+    background:#fff;
+    font-size:15px;
+    color:#333;
+    transition:.2s;
+}
+
+.selectVariante:focus,
+.inputCantidad:focus{
+    outline:none;
+    border-color:#2f8f31;
+    box-shadow:0 0 0 3px rgba(47,143,49,.15);
+}
+
+.btnAgregarProducto{
+  margin-top:5px;
+  height:46px;
+  border:none;
+  border-radius:10px;
+  background:#2f8f31;
+  color:#fff;
+  font-size:16px;
+  font-weight:600;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.btnAgregarProducto:hover{
+    background:#26782a;
+}
+
+.btnAgregarProducto:active{
+    transform:scale(.98);
 }
 
 /* Pantallas medianas */
