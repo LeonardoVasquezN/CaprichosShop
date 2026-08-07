@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client"; 
 
 export async function POST(req) {
   try {
@@ -32,8 +33,8 @@ export async function POST(req) {
         productoId: Number(producto_id),
         varianteId: Number(variante_id),
         cantidad: Number(cantidad),
-        precioUnitario: Number(precio_unitario),
-        total: Number(total),
+        precioUnitario: new Prisma.Decimal(precio_unitario),
+        total: new Prisma.Decimal(total),
       },
     });
 

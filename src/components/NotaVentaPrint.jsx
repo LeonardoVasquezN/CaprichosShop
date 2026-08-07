@@ -60,10 +60,10 @@ export default function NotaVentaPrint({
           </div>
 
           <div className={Style.ticketHeader}>
-            <span>Cant</span>
-            <span>P.Und</span>
-            <span>Und</span>
-            <span>P.Total</span>
+            <span className={Style.campos}>Cant</span>
+            <span className={Style.campos}>P.Und</span>
+            <span className={Style.campos}>Und</span>
+            <span className={Style.campos}>P.Total</span>
           </div>
 
           <div className={Style.ticketLine}>
@@ -77,10 +77,10 @@ export default function NotaVentaPrint({
               </div>
 
               <div className={Style.ticketRow}>
-                <span>{item.cantidad}</span>
-                <span>{Number(item.precioUnitario).toFixed(2)}</span>
-                <span>NIU</span>
-                <span>{Number(item.total).toFixed(2)}</span>
+                <span className={Style.itemsTicket}>{item.cantidad}</span>
+                <span className={Style.itemsTicket}>{Number(item.precioUnitario).toFixed(2)}</span>
+                <span className={Style.itemsTicket}>NIU</span>
+                <span className={Style.itemsTicket}>{Number(item.total).toFixed(2)}</span>
               </div>
             </div>
           ))}
