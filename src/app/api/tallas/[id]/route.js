@@ -35,7 +35,6 @@ export async function GET(req) {
 
 export async function PUT(req) {
   try {
-
     const usuario = await verificarAdmin();
 
     if (!usuario) {
@@ -56,10 +55,35 @@ export async function PUT(req) {
 
     const body = await req.json();
 
+    const nombreLimpio = body.nombre?.trim();
+
+    if (!nombreLimpio || typeof nombreLimpio !== "string") {
+      return NextResponse.json(
+        { mensaje: "El nombre es obligatorio" },
+        { status: 422 }
+      );
+    }
+    
+    const tallaExistente = await prisma.talla.findFirst({
+      where: {
+        nombre: nombreLimpio,
+        NOT: {
+          id,
+        },
+      },
+    });
+
+    if (tallaExistente) {
+      return NextResponse.json(
+        { mensaje: "La talla ya existe" },
+        { status: 409 }
+      );
+    }
+
     const tallaActualizada = await prisma.talla.update({
       where: { id },
       data: {
-        nombre: body.nombre,
+        nombre: nombreLimpio,
         isActivo:
           body.isActivo !== undefined
             ? Boolean(body.isActivo)
@@ -72,6 +96,8 @@ export async function PUT(req) {
       talla: tallaActualizada,
     });
   } catch (error) {
+    console.error("Error al actualizar talla:", error);
+
     return NextResponse.json(
       { mensaje: "Error interno" },
       { status: 500 }
