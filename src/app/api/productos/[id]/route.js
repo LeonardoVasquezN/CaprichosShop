@@ -49,7 +49,6 @@ export async function GET(req) {
 
 export async function PUT(req) {
   try {
-
     const usuario = await verificarSesion();
 
     if (!usuario) {
@@ -63,7 +62,9 @@ export async function PUT(req) {
       );
     }
 
-    const id = Number(req.nextUrl.pathname.split("/").pop());
+    const id = Number(
+      req.nextUrl.pathname.split("/").pop()
+    );
 
     if (!id || isNaN(id)) {
       return NextResponse.json(
@@ -86,12 +87,12 @@ export async function PUT(req) {
       );
     }
 
-    const nombreNormalizado = nombre.trim().toLowerCase();
+    const nombreLimpio = nombre.trim();
 
     const productoExistente = await prisma.producto.findFirst({
       where: {
         nombre: {
-          equals: nombreNormalizado,
+          equals: nombreLimpio,
           mode: "insensitive",
         },
         NOT: {
@@ -102,16 +103,27 @@ export async function PUT(req) {
 
     if (productoExistente) {
       return NextResponse.json(
-        { mensaje: "Ya existe otro producto con ese nombre" },
-        { status: 409 }
+        {
+          mensaje:
+            "Ya existe otro producto con ese nombre",
+        },
+        {
+          status: 409,
+        }
       );
     }
 
     const data = {
-      nombre: nombreNormalizado,
-      precioCompra: Number(formData.get("precio_compra")),
-      precioVenta: Number(formData.get("precio_venta")),
-      subCategoriaId: Number(formData.get("id_sub_categorias")),
+      nombre: nombreLimpio,
+      precioCompra: Number(
+        formData.get("precio_compra")
+      ),
+      precioVenta: Number(
+        formData.get("precio_venta")
+      ),
+      subCategoriaId: Number(
+        formData.get("id_sub_categorias")
+      ),
       marcaId: formData.get("id_marca")
         ? Number(formData.get("id_marca"))
         : null,
@@ -119,41 +131,57 @@ export async function PUT(req) {
 
     const imagen = formData.get("imagen");
 
-    if (imagen instanceof File && imagen.size > 0) {
-
+    if (
+      imagen instanceof File &&
+      imagen.size > 0
+    ) {
       const buffer = Buffer.from(
         await imagen.arrayBuffer()
       );
 
-      const upload = await new Promise((resolve, reject) => {
-        cloudinary.uploader.upload_stream(
-          {
-            folder: "productos",
-          },
-          (err, result) => {
-            if (err) reject(err);
-            else resolve(result);
-          }
-        ).end(buffer);
-      });
+      const upload = await new Promise(
+        (resolve, reject) => {
+          cloudinary.uploader.upload_stream(
+            {
+              folder: "productos",
+            },
+            (err, result) => {
+              if (err) reject(err);
+              else resolve(result);
+            }
+          ).end(buffer);
+        }
+      );
 
       data.imagen = upload.secure_url;
     }
 
     const producto = await prisma.producto.update({
-      where: { id },
+      where: {
+        id,
+      },
       data,
     });
 
     return NextResponse.json({
-      mensaje: "Producto actualizado correctamente",
+      mensaje:
+        "Producto actualizado correctamente",
       producto,
     });
   } catch (error) {
-    console.error("PUT PRODUCTO ERROR:", error);
+    console.error(
+      "PUT PRODUCTO ERROR:",
+      error
+    );
+
     return NextResponse.json(
-      { mensaje: "Error interno", error: error.message },
-      { status: 500 }
+      {
+        mensaje: "Error interno",
+        error: error.message,
+      },
+      {
+        status: 500,
+      }
     );
   }
 }

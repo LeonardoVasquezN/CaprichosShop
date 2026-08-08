@@ -41,6 +41,8 @@ export async function POST(req) {
       );
     }
 
+    const nombreLimpio = nombre.trim();
+
     let imageUrl = null;
     const imagen = formData.get("imagen");
 
@@ -52,8 +54,11 @@ export async function POST(req) {
           {
             folder: "productos",
             transformation: [
-              { fetch_format: "auto", quality: "auto" } // WebP/AVIF si soporta, JPG/PNG si no
-            ]
+              {
+                fetch_format: "auto",
+                quality: "auto",
+              },
+            ],
           },
           (err, result) => {
             if (err) reject(err);
@@ -65,12 +70,10 @@ export async function POST(req) {
       imageUrl = upload.secure_url;
     }
 
-    const nombreNormalizado = nombre.trim().toLowerCase();
-
     const productoExistente = await prisma.producto.findFirst({
       where: {
         nombre: {
-          equals: nombreNormalizado,
+          equals: nombreLimpio,
           mode: "insensitive",
         },
       },
@@ -85,7 +88,7 @@ export async function POST(req) {
 
     const producto = await prisma.producto.create({
       data: {
-        nombre: nombreNormalizado,
+        nombre: nombreLimpio,
         precioCompra,
         precioVenta,
         subCategoriaId,
@@ -97,9 +100,12 @@ export async function POST(req) {
       },
     });
 
-    return NextResponse.json(producto, { status: 201 });
+    return NextResponse.json(producto, {
+      status: 201,
+    });
   } catch (error) {
     console.error("ERROR POST PRODUCTO:", error);
+
     return NextResponse.json(
       { mensaje: "Error interno" },
       { status: 500 }
