@@ -24,6 +24,13 @@ export default function FormTalla() {
         t.nombre.toLowerCase().includes(findTalla.toLowerCase())
       )
     : tallas;
+
+  const tallasOrdenadas = [...tallasFiltradas].sort((a, b) =>
+    a.nombre.localeCompare(b.nombre, "es", {
+      numeric: true,
+      sensitivity: "base",
+    })
+  );
   
   const irAMantTalla = () => {
     router.push("/MantTalla");
@@ -81,7 +88,7 @@ export default function FormTalla() {
           </tr>
         </thead>
         <tbody>
-          {tallasFiltradas.map((talla) => (
+          {tallasOrdenadas.map((talla) => (
             <tr key={talla.id}>
               <td>{talla.nombre}</td>
               <td>

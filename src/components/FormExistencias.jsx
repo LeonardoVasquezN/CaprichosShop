@@ -40,6 +40,12 @@ export default function FormExistencias() {
       )
     : existencias;
 
+  const existenciasOrdenadas = [...existenciasFiltradas].sort((a, b) =>
+    a.producto.nombre.localeCompare(b.producto.nombre, "es", {
+      sensitivity: "base",
+    })
+  );
+
   const eliminarProducto = (id) => {
     if (!window.confirm("¿Estás seguro de eliminar esta variante?")) return;
 
@@ -86,7 +92,7 @@ export default function FormExistencias() {
         </thead>
 
         <tbody>
-          {existenciasFiltradas.map((existencia) => (
+          {existenciasOrdenadas.map((existencia) => (
             <tr key={existencia.id}>
               <td>{existencia.producto.marca?.nombre}</td>
               <td>{existencia.producto.nombre}</td>

@@ -20,7 +20,15 @@ export default function FormCategorias() {
   useEffect(() => {
     fetch(`/api/categorias`)
       .then((res) => res.json())
-      .then(setCategorias)
+      .then((data) =>
+        setCategorias(
+          [...data].sort((a, b) =>
+            a.nombre.localeCompare(b.nombre, "es", {
+              sensitivity: "base",
+            })
+          )
+        )
+      )
       .catch((error) =>
         console.error("Error al obtener categorías:", error)
       );

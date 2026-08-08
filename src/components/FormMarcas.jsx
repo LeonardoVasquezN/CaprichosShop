@@ -28,6 +28,8 @@ export default function FormMarcas() {
       : marcas
     : [];
 
+  const marcasOrdenadas = [...marcasFiltradas].sort((a, b) => a.nombre.localeCompare(b.nombre, "es", { sensitivity: "base", }) );
+
   return (
     <div className={Style.formMarcas}>
       <h1 className={Style.titulo}>Marcas</h1>
@@ -58,8 +60,8 @@ export default function FormMarcas() {
         </thead>
 
         <tbody>
-          {marcasFiltradas.length > 0 ? (
-            marcasFiltradas.map((marca) => (
+          {marcasOrdenadas.length > 0 ? (
+            marcasOrdenadas.map((marca) => (
               <tr key={marca.idMarca}>
                 <td>{marca.nombre}</td>
                 <td>

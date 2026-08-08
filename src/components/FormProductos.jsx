@@ -30,6 +30,12 @@ export default function FormProductos() {
       )
     : productos;
 
+  const productosOrdenados = [...productosFiltrados].sort((a, b) =>
+    a.nombre.localeCompare(b.nombre, "es", {
+      sensitivity: "base",
+    })
+  );
+
   const irAMantProducto = () => {
     router.push("/MantProductos");
   };
@@ -110,14 +116,14 @@ export default function FormProductos() {
         </thead>
 
         <tbody>
-          {productosFiltrados.length === 0 ? (
+          {productosOrdenados.length === 0 ? (
             <tr>
               <td colSpan="8" style={{ textAlign: "center" }}>
                 No hay productos registrados
               </td>
             </tr>
           ) : (
-            productosFiltrados.map((producto) => (
+            productosOrdenados.map((producto) => (
               <tr key={producto.id}>
                 <td>{producto.marca?.nombre}</td>
                 <td>{producto.nombre}</td>
