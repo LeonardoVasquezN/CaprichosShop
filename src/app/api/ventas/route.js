@@ -1,6 +1,182 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+// export async function POST(req) {
+//   try {
+//     const {
+//       fecha,
+//       total,
+//       metodo_de_pago,
+//       id_cliente,
+//       detalles,
+//       preVentaId,
+//     } = await req.json();
+
+//     if (
+//       !fecha ||
+//       total === undefined ||
+//       !metodo_de_pago ||
+//       !id_cliente ||
+//       !Array.isArray(detalles) ||
+//       detalles.length === 0
+//     ) {
+//       return NextResponse.json(
+//         { error: "Datos incompletos" },
+//         { status: 422 }
+//       );
+//     }
+
+//     const venta = await prisma.venta.create({
+//       data: {
+//         fecha: new Date(fecha),
+//         total,
+//         metodoDePago: metodo_de_pago,
+//         clienteId: Number(id_cliente),
+//       },
+//     });
+
+//     const operaciones = [];
+//     const productosAActualizar = new Set();
+
+//     for (const d of detalles) {
+
+//       const productoId = Number(d.productoId);
+//       const cantidad = Number(d.cantidad);
+
+//       let variante;
+
+//       if (d.varianteId) {
+
+//         variante = await prisma.variante.findUnique({
+//           where: {
+//             id: Number(d.varianteId),
+//           },
+//         });
+
+//       } 
+
+//       else {
+
+//         variante = await prisma.variante.findFirst({
+//           where: {
+//             productoId,
+//             colorId: Number(d.colorId),
+//             tallaId: Number(d.tallaId),
+//           },
+//         });
+
+//       }
+
+//       if (!variante) {
+//         throw new Error(
+//           `Variante no encontrada para producto ${productoId}`
+//         );
+//       }
+
+//       if (variante.stock < cantidad) {
+//         throw new Error(
+//           `Stock insuficiente. Disponible: ${variante.stock}, solicitado: ${cantidad}`
+//         );
+//       }
+
+//       operaciones.push(
+//         prisma.variante.update({
+//           where: {
+//             id: variante.id,
+//           },
+//           data: {
+//             stock: {
+//               decrement: cantidad,
+//             },
+//           },
+//         })
+//       );
+
+//       operaciones.push(
+//         prisma.detalleVenta.create({
+//           data: {
+//             ventaId: venta.id,
+//             productoId,
+//             varianteId: variante.id,
+//             cantidad,
+//             precioUnitario: Number(d.precioUnitario),
+//             total: Number(
+//               d.subTotal ?? d.total
+//             ),
+//           },
+//         })
+//       );
+
+//       productosAActualizar.add(productoId);
+//     }
+
+//     for (const productoId of productosAActualizar) {
+
+//       const totalStock = await prisma.variante.aggregate({
+//         where:{
+//           productoId,
+//         },
+//         _sum:{
+//           stock:true,
+//         },
+//       });
+
+//       operaciones.push(
+//         prisma.producto.update({
+//           where:{
+//             id:productoId,
+//           },
+//           data:{
+//             stockTotal:
+//               totalStock._sum.stock || 0,
+//           },
+//         })
+//       );
+//     }
+
+//     await prisma.$transaction(operaciones);
+
+//     if(preVentaId){
+//       await prisma.detallePreVenta.deleteMany({
+//         where:{
+//           preVentaId:Number(preVentaId),
+//         },
+//       });
+
+//       await prisma.preVenta.delete({
+//         where:{
+//           id:Number(preVentaId),
+//         },
+//       });
+//     }
+
+//     return NextResponse.json(
+//       {
+//         message:
+//           "Venta registrada correctamente y stock actualizado",
+//         ventaId: venta.id,
+//       },
+//       {
+//         status:201,
+//       }
+//     );
+
+
+//   } catch(error){
+//     console.error(error);
+
+//     return NextResponse.json(
+//       {
+//         error:"Error al registrar la venta",
+//         detail:error.message,
+//       },
+//       {
+//         status:500,
+//       }
+//     );
+//   }
+// }
+
 export async function POST(req) {
   try {
     const {
@@ -26,61 +202,69 @@ export async function POST(req) {
       );
     }
 
-    const venta = await prisma.venta.create({
-      data: {
-        fecha: new Date(fecha),
-        total,
-        metodoDePago: metodo_de_pago,
-        clienteId: Number(id_cliente),
-      },
-    });
+    const resultado = await prisma.$transaction(async (tx) => {
 
-    const operaciones = [];
-    const productosAActualizar = new Set();
+      // 1. Crear la venta
+      const venta = await tx.venta.create({
+        data: {
+          fecha: new Date(fecha),
+          total: Number(total),
+          metodoDePago: metodo_de_pago,
+          clienteId: Number(id_cliente),
+        },
+      });
 
-    for (const d of detalles) {
+      // Guardamos los productos que necesitan
+      // actualizar su stockTotal
+      const productosAActualizar = new Set();
 
-      const productoId = Number(d.productoId);
-      const cantidad = Number(d.cantidad);
+      // 2. Procesar cada detalle
+      for (const d of detalles) {
 
-      let variante;
+        const productoId = Number(d.productoId);
+        const cantidad = Number(d.cantidad);
 
-      if (d.varianteId) {
+        let variante;
 
-        variante = await prisma.variante.findUnique({
-          where: {
-            id: Number(d.varianteId),
-          },
-        });
+        // Buscar por varianteId
+        if (d.varianteId) {
 
-      } 
+          variante = await tx.variante.findUnique({
+            where: {
+              id: Number(d.varianteId),
+            },
+          });
 
-      else {
+        }
 
-        variante = await prisma.variante.findFirst({
-          where: {
-            productoId,
-            colorId: Number(d.colorId),
-            tallaId: Number(d.tallaId),
-          },
-        });
+        // Buscar por producto + color + talla
+        else {
 
-      }
+          variante = await tx.variante.findFirst({
+            where: {
+              productoId,
+              colorId: Number(d.colorId),
+              tallaId: Number(d.tallaId),
+            },
+          });
 
-      if (!variante) {
-        throw new Error(
-          `Variante no encontrada para producto ${productoId}`
-        );
-      }
+        }
 
-      if (variante.stock < cantidad) {
-        throw new Error(
-          `Stock insuficiente. Disponible: ${variante.stock}, solicitado: ${cantidad}`
-        );
-      }
+        if (!variante) {
+          throw new Error(
+            `Variante no encontrada para producto ${productoId}`
+          );
+        }
 
-      operaciones.push(
-        prisma.variante.update({
+        // 3. Validar stock
+        if (variante.stock < cantidad) {
+          throw new Error(
+            `Stock insuficiente. Disponible: ${variante.stock}, solicitado: ${cantidad}`
+          );
+        }
+
+        // 4. Descontar stock de la variante
+        await tx.variante.update({
           where: {
             id: variante.id,
           },
@@ -89,11 +273,10 @@ export async function POST(req) {
               decrement: cantidad,
             },
           },
-        })
-      );
+        });
 
-      operaciones.push(
-        prisma.detalleVenta.create({
+        // 5. Crear detalle de venta
+        await tx.detalleVenta.create({
           data: {
             ventaId: venta.id,
             productoId,
@@ -104,74 +287,77 @@ export async function POST(req) {
               d.subTotal ?? d.total
             ),
           },
-        })
-      );
+        });
 
-      productosAActualizar.add(productoId);
-    }
+        productosAActualizar.add(productoId);
+      }
 
-    for (const productoId of productosAActualizar) {
+      // 6. ACTUALIZAR stockTotal de cada producto
+      //
+      // IMPORTANTE:
+      // Esto ocurre DESPUÉS de descontar las variantes.
+      //
+      for (const productoId of productosAActualizar) {
 
-      const totalStock = await prisma.variante.aggregate({
-        where:{
-          productoId,
-        },
-        _sum:{
-          stock:true,
-        },
-      });
-
-      operaciones.push(
-        prisma.producto.update({
-          where:{
-            id:productoId,
+        const totalStock = await tx.variante.aggregate({
+          where: {
+            productoId,
           },
-          data:{
-            stockTotal:
-              totalStock._sum.stock || 0,
+          _sum: {
+            stock: true,
           },
-        })
-      );
-    }
+        });
 
-    await prisma.$transaction(operaciones);
+        await tx.producto.update({
+          where: {
+            id: productoId,
+          },
+          data: {
+            stockTotal: totalStock._sum.stock ?? 0,
+          },
+        });
+      }
 
-    if(preVentaId){
+      return venta;
+    });
+
+    // 7. Si venía de una preventa, eliminarla
+    if (preVentaId) {
+
       await prisma.detallePreVenta.deleteMany({
-        where:{
-          preVentaId:Number(preVentaId),
+        where: {
+          preVentaId: Number(preVentaId),
         },
       });
 
       await prisma.preVenta.delete({
-        where:{
-          id:Number(preVentaId),
+        where: {
+          id: Number(preVentaId),
         },
       });
     }
 
     return NextResponse.json(
       {
-        message:
-          "Venta registrada correctamente y stock actualizado",
-        ventaId: venta.id,
+        message: "Venta registrada correctamente y stock actualizado",
+        ventaId: resultado.id,
       },
       {
-        status:201,
+        status: 201,
       }
     );
 
+  } catch (error) {
 
-  } catch(error){
-    console.error(error);
+    console.error("ERROR POST VENTA:", error);
 
     return NextResponse.json(
       {
-        error:"Error al registrar la venta",
-        detail:error.message,
+        error: "Error al registrar la venta",
+        detail: error.message,
       },
       {
-        status:500,
+        status: 500,
       }
     );
   }
