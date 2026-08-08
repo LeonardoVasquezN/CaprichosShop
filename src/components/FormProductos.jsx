@@ -31,9 +31,13 @@ export default function FormProductos() {
     : productos;
 
   const productosOrdenados = [...productosFiltrados].sort((a, b) =>
-    a.nombre.localeCompare(b.nombre, "es", {
-      sensitivity: "base",
-    })
+    (a.marca?.nombre || "").localeCompare(
+      b.marca?.nombre || "",
+      "es",
+      {
+        sensitivity: "base",
+      }
+    )
   );
 
   const irAMantProducto = () => {

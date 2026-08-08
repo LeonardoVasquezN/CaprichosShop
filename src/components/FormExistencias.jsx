@@ -41,9 +41,13 @@ export default function FormExistencias() {
     : existencias;
 
   const existenciasOrdenadas = [...existenciasFiltradas].sort((a, b) =>
-    a.producto.nombre.localeCompare(b.producto.nombre, "es", {
-      sensitivity: "base",
-    })
+    (a.producto.marca?.nombre || "").localeCompare(
+      b.producto.marca?.nombre || "",
+      "es",
+      {
+        sensitivity: "base",
+      }
+    )
   );
 
   const eliminarProducto = (id) => {
