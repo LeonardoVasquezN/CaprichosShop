@@ -74,8 +74,41 @@ export async function PUT(req) {
 
     const formData = await req.formData();
 
+    const nombre = formData.get("nombre");
+
+    if (
+      typeof nombre !== "string" ||
+      !nombre.trim()
+    ) {
+      return NextResponse.json(
+        { mensaje: "El nombre del producto es obligatorio" },
+        { status: 400 }
+      );
+    }
+
+    const nombreNormalizado = nombre.trim().toLowerCase();
+
+    const productoExistente = await prisma.producto.findFirst({
+      where: {
+        nombre: {
+          equals: nombreNormalizado,
+          mode: "insensitive",
+        },
+        NOT: {
+          id,
+        },
+      },
+    });
+
+    if (productoExistente) {
+      return NextResponse.json(
+        { mensaje: "Ya existe otro producto con ese nombre" },
+        { status: 409 }
+      );
+    }
+
     const data = {
-      nombre: formData.get("nombre"),
+      nombre: nombreNormalizado,
       precioCompra: Number(formData.get("precio_compra")),
       precioVenta: Number(formData.get("precio_venta")),
       subCategoriaId: Number(formData.get("id_sub_categorias")),

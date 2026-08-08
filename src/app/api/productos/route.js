@@ -65,9 +65,27 @@ export async function POST(req) {
       imageUrl = upload.secure_url;
     }
 
+    const nombreNormalizado = nombre.trim().toLowerCase();
+
+    const productoExistente = await prisma.producto.findFirst({
+      where: {
+        nombre: {
+          equals: nombreNormalizado,
+          mode: "insensitive",
+        },
+      },
+    });
+
+    if (productoExistente) {
+      return NextResponse.json(
+        { mensaje: "Ya existe un producto con ese nombre" },
+        { status: 409 }
+      );
+    }
+
     const producto = await prisma.producto.create({
       data: {
-        nombre,
+        nombre: nombreNormalizado,
         precioCompra,
         precioVenta,
         subCategoriaId,

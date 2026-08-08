@@ -87,46 +87,63 @@ export default function MantProductos() {
     if (guardando) return;
 
     if (!idSubCategorias) {
-      alert(" Debes seleccionar una subcategoría");
+      alert("Debes seleccionar una subcategoría");
       return;
     }
 
     if (!idMarca) {
-      alert(" Debes seleccionar una marca");
+      alert("Debes seleccionar una marca");
       return;
     }
 
     setGuardando(true);
 
-    const formData = new FormData();
-    formData.append("id_sub_categorias", idSubCategorias);
-    formData.append("id_marca", idMarca);
-    formData.append("nombre", nombre);
-    formData.append("precio_compra", precioCompra);
-    formData.append("precio_venta", precioVenta);
+    try {
+      const formData = new FormData();
 
-    if (imagen) formData.append("imagen", imagen);
+      formData.append("id_sub_categorias", idSubCategorias);
+      formData.append("id_marca", idMarca);
+      formData.append("nombre", nombre);
+      formData.append("precio_compra", precioCompra);
+      formData.append("precio_venta", precioVenta);
 
-    // Aca vamos a implementar el fetchSeguro
-    const res = await fetchSeguro(
-      id ? `/api/productos/${id}` : "/api/productos",
-      {
-        method: id ? "PUT" : "POST",
-        body: formData,
+      if (imagen) {
+        formData.append("imagen", imagen);
       }
-    );
 
-    if(!res) return;
+      const res = await fetchSeguro(
+        id ? `/api/productos/${id}` : "/api/productos",
+        {
+          method: id ? "PUT" : "POST",
+          body: formData,
+        }
+      );
 
-    if (!res.ok) {
-      const err = await res.json();
-      console.error(err);
-      alert(" Error al guardar producto");
-      return;
+      if (!res) return;
+
+      if (!res.ok) {
+        const err = await res.json();
+
+        if (res.status === 409) {
+          alert(err.mensaje);
+          return;
+        }
+
+        console.error(err);
+        alert("Error al guardar producto");
+        return;
+      }
+
+      alert(id ? "Producto actualizado" : "Producto agregado");
+      router.push("/FormProductos");
+
+    } catch (error) {
+      console.error("ERROR AL GUARDAR PRODUCTO:", error);
+      alert("Error inesperado al guardar el producto");
+
+    } finally {
+      setGuardando(false);
     }
-
-    alert(id ? " Producto actualizado" : " Producto agregado");
-    router.push("/FormProductos");
   };
 
   const irAMantenimientoExistencia = () => {
