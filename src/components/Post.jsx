@@ -41,6 +41,9 @@ export default function Post() {
   const [mostrarPreview, setMostrarPreview] = useState(false);
   const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
 
+  const [creandoComprobante, setCreandoComprobante] = useState(false);
+  const creandoComprobanteRef = useRef(false);
+
   const formatMoney = (value) => {
     return Number(value || 0).toFixed(2);
   };
@@ -237,81 +240,97 @@ setCantidadSeleccionada(1);
     window.print();
   };
 
-  const crearComprobante = async()=>{
+  const crearComprobante = async () => {
+    if (creandoComprobanteRef.current) {
+      return;
+    }
 
-    if(productos.length===0){
+    if (productos.length === 0) {
       alert("Agrega productos");
       return;
     }
 
-    const pagosSeleccionados={};
+    const pagosSeleccionados = {};
 
-    Object.entries(metodosPago).forEach(([key,value])=>{
-      if(Number(value)>0){
-      pagosSeleccionados[key]=Number(value);
-    }
+    Object.entries(metodosPago).forEach(([key, value]) => {
+      if (Number(value) > 0) {
+        pagosSeleccionados[key] = Number(value);
+      }
     });
 
-    if(Object.keys(pagosSeleccionados).length===0){
+    if (Object.keys(pagosSeleccionados).length === 0) {
       alert("Selecciona método de pago");
       return;
     }
 
-    const totalPagado = Object.values(pagosSeleccionados).reduce((acc, val) => acc + Number(val), 0);
+    const totalPagado = Object.values(pagosSeleccionados).reduce(
+      (acc, val) => acc + Number(val),
+      0
+    );
 
-    if(Math.abs(totalPagado - total) > 0.01){
+    if (Math.abs(totalPagado - total) > 0.01) {
       alert("El total pagado no coincide con el total de la venta");
       return;
     }
 
-    const detalles=productos.map((p)=>(
-    {
-      productoId:p.productoId,
-      varianteId:p.varianteId,
-      cantidad:p.cantidad,
-      precioUnitario:p.precio,
-      total:p.total
-    }
-    ));
+    creandoComprobanteRef.current = true;
+    setCreandoComprobante(true);
 
-    const respuesta=await fetch("/api/ventas",{
-      method:"POST",
-      headers:{
-      "Content-Type":"application/json"
-      },
+    try {
+      const detalles = productos.map((p) => ({
+        productoId: p.productoId,
+        varianteId: p.varianteId,
+        cantidad: p.cantidad,
+        precioUnitario: p.precio,
+        total: p.total
+      }));
 
+      const respuesta = await fetch("/api/ventas", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
 
-      body:JSON.stringify({
-        fecha:new Date(),
+        body: JSON.stringify({
+          fecha: new Date(),
+          total,
+          metodo_de_pago: JSON.stringify(pagosSeleccionados),
+          id_cliente: clienteSeleccionado?.id ?? 16,
+          preVentaId: null,
+          detalles
+        })
+      });
+
+      const data = await respuesta.json();
+
+      if (!respuesta.ok) {
+        alert(data.detail || "Error");
+        return;
+      }
+
+      setVentaPreview({
+        cliente,
+        clienteSeleccionado,
+        productos,
+        metodosPago,
         total,
-        metodo_de_pago:
-        JSON.stringify(pagosSeleccionados),
-        id_cliente: clienteSeleccionado?.id ?? 15,
-        preVentaId:null,
-        detalles
-      })
-    });
+        fechaActual,
+        tipoComprobante
+      });
 
-    const data=await respuesta.json();
+      alert("Venta registrada correctamente");
+      setMostrarPreview(true);
+      limpiarFormulario();
 
-    if(!respuesta.ok){
-      alert(data.detail || "Error");
-      return;
+    } catch (error) {
+
+      console.error("ERROR CREANDO COMPROBANTE:", error);
+      alert("Ocurrió un error al registrar la venta");
+
+    } finally {
+      creandoComprobanteRef.current = false;
+      setCreandoComprobante(false);
     }
-
-    setVentaPreview({
-      cliente,
-      clienteSeleccionado,
-      productos,
-      metodosPago,
-      total,
-      fechaActual,
-      tipoComprobante
-    });
-
-    alert("Venta registrada correctamente");
-    setMostrarPreview(true);
-    limpiarFormulario();
   };
 
   const cambiarMetodoPago=(metodo,valor)=>{
@@ -329,6 +348,18 @@ setCantidadSeleccionada(1);
       producto.marca?.nombre?.toLowerCase().includes(texto)
     );
   });
+
+  const varianteSeleccionada = productoSeleccionado && colorSeleccionado && tallaSeleccionada
+  ? variantes.find((v) =>
+      v.productoId === productoSeleccionado.id &&
+      v.colorId === Number(colorSeleccionado) &&
+      v.tallaId === Number(tallaSeleccionada)
+    )
+  : null;
+
+  const sinStock =
+    varianteSeleccionada &&
+    varianteSeleccionada.stock <= 0;
 
   const limpiarFormulario = () => {
     // Cliente
@@ -552,27 +583,61 @@ setCantidadSeleccionada(1);
                         </select>
                     </div>
 
-                    <div className={Style.formGroup}>
-                        <label>Cantidad</label>
+                    {varianteSeleccionada && (
+    <>
+        {varianteSeleccionada.stock > 0 ? (
+            <>
+                <div className={Style.formGroup}>
+                    <label>
+                        Cantidad (Stock: {varianteSeleccionada.stock})
+                    </label>
 
-                        <input
-                            className={Style.inputCantidad}
-                            type="number"
-                            min="1"
-                            value={cantidadSeleccionada}
-                            onChange={(e)=>
-                                setCantidadSeleccionada(Number(e.target.value))
-                            }
-                        />
-                    </div>
+                    <input
+                        className={Style.inputCantidad}
+                        type="number"
+                        min="1"
+                        max={varianteSeleccionada.stock}
+                        value={cantidadSeleccionada}
+                        onChange={(e) =>
+                            setCantidadSeleccionada(
+                                Math.min(
+                                    Number(e.target.value),
+                                    varianteSeleccionada.stock
+                                )
+                            )
+                        }
+                    />
+                </div>
 
-                    <button
-                        type="button"
-                        className={Style.btnAgregarProducto}
-                        onClick={agregarProductoFinal}
-                    >
-                        Agregar producto
-                    </button>
+                <button
+                    type="button"
+                    className={Style.btnAgregarProducto}
+                    onClick={agregarProductoFinal}
+                    disabled={
+                        cantidadSeleccionada < 1 ||
+                        cantidadSeleccionada > varianteSeleccionada.stock
+                    }
+                >
+                    Agregar producto
+                </button>
+            </>
+        ) : (
+            <>
+                <div className={Style.formGroup}>
+                    <span>Sin stock disponible</span>
+                </div>
+
+                <button
+                    type="button"
+                    className={Style.btnAgregarProducto}
+                    disabled
+                >
+                    Sin stock
+                </button>
+            </>
+        )}
+    </>
+)}
                   </div>
                   )}
 
@@ -691,8 +756,11 @@ setCantidadSeleccionada(1);
                 type="button"
                 className={Style.btnCrear}
                 onClick={crearComprobante}
+                disabled={creandoComprobante}
               >
-                CREAR COMPROBANTE
+                {creandoComprobante
+                ? 'ENVIANDO COMPROBANTE...'
+                : 'CREAR COMPROBANTE'}
               </button>
             </main>
 
