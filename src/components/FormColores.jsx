@@ -39,6 +39,12 @@ export default function FormColores() {
       )
     : colores;
 
+  const coloresOrdenados = [...coloresFiltrados].sort((a, b) =>
+    a.nombre.localeCompare(b.nombre, "es", {
+      sensitivity: "base",
+    })
+  );
+
   return (
     <div className={Style.contentColores}>
       <h1 className={Style.titulo}>Colores</h1>
@@ -68,7 +74,7 @@ export default function FormColores() {
           </tr>
         </thead>
         <tbody>
-          {coloresFiltrados.map((color) => (
+          {coloresOrdenados.map((color) => (
             <tr key={color.id}>
               <td>{color.nombre}</td>
               <td>{color.hexadecimal}</td>

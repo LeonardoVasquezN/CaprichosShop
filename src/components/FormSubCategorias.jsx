@@ -29,6 +29,12 @@ export default function FormSubCategorias() {
       : subCategorias
     : [];
 
+  const subCategoriasOrdenadas = [...subCategoriasFiltradas].sort((a, b) =>
+    a.nombre.localeCompare(b.nombre, "es", {
+      sensitivity: "base",
+    })
+  );
+
   const cambiarEstadoSubCategorias = async (id, nuevoEstado) => {
     try {
       useSubCategoriasStore.setState((state) => ({
@@ -81,7 +87,7 @@ export default function FormSubCategorias() {
         </thead>
 
         <tbody>
-          {subCategoriasFiltradas.map((sc) => (
+          {subCategoriasOrdenadas.map((sc) => (
             <tr key={sc.id}>
               <td>{sc.categoria?.nombre}</td>
               <td>{sc.nombre}</td>
