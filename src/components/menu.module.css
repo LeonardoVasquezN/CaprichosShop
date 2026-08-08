@@ -1,7 +1,9 @@
 .contentMenu {
   border: 2px solid rgba(0, 0, 0, 0.279);
   border-radius: 7px;
-  width: 170px;
+
+  width: max-content;
+  min-width: 170px;
   height: auto;
 
   position: fixed; 
@@ -10,14 +12,18 @@
 
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 1px;
 
   z-index: 10002;
   background-color: white;
 }
 
+.contentMenu > div {
+  white-space: nowrap;
+}
+
 .contentPreventa {
-  width: 170px;
+  width: 100%;
   height: 30px;
 
   display: flex;
@@ -32,7 +38,7 @@
 }
 
 .contentVentas {
-  width: 170px;
+  width: 100%;
   height: 30px;
 
   display: flex;
@@ -47,7 +53,7 @@
 }
 
 .contentMantenimientoProductos {
-  width: 170px;
+  width: 100%;
   height: 30px;
 
   display: flex;
@@ -61,23 +67,8 @@
   background-color: rgba(128, 128, 128, 0.119);
 }
 
-.contentMantenimientoMarcas {
-  width: 170px;
-  height: 30px;
-
-  display: flex;
-  align-items: center;
-  padding-left: 25px;
-}
-
-.contentMantenimientoMarcas:hover {
-  cursor: pointer;
-  border-radius: 7px;
-  background-color: rgba(128, 128, 128, 0.119);
-}
-
 .contentMantenimientoCategorias{
-  width: 170px;
+  width: 100%;
   height: 30px;
 
   display: flex;
@@ -92,7 +83,7 @@
 }
 
 .contentMantenimientoSubCategorias {
-  width: 170px;
+  width: 100%;
   height: 30px;
 
   display: flex;
@@ -107,7 +98,7 @@
 }
 
 .contentMantenimientoTallas {
-  width: 170px;
+  width: 100%;
   height: 30px;
 
   display: flex;
@@ -122,7 +113,7 @@
 }
 
 .contentMantenimientoColor {
-  width: 170px;
+  width: 100%;
   height: 30px;
 
   display: flex;
@@ -137,12 +128,13 @@
 }
 
 .contentMantenimientoUsuario {
-  width: auto;
-  height: auto;
+  width: 100%;
+  height: 30px;
 
   display: flex;
   align-items: center;
   padding-left: 25px;
+  padding-right: 10px;
 }
 
 .contentMantenimientoUsuario:hover {
@@ -152,7 +144,7 @@
 }
 
 .contentMantenimientoMarcas {
-  width: 170px;
+  width: 100%;
   height: 30px;
 
   display: flex;
@@ -160,10 +152,10 @@
   padding-left: 25px;
 }
 
-.contentMantenimientoMarcas {
+.contentMantenimientoMarcas:hover {
   cursor: pointer;
   border-radius: 7px;
-  /* background-color: rgba(128, 128, 128, 0.119); */
+  background-color: rgba(128, 128, 128, 0.119);
 }
 
 .disabled {
