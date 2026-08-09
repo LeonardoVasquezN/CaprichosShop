@@ -174,6 +174,15 @@ export async function POST(req) {
 
 export async function GET(){
   try{
+
+    const prueba = await prisma.$queryRaw`
+      SELECT id, id_cliente
+      FROM ventas
+      WHERE id_cliente IS NULL
+    `;
+
+    console.log(" VENTAS CON NULL:", prueba);
+
     const ventas = await prisma.venta.findMany({
 
       orderBy:{
