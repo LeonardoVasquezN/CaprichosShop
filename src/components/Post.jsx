@@ -5,6 +5,8 @@ import Image from 'next/image';
 import Icognito from '../../public/images/icognito.png';
 import { useEffect, useRef, useState } from 'react';
 
+import { Trash2 } from 'lucide-react';
+
 export default function Post() {
   const contenedorRef = useRef(null);
   const contenedorProductosRef = useRef(null);
@@ -204,6 +206,12 @@ setCantidadSeleccionada(1);
     setProductos(nuevosProductos);
   };
 
+  const eliminarProducto = (index) => {
+    setProductos((productosActuales) =>
+      productosActuales.filter((_, productoIndex) => productoIndex !== index)
+    );
+  };
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -306,6 +314,15 @@ setCantidadSeleccionada(1);
       if (!respuesta.ok) {
         alert(data.detail || "Error");
         return;
+      }
+
+      const resVariantes = await fetch("/api/variantes", {
+        cache: "no-store"
+      });
+
+      if (resVariantes.ok) {
+        const variantesActualizadas = await resVariantes.json();
+        setVariantes(variantesActualizadas);
       }
 
       setVentaPreview({
@@ -561,83 +578,93 @@ setCantidadSeleccionada(1);
                             <option value="">Seleccione una talla</option>
 
                             {
-                                colorSeleccionado &&
-                                tallas
-                                .filter(t=>
-                                    variantes.some(v=>
-                                        v.productoId===productoSeleccionado.id &&
-                                        v.colorId===Number(colorSeleccionado) &&
-                                        v.tallaId===t.id
-                                    )
-                                )
-                                .map(talla=>(
-                                    <option
-                                        key={talla.id}
-                                        value={talla.id}
-                                    >
-                                        {talla.nombre}
-                                    </option>
-                                ))
+                              colorSeleccionado &&
+                              tallas
+                              .filter(t=>
+                                  variantes.some(v=>
+                                      v.productoId===productoSeleccionado.id &&
+                                      v.colorId===Number(colorSeleccionado) &&
+                                      v.tallaId===t.id
+                                  )
+                              )
+                              .map(talla=>(
+                                  <option
+                                      key={talla.id}
+                                      value={talla.id}
+                                  >
+                                      {talla.nombre}
+                                  </option>
+                              ))
                             }
-
                         </select>
                     </div>
 
                     {varianteSeleccionada && (
-    <>
-        {varianteSeleccionada.stock > 0 ? (
-            <>
-                <div className={Style.formGroup}>
-                    <label>
-                        Cantidad (Stock: {varianteSeleccionada.stock})
-                    </label>
+                    <>
+                      {varianteSeleccionada.stock > 0 ? (
+                        <>
+                            <div className={Style.formGroup}>
+                              <label>
+                                  Cantidad (Stock: {varianteSeleccionada.stock})
+                              </label>
 
-                    <input
-                        className={Style.inputCantidad}
-                        type="number"
-                        min="1"
-                        max={varianteSeleccionada.stock}
-                        value={cantidadSeleccionada}
-                        onChange={(e) =>
-                            setCantidadSeleccionada(
-                                Math.min(
-                                    Number(e.target.value),
-                                    varianteSeleccionada.stock
-                                )
-                            )
-                        }
-                    />
-                </div>
+                                <input
+                                  className={Style.inputCantidad}
+                                  type="number"
+                                  min="1"
+                                  max={varianteSeleccionada.stock}
+                                  value={cantidadSeleccionada}
+                                  onChange={(e) => {
+                                    const valor = e.target.value;
 
-                <button
-                    type="button"
-                    className={Style.btnAgregarProducto}
-                    onClick={agregarProductoFinal}
-                    disabled={
-                        cantidadSeleccionada < 1 ||
-                        cantidadSeleccionada > varianteSeleccionada.stock
-                    }
-                >
-                    Agregar producto
-                </button>
-            </>
-        ) : (
-            <>
-                <div className={Style.formGroup}>
-                    <span>Sin stock disponible</span>
-                </div>
+                                    if (valor === "") {
+                                      setCantidadSeleccionada("");
+                                      return;
+                                    }
 
-                <button
-                    type="button"
-                    className={Style.btnAgregarProducto}
-                    disabled
-                >
-                    Sin stock
-                </button>
-            </>
-        )}
-    </>
-)}
+                                    const cantidad = Number(valor);
+
+                                    if (cantidad < 1) {
+                                      setCantidadSeleccionada(1);
+                                      return;
+                                    }
+
+                                    setCantidadSeleccionada(
+                                      Math.min(cantidad, varianteSeleccionada.stock)
+                                    );
+                                  }}
+                                />
+                            </div>
+
+                            <button
+                                type="button"
+                                className={Style.btnAgregarProducto}
+                                onClick={agregarProductoFinal}
+                                disabled={
+                                    cantidadSeleccionada < 1 ||
+                                    cantidadSeleccionada > varianteSeleccionada.stock
+                                }
+                            >
+                                Agregar producto
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <div className={Style.formGroup}>
+                                <span>Sin stock disponible</span>
+                            </div>
+
+                            <button
+                                type="button"
+                                className={Style.btnAgregarProducto}
+                                disabled
+                            >
+                                Sin stock
+                            </button>
+                        </>
+                      )}
+                    </>
+                )}
                   </div>
                   )}
 
@@ -682,73 +709,84 @@ setCantidadSeleccionada(1);
                       <th>P. Unit.</th>
                       <th>Cant.</th>
                       <th>Importe</th>
+                      <th>Eliminar</th>
                     </tr>
                   </thead>
 
                   <tbody>
-                    {productos.length > 0 ? (
-                      productos.map((producto, index) => (
-                        <tr key={producto.id}>
-                          <td>
-                            <span className={Style.productNameTable}>
-                              {producto.nombre} - S/{' '}
-                              {formatMoney(producto.precio)}
-                            </span>
-                          </td>
+                  {productos.length > 0 ? (
+                    productos.map((producto, index) => (
+                      <tr key={producto.varianteId}>
+                        <td>
+                          <span className={Style.productNameTable}>
+                            {producto.nombre} - S/{' '}
+                            {formatMoney(producto.precio)}
+                          </span>
+                        </td>
 
-                          <td>
-                            <input
-                              className={Style.inputTabla}
-                              type="number"
-                              min="0"
-                              step="0.01"
-                              value={producto.precio}
-                              onChange={(event) =>
-                                handleChange(
-                                  index,
-                                  'precio',
-                                  event.target.value
-                                )
-                              }
-                            />
-                          </td>
+                        <td>
+                          <input
+                            className={Style.inputTabla}
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            value={producto.precio}
+                            onChange={(event) =>
+                              handleChange(
+                                index,
+                                'precio',
+                                event.target.value
+                              )
+                            }
+                          />
+                        </td>
 
-                          <td>
-                            <input
-                              className={Style.inputTabla}
-                              type="number"
-                              min="1"
-                              step="1"
-                              value={producto.cantidad}
-                              onChange={(event) =>
-                                handleChange(
-                                  index,
-                                  'cantidad',
-                                  event.target.value
-                                )
-                              }
-                            />
-                          </td>
+                        <td>
+                          <input
+                            className={Style.inputTabla}
+                            type="number"
+                            min="1"
+                            step="1"
+                            value={producto.cantidad}
+                            onChange={(event) =>
+                              handleChange(
+                                index,
+                                'cantidad',
+                                event.target.value
+                              )
+                            }
+                          />
+                        </td>
 
-                          <td>
-                            S/{' '}
-                            {formatMoney(
-                              producto.precio * producto.cantidad
-                            )}
-                          </td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td
-                          className={Style.emptyTable}
-                          colSpan={4}
-                        >
-                          Busca y agrega productos a la venta
+                        <td className={Style.importe}>
+                          S/{' '}
+                          {formatMoney(
+                            producto.precio * producto.cantidad
+                          )}
+                        </td>
+
+                        <td>
+                          <button
+                            type="button"
+                            onClick={() => eliminarProducto(index)}
+                            title="Eliminar producto"
+                          >
+                            <Trash2 size={20} />
+                          </button>
                         </td>
                       </tr>
-                    )}
-                  </tbody>
+                    ))
+                  ) : (
+                    <tr>
+                      <td
+                        className={Style.emptyTable}
+                        colSpan={5}
+                      >
+                        Busca y agrega productos a la venta
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
                 </table>
               </div>
 
