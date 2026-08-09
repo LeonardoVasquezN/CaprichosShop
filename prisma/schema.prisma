@@ -173,8 +173,8 @@ model Venta {
   total Decimal
   metodoDePago String @map("metodo_de_pago")
 
-  clienteId Int @map("id_cliente")
-  cliente Cliente @relation(fields: [clienteId], references: [id])
+  clienteId Int? @map("id_cliente")
+  cliente Cliente? @relation(fields: [clienteId], references: [id])
 
   detalleVentas DetalleVenta[]
 
