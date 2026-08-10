@@ -110,11 +110,11 @@ export default function FormProductos() {
           <tr>
             <th>Marca</th>
             <th>Nombre</th>
-            <th>Categoría</th>
-            <th>Subcategoría</th>
             <th>Precio Compra</th>
             <th>Precio Venta</th>
             <th>Stock Actual</th>
+            <th>Categoría</th>
+            <th>Subcategoría</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -131,11 +131,11 @@ export default function FormProductos() {
               <tr key={producto.id}>
                 <td>{producto.marca?.nombre}</td>
                 <td>{producto.nombre}</td>
-                <td>{producto.subCategoria?.categoria?.nombre}</td>
-                <td>{producto.subCategoria?.nombre}</td>
                 <td>S/ {producto.precioCompra}</td>
                 <td>S/ {producto.precioVenta}</td>
                 <td>{producto.stockTotal}</td>
+                <td>{producto.subCategoria?.categoria?.nombre}</td>
+                <td>{producto.subCategoria?.nombre}</td>
                 <td> 
                   <button
                     className={Style.botonEditar}

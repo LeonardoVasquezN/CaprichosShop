@@ -86,11 +86,11 @@ export default function FormExistencias() {
           <tr>
             <th>marca</th>
             <th>Nombre</th>
-            <th>Categoría</th>
-            <th>Subcategoría</th>
             <th>Color</th>
             <th>Talla</th>
             <th>Cantidad</th>
+            <th>Categoría</th>
+            <th>Subcategoría</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -100,18 +100,15 @@ export default function FormExistencias() {
             <tr key={existencia.id}>
               <td>{existencia.producto.marca?.nombre}</td>
               <td>{existencia.producto.nombre}</td>
-
-              <td>
-                {existencia.producto.subCategoria?.categoria?.nombre || "-"}
-              </td>
-
-              <td>
-                {existencia.producto.subCategoria?.nombre || "-"}
-              </td>
-            
               <td>{existencia.color.nombre}</td>
               <td>{existencia.talla.nombre}</td>
               <td>{existencia.stock}</td>
+              <td>
+                {existencia.producto.subCategoria?.categoria?.nombre || "-"}
+              </td>
+              <td>
+                {existencia.producto.subCategoria?.nombre || "-"}
+              </td>
 
               <td>
                 <button
