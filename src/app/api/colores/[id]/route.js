@@ -1,14 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verificarAdmin } from "@/lib/auth";
-
-function serializarBigInt(data) {
-  return JSON.parse(
-    JSON.stringify(data, (_, value) =>
-      typeof value === "bigint" ? Number(value) : value
-    )
-  );
-}
+import { serializeBigInt } from "@/lib/serialize";
 
 export async function GET(_req, { params }) {
   try {
@@ -34,7 +27,7 @@ export async function GET(_req, { params }) {
       );
     }
 
-    return NextResponse.json(serializarBigInt(color));
+    return NextResponse.json(serializeBigInt(color));
   } catch (error) {
     console.error("GET /api/colores/[id] error:", error);
 
@@ -106,7 +99,7 @@ export async function PUT(req, { params }) {
       },
     });
 
-    return NextResponse.json(serializarBigInt(color));
+    return NextResponse.json(serializeBigInt(color));
   } catch (error) {
     console.error("PUT /api/colores/[id] error:", error);
 

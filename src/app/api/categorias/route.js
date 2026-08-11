@@ -1,13 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-
-function serializarBigInt(data) {
-  return JSON.parse(
-    JSON.stringify(data, (_, value) =>
-      typeof value === "bigint" ? Number(value) : value
-    )
-  );
-}
+import { serializeBigInt } from "@/lib/serialize";
 
 export async function GET() {
   try {
@@ -18,7 +11,7 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json(serializarBigInt(categorias));
+    return NextResponse.json(serializeBigInt(categorias));
   } catch (error) {
     console.error("GET /api/categorias error:", error);
 
@@ -69,7 +62,7 @@ export async function POST(req) {
     return NextResponse.json(
       {
         mensaje: "Categoría guardada con éxito",
-        categoria: serializarBigInt(categoria),
+        categoria: serializeBigInt(categoria),
       },
       { status: 201 }
     );

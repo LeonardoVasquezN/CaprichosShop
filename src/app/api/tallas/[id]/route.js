@@ -1,14 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verificarAdmin } from "@/lib/auth";
-
-function serializarBigInt(data) {
-  return JSON.parse(
-    JSON.stringify(data, (_, value) =>
-      typeof value === "bigint" ? Number(value) : value
-    )
-  );
-}
+import { serializeBigInt } from "@/lib/serialize";
 
 export async function GET(req) {
   try {
