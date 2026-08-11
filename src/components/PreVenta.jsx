@@ -18,35 +18,78 @@ export default function PreVenta() {
   useEffect(() => {
     setIsClient(true);
 
-    fetch("/api/clientes").then((r) => r.json()).then(setClientes);
-    fetch("/api/productos").then((r) => r.json()).then(setProductos);
-    fetch("/api/tallas").then((r) => r.json()).then(setTallas);
-    fetch("/api/colores").then((r) => r.json()).then(setColores);
+    const cargarDatos = async () => {
+      try {
+        const obtenerJSON = async (url) => {
+          const res = await fetch(url);
 
-    fetch("/api/pre-ventas")
-      .then((r) => r.json())
-      .then((data) =>
+          const texto = await res.text();
+
+          if (!res.ok) {
+            console.error(`Error ${res.status} en ${url}:`, texto);
+            throw new Error(`Error ${res.status} en ${url}`);
+          }
+
+          if (!texto) {
+            throw new Error(`La API ${url} devolvió una respuesta vacía`);
+          }
+
+          try {
+            return JSON.parse(texto);
+          } catch (error) {
+            console.error(`Respuesta inválida de ${url}:`, texto);
+            throw new Error(`La API ${url} no devolvió JSON válido`);
+          }
+        };
+
+        const [
+          clientesData,
+          productosData,
+          tallasData,
+          coloresData,
+          preVentasData,
+          detallesData,
+        ] = await Promise.all([
+          obtenerJSON("/api/clientes"),
+          obtenerJSON("/api/productos"),
+          obtenerJSON("/api/tallas"),
+          obtenerJSON("/api/colores"),
+          obtenerJSON("/api/pre-ventas"),
+          obtenerJSON("/api/detalle-pre-ventas"),
+        ]);
+
+        setClientes(clientesData);
+        setProductos(productosData);
+        setTallas(tallasData);
+        setColores(coloresData);
+
         setDatosPreVenta(
-          data.sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
-        )
-      );
+          preVentasData.sort(
+            (a, b) => new Date(b.fecha) - new Date(a.fecha)
+          )
+        );
 
-    fetch("/api/detalle-pre-ventas")
-      .then((r) => r.json())
-      .then(setDatosDetallePreVenta);
+        setDatosDetallePreVenta(detallesData);
+      } catch (error) {
+        console.error("ERROR CARGANDO PRE-VENTAS:", error);
+        alert(error.message);
+      }
+    };
+
+    cargarDatos();
   }, []);
 
   const obtenerNombreProducto = (id) =>
-    productos.find((p) => p.id === id)?.nombre || "";
+  productos.find((p) => Number(p.id) === Number(id))?.nombre || "";
 
   const obtenerNombreTalla = (id) =>
-    tallas.find((t) => t.id === id)?.nombre || "";
+  tallas.find((t) => Number(t.id) === Number(id))?.nombre || "";
 
   const obtenerNombreColor = (id) =>
-    colores.find((c) => c.id === id)?.nombre || "";
+  colores.find((c) => Number(c.id) === Number(id))?.nombre || "";
 
   const showNameCliente = (id) =>
-    clientes.find((c) => c.id === id)?.nombre || "";
+  clientes.find((c) => Number(c.id) === Number(id))?.nombre || "";
 
   const formatearFecha = (fechaISO) =>
     new Date(fechaISO).toLocaleString("es-PE", {
