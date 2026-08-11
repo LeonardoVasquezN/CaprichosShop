@@ -3,282 +3,443 @@ generator client {
 }
 
 datasource db {
-  // provider = "mysql"
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Categoria {
-  id Int @id @default(autoincrement())
-  nombre String
-  estado Int?
-
+  id            BigInt         @id(map: "pk_categorias") @default(autoincrement())
+  nombre        String         @db.VarChar(255)
+  estado        Int            @db.SmallInt
+  created_at    DateTime       @default(now()) @db.Timestamp(6)
+  updated_at    DateTime       @default(now()) @db.Timestamp(6)
+  trial611      String?        @db.Char(1)
   subCategorias SubCategoria[]
 
   @@map("categorias")
 }
 
 model SubCategoria {
-  id Int @id @default(autoincrement())
-  nombre String
-  estado Int?
-  categoriaId Int @map("id_categorias")
-
-  categoria Categoria @relation(fields: [categoriaId], references: [id])
-  productos Producto[]
+  id          BigInt     @id(map: "pk_sub_categorias") @default(autoincrement())
+  categoriaId BigInt     @map("id_categorias")
+  nombre      String     @db.VarChar(255)
+  estado      Int        @db.SmallInt
+  created_at  DateTime   @default(now()) @db.Timestamp(6)
+  updated_at  DateTime   @default(now()) @db.Timestamp(6)
+  trial611    String?    @db.Char(1)
+  productos   Producto[]
+  categoria   Categoria  @relation(fields: [categoriaId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "sub_categorias_id_categorias_foreign")
 
   @@map("sub_categorias")
 }
 
 model Marca {
-  idMarca Int @id @default(autoincrement()) @map("id_marca")
-  nombre String
-  estado Int?
-
-  productos Producto[]
+  idMarca    BigInt     @id(map: "pk_marcas") @default(autoincrement()) @map("id_marca")
+  nombre     String     @db.VarChar(255)
+  estado     Int        @default(1) @db.SmallInt
+  created_at DateTime   @default(now()) @db.Timestamp(6)
+  updated_at DateTime   @default(now()) @db.Timestamp(6)
+  trial611   String?    @db.Char(1)
+  productos  Producto[]
 
   @@map("marcas")
 }
 
 model Color {
-  id Int @id @default(autoincrement())
-  nombre String
-  hexadecimal String
-  estado Int?
-
-  variantes Variante[]
+  id               BigInt            @id(map: "pk_color") @default(autoincrement())
+  nombre           String            @db.VarChar(255)
+  hexadecimal      String            @db.VarChar(255)
+  created_at       DateTime          @default(now()) @db.Timestamp(6)
+  updated_at       DateTime          @default(now()) @db.Timestamp(6)
+  estado           Int               @default(1) @db.SmallInt
+  trial611         String?           @db.Char(1)
   detallePreVentas DetallePreVenta[]
+  variantes        Variante[]
 
   @@map("color")
 }
 
 model Talla {
-  id Int @id @default(autoincrement())
-  nombre String
-  isActivo Boolean @map("isactivo")
-
-  variantes Variante[]
+  id               BigInt            @id(map: "pk_talla") @default(autoincrement())
+  nombre           String            @db.VarChar(255)
+  isActivo         Boolean           @default(true) @map("isactivo")
+  created_at       DateTime          @default(now()) @db.Timestamp(6)
+  updated_at       DateTime          @default(now()) @db.Timestamp(6)
+  trial611         String?           @db.Char(1)
   detallePreVentas DetallePreVenta[]
+  variantes        Variante[]
 
   @@map("talla")
 }
 
 model TipoDocumento {
-  id Int @id @default(autoincrement())
-  nombre String
-  isActivo Boolean @map("isActivo")
-
-  compras Compra[]
+  id         BigInt   @id(map: "pk_tipo_documento") @default(autoincrement())
+  nombre     String   @db.VarChar(255)
+  isactivo   Int      @default(1) @db.SmallInt
+  created_at DateTime @default(now()) @db.Timestamp(6)
+  updated_at DateTime @default(now()) @db.Timestamp(6)
+  trial615   String?  @db.Char(1)
+  compras    Compra[]
 
   @@map("tipo_documento")
 }
 
 model TipoMovimiento {
-  id Int @id @default(autoincrement())
-  nombre String
-  isActivo Boolean @map("isActivo")
-
+  id              BigInt           @id(map: "pk_tipo_movimiento") @default(autoincrement())
+  nombre          String           @db.VarChar(255)
+  isactivo        Int              @default(1) @db.SmallInt
+  created_at      DateTime         @default(now()) @db.Timestamp(6)
+  updated_at      DateTime         @default(now()) @db.Timestamp(6)
+  trial618        String?          @db.Char(1)
   movimientosCaja MovimientoCaja[]
 
   @@map("tipo_movimiento")
 }
 
 model Producto {
-  id Int @id @default(autoincrement())
-  nombre String
-  precioCompra Float @map("precio_compra")
-  precioVenta Float @map("precio_venta")
-  stockTotal Int @map("stock_total")
-  imagen String?
-
-  estado Boolean @default(true)
-
-  subCategoriaId Int @map("id_sub_categorias")
-  marcaId Int? @map("id_marca")
-
-  subCategoria SubCategoria @relation(fields: [subCategoriaId], references: [id])
-  marca Marca? @relation(fields: [marcaId], references: [idMarca])
-
-  variantes Variante[]
-  detalleCompras DetalleCompra[]
-  detalleVentas DetalleVenta[]
+  id               BigInt            @id(map: "pk_producto") @default(autoincrement())
+  subCategoriaId   BigInt            @map("id_sub_categorias")
+  marcaId          BigInt?           @map("id_marca")
+  nombre           String            @db.VarChar(255)
+  precioCompra     Decimal           @map("precio_compra") @db.Decimal(10, 2)
+  precioVenta      Decimal           @map("precio_venta") @db.Decimal(10, 2)
+  stockTotal       Int               @map("stock_total")
+  created_at       DateTime          @default(now()) @db.Timestamp(6)
+  updated_at       DateTime          @default(now()) @db.Timestamp(6)
+  imagen           String?           @db.VarChar(255)
+  trial611         String?           @db.Char(1)
+  estado           Boolean?          @default(true)
+  cambios          Cambio[]
+  detalleCompras   DetalleCompra[]
   detallePreVentas DetallePreVenta[]
-  cambios Cambio[]
+  detalleVentas    DetalleVenta[]
+  marca            Marca?            @relation(fields: [marcaId], references: [idMarca], onUpdate: Restrict, map: "producto_id_marca_foreign")
+  subCategoria     SubCategoria      @relation(fields: [subCategoriaId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "producto_id_sub_categorias_foreign")
+  variantes        Variante[]
 
   @@map("producto")
 }
 
 model Variante {
-  id Int @id @default(autoincrement())
-  stock Int
-
-  colorId Int @map("id_color")
-  tallaId Int @map("id_talla")
-  productoId Int @map("id_producto")
-
-  color Color @relation(fields: [colorId], references: [id])
-  talla Talla @relation(fields: [tallaId], references: [id])
-  producto Producto @relation(fields: [productoId], references: [id])
-
+  id            BigInt         @id(map: "pk_variante") @default(autoincrement())
+  colorId       BigInt         @map("id_color")
+  tallaId       BigInt         @map("id_talla")
+  stock         Int
+  productoId    BigInt         @map("id_producto")
+  created_at    DateTime       @default(now()) @db.Timestamp(6)
+  updated_at    DateTime       @default(now()) @db.Timestamp(6)
+  trial611      String?        @db.Char(1)
+  cambios       Cambio[]
   detalleVentas DetalleVenta[]
-  cambios Cambio[]
+  color         Color          @relation(fields: [colorId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "variante_id_color_foreign")
+  producto      Producto       @relation(fields: [productoId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "variante_id_producto_foreign")
+  talla         Talla          @relation(fields: [tallaId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "variante_id_talla_foreign")
 
   @@map("variante")
 }
 
 model Proveedor {
-  id Int @id @default(autoincrement())
-  razonSocial String @map("razon_social")
-  ruc String
-  direccion String
-  telefono String
-  provincia String
-  departamento String
-
-  compras Compra[]
+  id           BigInt   @id(map: "pk_proveedor") @default(autoincrement())
+  razonSocial  String   @map("razon_social") @db.VarChar(255)
+  ruc          String   @db.VarChar(255)
+  direccion    String   @db.VarChar(255)
+  telefono     String   @db.VarChar(255)
+  provincia    String   @db.VarChar(255)
+  departamento String   @db.VarChar(255)
+  created_at   DateTime @default(now()) @db.Timestamp(6)
+  updated_at   DateTime @default(now()) @db.Timestamp(6)
+  trial615     String?  @db.Char(1)
+  compras      Compra[]
 
   @@map("proveedor")
 }
 
 model Cliente {
-  id Int @id @default(autoincrement())
-  nombre String
-  documento String
-
-  ventas Venta[]
-  preVentas PreVenta[]
+  id         BigInt     @id(map: "pk_clientes") @default(autoincrement())
+  nombre     String     @db.VarChar(255)
+  documento  String     @unique(map: "clientes_documento_unique") @db.VarChar(255)
+  created_at DateTime   @default(now()) @db.Timestamp(6)
+  updated_at DateTime   @default(now()) @db.Timestamp(6)
+  trial615   String?    @db.Char(1)
+  preVentas  PreVenta[]
+  ventas     Venta[]
 
   @@map("clientes")
 }
 
 model Compra {
-  id Int @id @default(autoincrement())
-  total Float
-  fechaCompra DateTime @map("fecha_compra")
-
-  proveedorId Int @map("id_proveedor")
-  tipoDocumentoId Int @map("id_tipo_documento")
-
-  proveedor Proveedor @relation(fields: [proveedorId], references: [id])
-  tipoDocumento TipoDocumento @relation(fields: [tipoDocumentoId], references: [id])
-
-  detalleCompras DetalleCompra[]
+  id              BigInt          @id(map: "pk_compra") @default(autoincrement())
+  proveedorId     BigInt          @map("id_proveedor")
+  tipoDocumentoId BigInt          @map("id_tipo_documento")
+  total           Decimal         @db.Decimal(10, 2)
+  fechaCompra     DateTime        @map("fecha_compra") @db.Date
+  created_at      DateTime        @default(now()) @db.Timestamp(6)
+  updated_at      DateTime        @default(now()) @db.Timestamp(6)
+  trial615        String?         @db.Char(1)
+  proveedor       Proveedor       @relation(fields: [proveedorId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "compra_id_proveedor_foreign")
+  tipoDocumento   TipoDocumento   @relation(fields: [tipoDocumentoId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "compra_id_tipo_documento_foreign")
+  detalleCompras  DetalleCompra[]
 
   @@map("compra")
 }
 
 model Venta {
-  id Int @id @default(autoincrement())
-  fecha DateTime
-  total Decimal
-  metodoDePago String @map("metodo_de_pago")
+  id           BigInt   @id(map: "pk_ventas") @default(autoincrement())
+  clienteId    BigInt?  @map("id_cliente")
+  fecha        DateTime @db.Timestamp(6)
+  total        Decimal  @db.Decimal(10, 2)
+  created_at   DateTime @default(now()) @db.Timestamp(6)
+  updated_at   DateTime @default(now()) @db.Timestamp(6)
+  metodoDePago String?  @map("metodo_de_pago") @db.VarChar(255)
+  trial615     String?  @db.Char(1)
 
-  clienteId Int? @map("id_cliente")
-  cliente Cliente? @relation(fields: [clienteId], references: [id])
+  // Datos del comprobante electrónico
+  tipoComprobante String? @map("tipo_comprobante") @db.VarChar(2)
+  serie           String? @db.VarChar(4)
+  numero          BigInt?
+  estadoSunat     String? @map("estado_sunat") @db.VarChar(20)
+  hashSunat       String? @map("hash_sunat") @db.Text
+  xmlUrl          String? @map("xml_url") @db.Text
+  cdrUrl          String? @map("cdr_url") @db.Text
+  pdfUrl          String? @map("pdf_url") @db.Text
 
   detalleVentas DetalleVenta[]
+  cliente       Cliente?       @relation(fields: [clienteId], references: [id], onUpdate: Restrict, map: "ventas_id_cliente_foreign")
 
   @@map("ventas")
 }
 
 model PreVenta {
-  id Int @id @default(autoincrement())
-  total Decimal
-  estado Int       
-  fecha DateTime
-
-  clienteId Int @map("id_cliente")
-  cliente Cliente @relation(fields: [clienteId], references: [id])
-
+  id               BigInt            @id(map: "pk_pre_ventas") @default(autoincrement())
+  clienteId        BigInt?           @map("id_cliente")
+  total            Decimal           @db.Decimal(8, 2)
+  estado           Int               @default(0) @db.SmallInt
+  fecha            DateTime          @db.Timestamp(6)
+  created_at       DateTime          @default(now()) @db.Timestamp(6)
+  updated_at       DateTime          @default(now()) @db.Timestamp(6)
+  trial615         String?           @db.Char(1)
   detallePreVentas DetallePreVenta[]
+  cliente          Cliente?          @relation(fields: [clienteId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "pre_ventas_id_cliente_foreign")
 
   @@map("pre_ventas")
 }
 
 model MovimientoCaja {
-  id Int @id @default(autoincrement())
-  descripcion String
-  motivo String
-
-  tipoMovimientoId Int @map("id_tipo_movimiento")
-  tipoMovimiento TipoMovimiento @relation(fields: [tipoMovimientoId], references: [id])
+  id               BigInt         @id(map: "pk_movimiento_caja") @default(autoincrement())
+  tipoMovimientoId BigInt         @map("id_tipo_movimiento")
+  descripcion      String         @db.VarChar(255)
+  motivo           String         @db.VarChar(255)
+  created_at       DateTime       @default(now()) @db.Timestamp(6)
+  updated_at       DateTime       @default(now()) @db.Timestamp(6)
+  trial618         String?        @db.Char(1)
+  tipoMovimiento   TipoMovimiento @relation(fields: [tipoMovimientoId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "movimiento_caja_id_tipo_movimiento_foreign")
 
   @@map("movimiento_caja")
 }
 
-
 model DetalleCompra {
-  id Int @id @default(autoincrement())
-  cantidad Int
-  precioCompra Float @map("precio_compra")
-
-  productoId Int @map("id_producto")
-  compraId Int @map("id_compra")
-
-  producto Producto @relation(fields: [productoId], references: [id])
-  compra Compra @relation(fields: [compraId], references: [id])
+  id           BigInt   @id(map: "pk_detalle_compra") @default(autoincrement())
+  productoId   BigInt   @map("id_producto")
+  compraId     BigInt   @map("id_compra")
+  cantidad     Int
+  precioCompra Decimal  @map("precio_compra") @db.Decimal(10, 2)
+  created_at   DateTime @default(now()) @db.Timestamp(6)
+  updated_at   DateTime @default(now()) @db.Timestamp(6)
+  trial615     String?  @db.Char(1)
+  compra       Compra   @relation(fields: [compraId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "detalle_compra_id_compra_foreign")
+  producto     Producto @relation(fields: [productoId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "detalle_compra_id_producto_foreign")
 
   @@map("detalle_compra")
 }
 
 model DetalleVenta {
-  id Int @id @default(autoincrement())
-  cantidad Int
-
-  precioUnitario Decimal @map("precio_unitario")
-  total Decimal
-
-  productoId Int @map("id_producto")
-  ventaId Int @map("id_venta")
-  varianteId Int? @map("id_variante")
-
-  producto Producto @relation(fields: [productoId], references: [id])
-  venta Venta @relation(fields: [ventaId], references: [id])
-  variante Variante? @relation(fields: [varianteId], references: [id])
+  id             BigInt    @id(map: "pk_detalle_venta") @default(autoincrement())
+  productoId     BigInt    @map("id_producto")
+  cantidad       Int
+  ventaId        BigInt    @map("id_venta")
+  varianteId     BigInt?   @map("id_variante")
+  precioUnitario Decimal   @map("precio_unitario") @db.Decimal(10, 2)
+  total          Decimal   @db.Decimal(10, 2)
+  created_at     DateTime  @default(now()) @db.Timestamp(6)
+  updated_at     DateTime  @default(now()) @db.Timestamp(6)
+  trial615       String?   @db.Char(1)
+  producto       Producto  @relation(fields: [productoId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "detalle_venta_id_producto_foreign")
+  variante       Variante? @relation(fields: [varianteId], references: [id], onUpdate: Restrict, map: "detalle_venta_id_variante_foreign")
+  venta          Venta     @relation(fields: [ventaId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "detalle_venta_id_venta_foreign")
 
   @@map("detalle_venta")
 }
+
 model DetallePreVenta {
-  id Int @id @default(autoincrement())
-  cantidad Int
-
-  precioUnitario Decimal @map("precio_unitario")
-  subTotal Decimal @map("sub_total")
-
-  preVentaId Int @map("pre_venta_id")
-  productoId Int @map("producto_id")
-  tallaId Int @map("talla_id")
-  colorId Int @map("color_id")
-
-  preVenta PreVenta @relation(fields: [preVentaId], references: [id])
-  producto Producto @relation(fields: [productoId], references: [id])
-  talla Talla @relation(fields: [tallaId], references: [id])
-  color Color @relation(fields: [colorId], references: [id])
+  id             BigInt   @id(map: "pk_detalle_pre_ventas") @default(autoincrement())
+  preVentaId     BigInt   @map("pre_venta_id")
+  cantidad       Int
+  precioUnitario Decimal  @map("precio_unitario") @db.Decimal(8, 2)
+  subTotal       Decimal  @map("sub_total") @db.Decimal(8, 2)
+  created_at     DateTime @default(now()) @db.Timestamp(6)
+  updated_at     DateTime @default(now()) @db.Timestamp(6)
+  productoId     BigInt   @map("producto_id")
+  tallaId        BigInt   @map("talla_id")
+  colorId        BigInt   @map("color_id")
+  trial615       String?  @db.Char(1)
+  color          Color    @relation(fields: [colorId], references: [id], onUpdate: Restrict, map: "detalle_pre_ventas_color_id_foreign")
+  preVenta       PreVenta @relation(fields: [preVentaId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "detalle_pre_ventas_pre_venta_id_foreign")
+  producto       Producto @relation(fields: [productoId], references: [id], onUpdate: Restrict, map: "detalle_pre_ventas_producto_id_foreign")
+  talla          Talla    @relation(fields: [tallaId], references: [id], onUpdate: Restrict, map: "detalle_pre_ventas_talla_id_foreign")
 
   @@map("detalle_pre_ventas")
 }
 
 model Cambio {
-  id Int @id @default(autoincrement())
-  cantidad Int
-  observacion String?
-  tipo String
-  fecha DateTime
-
-  productoId Int @map("id_producto")
-  varianteId Int @map("id_variante")
-
-  producto Producto @relation(fields: [productoId], references: [id])
-  variante Variante @relation(fields: [varianteId], references: [id])
+  id          BigInt   @id(map: "pk_cambios") @default(autoincrement())
+  productoId  BigInt   @map("id_producto")
+  cantidad    Int
+  observacion String?  @db.VarChar(255)
+  tipo        String   @db.VarChar(7)
+  fecha       DateTime @db.Date
+  varianteId  BigInt   @map("id_variante")
+  created_at  DateTime @default(now()) @db.Timestamp(6)
+  updated_at  DateTime @default(now()) @db.Timestamp(6)
+  trial611    String?  @db.Char(1)
+  producto    Producto @relation(fields: [productoId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "cambios_id_producto_foreign")
+  variante    Variante @relation(fields: [varianteId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "cambios_id_variante_foreign")
 
   @@map("cambios")
 }
 
 model Usuario {
-  id     Int    @id @default(autoincrement())
-  nombre String @unique
-  cargo  String
-  clave  String
+  id         BigInt   @id(map: "pk_usuario") @default(autoincrement())
+  nombre     String   @unique(map: "usuario_nombre_unique") @db.VarChar(255)
+  cargo      String   @db.VarChar(255)
+  clave      String   @db.VarChar(255)
+  created_at DateTime @default(now()) @db.Timestamp(6)
+  updated_at DateTime @default(now()) @db.Timestamp(6)
+  trial621   String?  @db.Char(1)
 
   @@map("usuario")
+}
+
+model cache {
+  key        String  @id(map: "pk_cache") @db.VarChar(255)
+  value      String
+  expiration Int
+  trial608   String? @db.Char(1)
+}
+
+model cache_locks {
+  key        String  @id(map: "pk_cache_locks") @db.VarChar(255)
+  owner      String  @db.VarChar(255)
+  expiration Int
+  trial611   String? @db.Char(1)
+}
+
+model failed_jobs {
+  id         BigInt   @id(map: "pk_failed_jobs") @default(autoincrement())
+  uuid       String   @unique(map: "failed_jobs_uuid_unique") @db.VarChar(255)
+  connection String
+  queue      String
+  payload    String
+  exception  String
+  failed_at  DateTime @default(now()) @db.Timestamp(6)
+  trial618   String?  @db.Char(1)
+}
+
+model job_batches {
+  id             String  @id(map: "pk_job_batches") @db.VarChar(255)
+  name           String  @db.VarChar(255)
+  total_jobs     Int
+  pending_jobs   Int
+  failed_jobs    Int
+  failed_job_ids String
+  options        String?
+  cancelled_at   Int?
+  created_at     Int
+  finished_at    Int?
+  trial618       String? @db.Char(1)
+}
+
+model jobs {
+  id           BigInt  @id(map: "pk_jobs") @default(autoincrement())
+  queue        String  @db.VarChar(255)
+  payload      String
+  attempts     Int     @db.SmallInt
+  reserved_at  BigInt?
+  available_at BigInt
+  created_at   BigInt
+  trial618     String? @db.Char(1)
+
+  @@index([queue], map: "jobs_queue_index")
+}
+
+model migrations {
+  id        Int     @id(map: "pk_migrations") @default(autoincrement())
+  migration String  @db.VarChar(255)
+  batch     Int
+  trial618  String? @db.Char(1)
+}
+
+model password_reset_tokens {
+  email      String    @id(map: "pk_password_reset_tokens") @db.VarChar(255)
+  token      String    @db.VarChar(255)
+  created_at DateTime? @db.Timestamp(6)
+  trial618   String?   @db.Char(1)
+}
+
+model personal_access_tokens {
+  id             BigInt    @id(map: "pk_personal_access_tokens") @default(autoincrement())
+  tokenable_type String    @db.VarChar(255)
+  tokenable_id   BigInt
+  name           String    @db.VarChar(255)
+  token          String    @unique(map: "personal_access_tokens_token_unique") @db.VarChar(64)
+  abilities      String?
+  last_used_at   DateTime? @db.Timestamp(6)
+  expires_at     DateTime? @db.Timestamp(6)
+  created_at     DateTime  @default(now()) @db.Timestamp(6)
+  updated_at     DateTime  @default(now()) @db.Timestamp(6)
+  trial618       String?   @db.Char(1)
+
+  @@index([tokenable_type, tokenable_id], map: "personal_access_tokens_tokenable_type_tokenable_id_index")
+}
+
+model sessions {
+  id            String  @id(map: "pk_sessions") @db.VarChar(255)
+  user_id       BigInt?
+  ip_address    String? @db.VarChar(45)
+  user_agent    String?
+  payload       String
+  last_activity Int
+  trial621      String? @db.Char(1)
+
+  @@index([last_activity], map: "sessions_last_activity_index")
+  @@index([user_id], map: "sessions_user_id_index")
+}
+
+model tipo_doc_identidad {
+  id         BigInt   @id(map: "pk_tipo_doc_identidad") @default(autoincrement())
+  nombre     String   @db.VarChar(255)
+  isactivo   Int      @default(1) @db.SmallInt
+  created_at DateTime @default(now()) @db.Timestamp(6)
+  updated_at DateTime @default(now()) @db.Timestamp(6)
+  trial615   String?  @db.Char(1)
+}
+
+model tipo_pago {
+  id         BigInt   @id(map: "pk_tipo_pago") @default(autoincrement())
+  nombre     String   @db.VarChar(255)
+  created_at DateTime @default(now()) @db.Timestamp(6)
+  updated_at DateTime @default(now()) @db.Timestamp(6)
+  trial615   String?  @db.Char(1)
+}
+
+model users {
+  id                BigInt    @id(map: "pk_users") @default(autoincrement())
+  name              String    @db.VarChar(255)
+  email             String    @unique(map: "users_email_unique") @db.VarChar(255)
+  email_verified_at DateTime? @db.Timestamp(6)
+  password          String    @db.VarChar(255)
+  remember_token    String?   @db.VarChar(100)
+  created_at        DateTime  @default(now()) @db.Timestamp(6)
+  updated_at        DateTime  @default(now()) @db.Timestamp(6)
+  trial621          String?   @db.Char(1)
 }
