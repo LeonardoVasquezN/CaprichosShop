@@ -6,7 +6,7 @@ export async function GET() {
   try {
     const tallas = await prisma.talla.findMany();
 
-    return NextResponse.json(serializarBigInt(tallas));
+    return NextResponse.json(serializeBigInt(tallas));
   } catch (error) {
     console.error("GET /api/tallas error:", error);
 
@@ -54,7 +54,7 @@ export async function POST(req) {
     return NextResponse.json(
       {
         mensaje: "Talla guardada con éxito",
-        talla: serializarBigInt(talla),
+        talla: serializeBigInt(talla),
       },
       { status: 201 }
     );
