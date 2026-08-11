@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import { serializeBigInt } from "@/lib/serialize";
 
 export async function POST(req) {
   try {
@@ -51,7 +52,7 @@ export async function POST(req) {
 
     const token = jwt.sign(
       {
-        id: usuario.id,
+        id: Number(usuario.id),
         nombre: usuario.nombre,
         cargo: usuario.cargo,
       },
@@ -59,12 +60,12 @@ export async function POST(req) {
       {
         expiresIn: "8h",
       }
-    )
+    );
 
     const response = NextResponse.json(
       {
         message: "Login Exitoso",
-        usuario: usuarioSeguro,
+        usuario: serializeBigInt(usuarioSeguro),
       },
       {
         status: 200,

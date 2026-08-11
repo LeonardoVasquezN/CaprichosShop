@@ -1,16 +1,9 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { serializeBigInt } from "@/lib/serialize";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
-
-// Convierte BigInt a Number para poder enviarlo como JSON
-const serializeBigInt = (data) =>
-  JSON.parse(
-    JSON.stringify(data, (_, value) =>
-      typeof value === "bigint" ? Number(value) : value
-    )
-  );
 
 // POST: crear pre-venta
 export async function POST(req) {

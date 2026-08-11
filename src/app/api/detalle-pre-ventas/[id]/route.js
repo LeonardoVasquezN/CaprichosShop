@@ -1,16 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { serializeBigInt } from "@/lib/serialize";
 
 export const dynamic = "force-dynamic";
-
-const serializeBigInt = (data) =>
-  JSON.parse(
-    JSON.stringify(data, (_, value) =>
-      typeof value === "bigint"
-        ? Number(value)
-        : value
-    )
-  );
 
 export async function GET(_req, { params }) {
   try {
