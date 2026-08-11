@@ -2,34 +2,49 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verificarAdmin } from "@/lib/auth";
 
-export async function GET(_req, context) {
-  const params = await context.params; 
-  const id = Number(params.id);
-
-  if (isNaN(id)) {
-    return NextResponse.json(
-      { mensaje: "ID inválido" },
-      { status: 400 }
-    );
-  }
-
-  const categoria = await prisma.categoria.findUnique({
-    where: { id: id }, 
-  });
-
-  if (!categoria) {
-    return NextResponse.json(
-      { mensaje: "Categoría no encontrada" },
-      { status: 404 }
-    );
-  }
-
-  return NextResponse.json(categoria);
+function serializarBigInt(data) {
+  return JSON.parse(
+    JSON.stringify(data, (_, value) =>
+      typeof value === "bigint" ? Number(value) : value
+    )
+  );
 }
 
+export async function GET(_req, context) {
+  try {
+    const params = await context.params;
+    const id = Number(params.id);
+
+    if (isNaN(id)) {
+      return NextResponse.json(
+        { mensaje: "ID inválido" },
+        { status: 400 }
+      );
+    }
+
+    const categoria = await prisma.categoria.findUnique({
+      where: { id },
+    });
+
+    if (!categoria) {
+      return NextResponse.json(
+        { mensaje: "Categoría no encontrada" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(serializarBigInt(categoria));
+  } catch (error) {
+    console.error("GET /api/categorias/[id] error:", error);
+
+    return NextResponse.json(
+      { mensaje: "Error al obtener categoría" },
+      { status: 500 }
+    );
+  }
+}
 
 export async function PUT(req, context) {
-
   const usuario = await verificarAdmin();
 
   if (!usuario) {
@@ -40,7 +55,6 @@ export async function PUT(req, context) {
   }
 
   try {
-
     const params = await context.params;
     const id = Number(params.id);
 
@@ -80,7 +94,7 @@ export async function PUT(req, context) {
           mode: "insensitive",
         },
         NOT: {
-          id: id,
+          id,
         },
       },
     });
@@ -101,11 +115,9 @@ export async function PUT(req, context) {
 
     return NextResponse.json({
       mensaje: "Categoría actualizada con éxito",
-      categoria: categoriaActualizada,
+      categoria: serializarBigInt(categoriaActualizada),
     });
-
   } catch (error) {
-
     console.error("PUT /api/categorias/[id] error:", error);
 
     return NextResponse.json(

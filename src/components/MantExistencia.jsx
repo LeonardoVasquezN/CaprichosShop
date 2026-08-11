@@ -43,40 +43,55 @@ export default function MantExistencia({id}) {
   }, []);
 
   useEffect(() => {
-    if (!productoIdDesdeURL || productos.length === 0 || subCategorias.length === 0) {
+    if (
+      !productoIdDesdeURL ||
+      productos.length === 0 ||
+      subCategorias.length === 0
+    ) {
       return;
     }
 
+    const productoId = Number(productoIdDesdeURL);
+
     const producto = productos.find(
-      p => p.id === Number(productoIdDesdeURL)
+      p => Number(p.id) === productoId
     );
 
-    if (!producto) return;
+    if (!producto) {
+      console.log("No se encontró el producto:", productoId);
+      return;
+    }
 
     const subCategoria = subCategorias.find(
-      sc => sc.id === producto.subCategoriaId
+      sc => Number(sc.id) === Number(producto.subCategoriaId)
     );
 
-    if (!subCategoria) return;
+    if (!subCategoria) {
+      console.log(
+        "No se encontró la subcategoría:",
+        producto.subCategoriaId
+      );
+      return;
+    }
 
-    const categoriaId = subCategoria.categoriaId;
+    const categoriaId = Number(subCategoria.categoriaId);
+    const subCategoriaId = Number(subCategoria.id);
 
-    setIdCategoria(categoriaId);
-    setIdSubCategoria(subCategoria.id);
-    setIdProducto(producto.id);
+    setIdCategoria(String(categoriaId));
+    setIdSubCategoria(String(subCategoriaId));
+    setIdProducto(String(productoId));
 
     setSubCategoriasFiltradas(
       subCategorias.filter(
-        sc => sc.categoriaId === categoriaId
+        sc => Number(sc.categoriaId) === categoriaId
       )
     );
 
     setProductosFiltrados(
       productos.filter(
-        p => p.subCategoriaId === subCategoria.id
+        p => Number(p.subCategoriaId) === subCategoriaId
       )
     );
-
   }, [productoIdDesdeURL, productos, subCategorias]);
 
   useEffect(() => {

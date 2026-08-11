@@ -33,9 +33,16 @@ export async function GET(req, context) {
       );
     }
 
-    return NextResponse.json(marca);
+    const marcaJSON = JSON.parse(
+      JSON.stringify(marca, (_, value) =>
+        typeof value === "bigint" ? Number(value) : value
+      )
+    );
+
+    return NextResponse.json(marcaJSON);
   } catch (error) {
     console.error("GET /api/marcas/[id] error:", error);
+
     return NextResponse.json(
       { mensaje: "Error al cargar marca" },
       { status: 500 }
@@ -45,7 +52,6 @@ export async function GET(req, context) {
 
 export async function PUT(req, context) {
   try {
-
     const usuario = await verificarAdmin();
 
     if (!usuario) {
@@ -98,15 +104,21 @@ export async function PUT(req, context) {
     const marcaActualizada = await prisma.marca.update({
       where: { idMarca },
       data: {
-        nombre: body.nombre,
+        nombre: nombreLimpio,
         estado: body.estado,
       },
     });
 
-    return NextResponse.json(marcaActualizada);
+    const marcaJSON = JSON.parse(
+      JSON.stringify(marcaActualizada, (_, value) =>
+        typeof value === "bigint" ? Number(value) : value
+      )
+    );
+
+    return NextResponse.json(marcaJSON);
   } catch (error) {
     console.error("PUT /api/marcas/[id] error:", error);
-    
+
     return NextResponse.json(
       { mensaje: "Error al actualizar marca" },
       { status: 500 }

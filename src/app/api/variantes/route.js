@@ -1,6 +1,13 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+const serializeBigInt = (data) =>
+  JSON.parse(
+    JSON.stringify(data, (_, value) =>
+      typeof value === "bigint" ? Number(value) : value
+    )
+  );
+
 export async function GET() {
   const variantes = await prisma.variante.findMany({
     include: {
@@ -17,7 +24,7 @@ export async function GET() {
     },
   });
 
-  return NextResponse.json(variantes);
+  return NextResponse.json(serializeBigInt(variantes));
 }
 
 export async function POST(req) {
@@ -64,10 +71,12 @@ export async function POST(req) {
 
     await actualizarStockProducto(id_producto);
 
-    return NextResponse.json({
-      mensaje: "Variante existente. Stock actualizado.",
-      variante_actualizada: varianteActualizada,
-    });
+    return NextResponse.json(
+      serializeBigInt({
+        mensaje: "Variante existente. Stock actualizado.",
+        variante_actualizada: varianteActualizada,
+      })
+    );
   }
 
   const nuevaVariante = await prisma.variante.create({
@@ -82,10 +91,10 @@ export async function POST(req) {
   await actualizarStockProducto(id_producto);
 
   return NextResponse.json(
-    {
+    serializeBigInt({
       mensaje: "Variante nueva guardada con éxito.",
       existencias: nuevaVariante,
-    },
+    }),
     { status: 201 }
   );
 }

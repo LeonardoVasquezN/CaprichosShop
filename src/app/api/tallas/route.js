@@ -1,11 +1,22 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+function serializarBigInt(data) {
+  return JSON.parse(
+    JSON.stringify(data, (_, value) =>
+      typeof value === "bigint" ? Number(value) : value
+    )
+  );
+}
+
 export async function GET() {
   try {
     const tallas = await prisma.talla.findMany();
-    return NextResponse.json(tallas);
+
+    return NextResponse.json(serializarBigInt(tallas));
   } catch (error) {
+    console.error("GET /api/tallas error:", error);
+
     return NextResponse.json(
       { mensaje: "Error al obtener tallas" },
       { status: 500 }
@@ -50,11 +61,13 @@ export async function POST(req) {
     return NextResponse.json(
       {
         mensaje: "Talla guardada con éxito",
-        talla,
+        talla: serializarBigInt(talla),
       },
       { status: 201 }
     );
   } catch (error) {
+    console.error("POST /api/tallas error:", error);
+
     return NextResponse.json(
       { mensaje: "Error al guardar talla" },
       { status: 500 }

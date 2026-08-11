@@ -1,6 +1,13 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+function serializarBigInt(data) {
+  return JSON.parse(
+    JSON.stringify(data, (_, value) =>
+      typeof value === "bigint" ? Number(value) : value
+    )
+  );
+}
 
 export async function GET() {
   try {
@@ -11,15 +18,16 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json(categorias);
+    return NextResponse.json(serializarBigInt(categorias));
   } catch (error) {
+    console.error("GET /api/categorias error:", error);
+
     return NextResponse.json(
       { mensaje: "Error al obtener categorías" },
       { status: 500 }
     );
   }
 }
-
 
 export async function POST(req) {
   try {
@@ -61,11 +69,10 @@ export async function POST(req) {
     return NextResponse.json(
       {
         mensaje: "Categoría guardada con éxito",
-        categoria,
+        categoria: serializarBigInt(categoria),
       },
       { status: 201 }
     );
-
   } catch (error) {
     console.error("POST /api/categorias error:", error);
 

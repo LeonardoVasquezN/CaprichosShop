@@ -2,26 +2,48 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verificarAdmin } from "@/lib/auth";
 
-export async function GET(_req, { params }) {
-  const id = Number(params.id);
-
-  const variante = await prisma.variante.findUnique({
-    where: { id },
-    include: {
-      producto: {
-        include: {
-          marca: true,
-          subCategoria: {
-            include: { categoria: true },
+export async function GET() {
+  try {
+    const variantes = await prisma.variante.findMany({
+      include: {
+        producto: {
+          include: {
+            marca: true,
+            subCategoria: {
+              include: {
+                categoria: true,
+              },
+            },
           },
         },
+        talla: true,
+        color: true,
       },
-      talla: true,
-      color: true,
-    },
-  });
+    });
 
-  return NextResponse.json(variante);
+    const variantesJSON = JSON.parse(
+      JSON.stringify(variantes, (_, value) =>
+        typeof value === "bigint"
+          ? Number(value)
+          : value
+      )
+    );
+
+    return NextResponse.json(variantesJSON);
+
+  } catch (error) {
+    console.error("ERROR GET VARIANTES:", error);
+
+    return NextResponse.json(
+      {
+        error: "Error al obtener variantes",
+        detail: error.message,
+      },
+      {
+        status: 500,
+      }
+    );
+  }
 }
 
 export async function PUT(req, { params }) {
@@ -61,7 +83,11 @@ export async function PUT(req, { params }) {
 
   return NextResponse.json({
     mensaje: "Variante actualizada correctamente",
-    variante
+    variante: JSON.parse(
+      JSON.stringify(variante, (_, value) =>
+        typeof value === "bigint" ? Number(value) : value
+      )
+    )
   });
 }
 

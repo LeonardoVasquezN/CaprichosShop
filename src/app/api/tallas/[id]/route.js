@@ -2,9 +2,19 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verificarAdmin } from "@/lib/auth";
 
+function serializarBigInt(data) {
+  return JSON.parse(
+    JSON.stringify(data, (_, value) =>
+      typeof value === "bigint" ? Number(value) : value
+    )
+  );
+}
+
 export async function GET(req) {
   try {
-    const id = Number(req.nextUrl.pathname.split("/").pop());
+    const id = Number(
+      req.nextUrl.pathname.split("/").pop()
+    );
 
     if (!id || isNaN(id)) {
       return NextResponse.json(
@@ -24,8 +34,10 @@ export async function GET(req) {
       );
     }
 
-    return NextResponse.json(talla);
+    return NextResponse.json(serializarBigInt(talla));
   } catch (error) {
+    console.error("GET /api/tallas/[id] error:", error);
+
     return NextResponse.json(
       { mensaje: "Error interno" },
       { status: 500 }
@@ -44,7 +56,9 @@ export async function PUT(req) {
       );
     }
 
-    const id = Number(req.nextUrl.pathname.split("/").pop());
+    const id = Number(
+      req.nextUrl.pathname.split("/").pop()
+    );
 
     if (!id || isNaN(id)) {
       return NextResponse.json(
@@ -63,7 +77,7 @@ export async function PUT(req) {
         { status: 422 }
       );
     }
-    
+
     const tallaExistente = await prisma.talla.findFirst({
       where: {
         nombre: nombreLimpio,
@@ -93,7 +107,7 @@ export async function PUT(req) {
 
     return NextResponse.json({
       mensaje: "Talla actualizada con éxito",
-      talla: tallaActualizada,
+      talla: serializarBigInt(tallaActualizada),
     });
   } catch (error) {
     console.error("Error al actualizar talla:", error);
