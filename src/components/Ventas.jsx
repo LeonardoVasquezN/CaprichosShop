@@ -32,8 +32,8 @@ export default function Ventas({
     setFechaFin(hoy);
   }, []);
 
-  const obtenerNombreProducto = id =>
-    productos.find(p => p.id === id)?.nombre || "";
+  const obtenerNombreProducto = (id) =>
+    productos.find(p => Number(p.id) === Number(id))?.nombre || "";
 
   const obtenerPrecioCompra = id =>
     productos.find(p => p.id === id)?.precioCompra || 0;

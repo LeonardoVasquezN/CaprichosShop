@@ -1,6 +1,13 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+const serializeBigInt = (data) =>
+  JSON.parse(
+    JSON.stringify(data, (_, value) =>
+      typeof value === "bigint" ? Number(value) : value
+    )
+  );
+
 export async function POST(req) {
   try {
     const {
@@ -8,6 +15,7 @@ export async function POST(req) {
       total,
       metodo_de_pago,
       id_cliente,
+      tipoComprobante,
       detalles,
       preVentaId,
     } = await req.json();
@@ -27,7 +35,6 @@ export async function POST(req) {
     }
 
     const resultado = await prisma.$transaction(async (tx) => {
-
       const venta = await tx.venta.create({
         data: {
           fecha: new Date(fecha),
@@ -40,24 +47,18 @@ export async function POST(req) {
       const productosAActualizar = new Set();
 
       for (const d of detalles) {
-
         const productoId = Number(d.productoId);
         const cantidad = Number(d.cantidad);
 
         let variante;
 
         if (d.varianteId) {
-
           variante = await tx.variante.findUnique({
             where: {
               id: Number(d.varianteId),
             },
           });
-
-        }
-
-        else {
-
+        } else {
           variante = await tx.variante.findFirst({
             where: {
               productoId,
@@ -65,7 +66,6 @@ export async function POST(req) {
               tallaId: Number(d.tallaId),
             },
           });
-
         }
 
         if (!variante) {
@@ -98,9 +98,7 @@ export async function POST(req) {
             varianteId: variante.id,
             cantidad,
             precioUnitario: Number(d.precioUnitario),
-            total: Number(
-              d.subTotal ?? d.total
-            ),
+            total: Number(d.subTotal ?? d.total),
           },
         });
 
@@ -108,7 +106,6 @@ export async function POST(req) {
       }
 
       for (const productoId of productosAActualizar) {
-
         const totalStock = await tx.variante.aggregate({
           where: {
             productoId,
@@ -132,7 +129,6 @@ export async function POST(req) {
     });
 
     if (preVentaId) {
-
       await prisma.detallePreVenta.deleteMany({
         where: {
           preVentaId: Number(preVentaId),
@@ -149,7 +145,7 @@ export async function POST(req) {
     return NextResponse.json(
       {
         message: "Venta registrada correctamente y stock actualizado",
-        ventaId: resultado.id,
+        ventaId: Number(resultado.id),
       },
       {
         status: 201,
@@ -157,7 +153,6 @@ export async function POST(req) {
     );
 
   } catch (error) {
-
     console.error("ERROR POST VENTA:", error);
 
     return NextResponse.json(
@@ -172,51 +167,53 @@ export async function POST(req) {
   }
 }
 
-export async function GET(){
-  try{
-
+export async function GET() {
+  try {
     const prueba = await prisma.$queryRaw`
       SELECT id, id_cliente
       FROM ventas
       WHERE id_cliente IS NULL
     `;
 
-    console.log(" VENTAS CON NULL:", prueba);
+    console.log("VENTAS CON NULL:", serializeBigInt(prueba));
 
     const ventas = await prisma.venta.findMany({
-
-      orderBy:{
-        id:"desc",
+      orderBy: {
+        id: "desc",
       },
 
-      include:{
-        cliente:true,
-        detalleVentas:{
-          include:{
-            producto:true,
-            variante:{
-              include:{
-                color:true,
-                talla:true,
+      include: {
+        cliente: true,
+
+        detalleVentas: {
+          include: {
+            producto: true,
+
+            variante: {
+              include: {
+                color: true,
+                talla: true,
               },
             },
           },
         },
       },
     });
-    return NextResponse.json(ventas);
-  }catch(error){
-    console.error(
-      "ERROR GET VENTAS:",
-      error
+
+    return NextResponse.json(
+      serializeBigInt(ventas)
     );
+
+  } catch (error) {
+    console.error("ERROR GET VENTAS:", error);
+
     return NextResponse.json(
       {
-        error:"Error al obtener ventas",
-        detail:error.message,
+        error: "Error al obtener ventas",
+        detail: error.message,
       },
       {
-        status:500,
+        status: 500,
       }
     );
   }
