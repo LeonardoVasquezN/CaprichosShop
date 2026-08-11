@@ -3,11 +3,22 @@ import { prisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";
 
+function serializarBigInt(data) {
+  return JSON.parse(
+    JSON.stringify(data, (_, value) =>
+      typeof value === "bigint" ? Number(value) : value
+    )
+  );
+}
+
 export async function GET() {
   try {
     const colores = await prisma.color.findMany();
-    return NextResponse.json(colores);
+
+    return NextResponse.json(serializarBigInt(colores));
   } catch (error) {
+    console.error("GET /api/colores error:", error);
+
     return NextResponse.json(
       { mensaje: "Error al obtener colores" },
       { status: 500 }
@@ -53,8 +64,9 @@ export async function POST(req) {
       },
     });
 
-    return NextResponse.json(color, { status: 201 });
-
+    return NextResponse.json(serializarBigInt(color), {
+      status: 201,
+    });
   } catch (error) {
     console.error("POST /api/colores error:", error);
 

@@ -10,19 +10,36 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export async function GET() {
-  const productos = await prisma.producto.findMany({
-    include:{
-      subCategoria:{
-        include:{
-          categoria:true
-        }
-      },
-      marca:true
-    }
- });
+// Convierte BigInt de Prisma a string para poder enviarlo como JSON
+const serializeBigInt = (data) =>
+  JSON.parse(
+    JSON.stringify(data, (_, value) =>
+      typeof value === "bigint" ? value.toString() : value
+    )
+  );
 
-  return NextResponse.json(productos);
+export async function GET() {
+  try {
+    const productos = await prisma.producto.findMany({
+      include: {
+        subCategoria: {
+          include: {
+            categoria: true,
+          },
+        },
+        marca: true,
+      },
+    });
+
+    return NextResponse.json(serializeBigInt(productos));
+  } catch (error) {
+    console.error("GET PRODUCTOS ERROR:", error);
+
+    return NextResponse.json(
+      { mensaje: "Error interno" },
+      { status: 500 }
+    );
+  }
 }
 
 export async function POST(req) {
@@ -30,11 +47,15 @@ export async function POST(req) {
     const formData = await req.formData();
 
     const nombre = formData.get("nombre");
-    const subCategoriaId = Number(formData.get("id_sub_categorias"));
+
+    const subCategoriaId = formData.get("id_sub_categorias")
+      ? BigInt(formData.get("id_sub_categorias"))
+      : null;
+
     const precioCompra = Number(formData.get("precio_compra"));
     const precioVenta = Number(formData.get("precio_venta"));
 
-    if (!nombre || isNaN(subCategoriaId)) {
+    if (!nombre || subCategoriaId === null) {
       return NextResponse.json(
         { mensaje: "Datos inválidos" },
         { status: 400 }
@@ -50,21 +71,23 @@ export async function POST(req) {
       const buffer = Buffer.from(await imagen.arrayBuffer());
 
       const upload = await new Promise((resolve, reject) => {
-        cloudinary.uploader.upload_stream(
-          {
-            folder: "productos",
-            transformation: [
-              {
-                fetch_format: "auto",
-                quality: "auto",
-              },
-            ],
-          },
-          (err, result) => {
-            if (err) reject(err);
-            else resolve(result);
-          }
-        ).end(buffer);
+        cloudinary.uploader
+          .upload_stream(
+            {
+              folder: "productos",
+              transformation: [
+                {
+                  fetch_format: "auto",
+                  quality: "auto",
+                },
+              ],
+            },
+            (err, result) => {
+              if (err) reject(err);
+              else resolve(result);
+            }
+          )
+          .end(buffer);
       });
 
       imageUrl = upload.secure_url;
@@ -93,14 +116,14 @@ export async function POST(req) {
         precioVenta,
         subCategoriaId,
         marcaId: formData.get("id_marca")
-          ? Number(formData.get("id_marca"))
+          ? BigInt(formData.get("id_marca"))
           : null,
         stockTotal: 0,
         imagen: imageUrl,
       },
     });
 
-    return NextResponse.json(producto, {
+    return NextResponse.json(serializeBigInt(producto), {
       status: 201,
     });
   } catch (error) {

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { serializeBigInt } from "@/lib/serialize";
 
 export const runtime = "nodejs";
 
@@ -20,8 +21,10 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json(subCategorias);
+    return NextResponse.json(serializeBigInt(subCategorias));
   } catch (error) {
+    console.error("GET /api/subCategorias error:", error);
+
     return NextResponse.json(
       { mensaje: "Error al obtener subcategorías" },
       { status: 500 }
@@ -51,20 +54,22 @@ export async function POST(req) {
     const nombreLimpio = nombre.trim();
     const categoriaId = Number(id_categorias);
 
-    const subCategoriaExistente = await prisma.subCategoria.findFirst({
-      where: {
-        nombre: {
-          equals: nombreLimpio,
-          mode: "insensitive",
+    const subCategoriaExistente =
+      await prisma.subCategoria.findFirst({
+        where: {
+          nombre: {
+            equals: nombreLimpio,
+            mode: "insensitive",
+          },
+          categoriaId: categoriaId,
         },
-        categoriaId: categoriaId,
-      },
-    });
+      });
 
     if (subCategoriaExistente) {
       return NextResponse.json(
         {
-          mensaje: "Ya existe una subcategoría con ese nombre en esta categoría",
+          mensaje:
+            "Ya existe una subcategoría con ese nombre en esta categoría",
         },
         { status: 409 }
       );
@@ -81,11 +86,10 @@ export async function POST(req) {
     return NextResponse.json(
       {
         mensaje: "Subcategoría guardada con éxito",
-        subCategoria,
+        subCategoria: serializeBigInt(subCategoria),
       },
       { status: 201 }
     );
-
   } catch (error) {
     console.error("POST /api/subCategorias error:", error);
 

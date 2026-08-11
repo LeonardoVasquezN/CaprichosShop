@@ -6,26 +6,31 @@ import { v2 as cloudinary } from "cloudinary";
 import { verificarSesion } from "@/lib/auth";
 
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+// Convierte BigInt de Prisma a string para poder enviarlo como JSON
+const serializeBigInt = (data) =>
+  JSON.parse(
+    JSON.stringify(data, (_, value) =>
+      typeof value === "bigint" ? value.toString() : value
+    )
+  );
+
 export async function GET(req) {
   try {
-    const id = Number(req.nextUrl.pathname.split("/").pop());
-
-    if (!id || isNaN(id)) {
-      return NextResponse.json(
-        { mensaje: "ID inválido" },
-        { status: 400 }
-      );
-    }
+    const id = BigInt(req.nextUrl.pathname.split("/").pop());
 
     const producto = await prisma.producto.findUnique({
       where: { id },
       include: {
-        subCategoria: { include: { categoria: true } },
+        subCategoria: {
+          include: {
+            categoria: true,
+          },
+        },
         marca: true,
       },
     });
@@ -37,12 +42,13 @@ export async function GET(req) {
       );
     }
 
-    return NextResponse.json(producto);
+    return NextResponse.json(serializeBigInt(producto));
   } catch (error) {
     console.error("GET PRODUCTO ERROR:", error);
+
     return NextResponse.json(
-      { mensaje: "Error interno" },
-      { status: 500 }
+      { mensaje: "ID inválido o error interno" },
+      { status: 400 }
     );
   }
 }
@@ -62,25 +68,13 @@ export async function PUT(req) {
       );
     }
 
-    const id = Number(
-      req.nextUrl.pathname.split("/").pop()
-    );
-
-    if (!id || isNaN(id)) {
-      return NextResponse.json(
-        { mensaje: "ID inválido" },
-        { status: 400 }
-      );
-    }
+    const id = BigInt(req.nextUrl.pathname.split("/").pop());
 
     const formData = await req.formData();
 
     const nombre = formData.get("nombre");
 
-    if (
-      typeof nombre !== "string" ||
-      !nombre.trim()
-    ) {
+    if (typeof nombre !== "string" || !nombre.trim()) {
       return NextResponse.json(
         { mensaje: "El nombre del producto es obligatorio" },
         { status: 400 }
@@ -104,8 +98,7 @@ export async function PUT(req) {
     if (productoExistente) {
       return NextResponse.json(
         {
-          mensaje:
-            "Ya existe otro producto con ese nombre",
+          mensaje: "Ya existe otro producto con ese nombre",
         },
         {
           status: 409,
@@ -115,33 +108,22 @@ export async function PUT(req) {
 
     const data = {
       nombre: nombreLimpio,
-      precioCompra: Number(
-        formData.get("precio_compra")
-      ),
-      precioVenta: Number(
-        formData.get("precio_venta")
-      ),
-      subCategoriaId: Number(
-        formData.get("id_sub_categorias")
-      ),
+      precioCompra: Number(formData.get("precio_compra")),
+      precioVenta: Number(formData.get("precio_venta")),
+      subCategoriaId: BigInt(formData.get("id_sub_categorias")),
       marcaId: formData.get("id_marca")
-        ? Number(formData.get("id_marca"))
+        ? BigInt(formData.get("id_marca"))
         : null,
     };
 
     const imagen = formData.get("imagen");
 
-    if (
-      imagen instanceof File &&
-      imagen.size > 0
-    ) {
-      const buffer = Buffer.from(
-        await imagen.arrayBuffer()
-      );
+    if (imagen instanceof File && imagen.size > 0) {
+      const buffer = Buffer.from(await imagen.arrayBuffer());
 
-      const upload = await new Promise(
-        (resolve, reject) => {
-          cloudinary.uploader.upload_stream(
+      const upload = await new Promise((resolve, reject) => {
+        cloudinary.uploader
+          .upload_stream(
             {
               folder: "productos",
             },
@@ -149,9 +131,9 @@ export async function PUT(req) {
               if (err) reject(err);
               else resolve(result);
             }
-          ).end(buffer);
-        }
-      );
+          )
+          .end(buffer);
+      });
 
       data.imagen = upload.secure_url;
     }
@@ -164,15 +146,11 @@ export async function PUT(req) {
     });
 
     return NextResponse.json({
-      mensaje:
-        "Producto actualizado correctamente",
-      producto,
+      mensaje: "Producto actualizado correctamente",
+      producto: serializeBigInt(producto),
     });
   } catch (error) {
-    console.error(
-      "PUT PRODUCTO ERROR:",
-      error
-    );
+    console.error("PUT PRODUCTO ERROR:", error);
 
     return NextResponse.json(
       {
@@ -188,7 +166,6 @@ export async function PUT(req) {
 
 export async function PATCH(req) {
   try {
-
     const usuario = await verificarSesion();
 
     if (!usuario) {
@@ -202,41 +179,32 @@ export async function PATCH(req) {
       );
     }
 
-    const id = Number(req.nextUrl.pathname.split("/").pop());
-
-    if (!id || isNaN(id)) {
-      return NextResponse.json(
-        { mensaje: "ID inválido" },
-        { status: 400 }
-      );
-    }
+    const id = BigInt(req.nextUrl.pathname.split("/").pop());
 
     const { estado } = await req.json();
 
     const producto = await prisma.producto.update({
-      where:{
-        id
+      where: {
+        id,
       },
-      data:{
-        estado
-      }
+      data: {
+        estado,
+      },
     });
 
     return NextResponse.json({
-      mensaje:"Estado actualizado correctamente",
-      producto
+      mensaje: "Estado actualizado correctamente",
+      producto: serializeBigInt(producto),
     });
-
-
-  } catch(error){
+  } catch (error) {
     console.error("PATCH PRODUCTO ERROR:", error);
 
     return NextResponse.json(
       {
-        mensaje:"Error interno"
+        mensaje: "Error interno",
       },
       {
-        status:500
+        status: 500,
       }
     );
   }

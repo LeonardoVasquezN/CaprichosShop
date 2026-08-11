@@ -1,76 +1,90 @@
-  import { NextResponse } from "next/server";
-  import { prisma } from "@/lib/prisma";
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 
-  export const dynamic = "force-dynamic";
-  export const revalidate = 0;
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
-  export async function GET() {
-    try {
-      const marcas = await prisma.marca.findMany({
-        select: {
-          idMarca: true,
-          nombre: true,
-          estado: true,
-        },
-        orderBy: { idMarca: "asc" },
-      });
+export async function GET() {
+  try {
+    const marcas = await prisma.marca.findMany({
+      select: {
+        idMarca: true,
+        nombre: true,
+        estado: true,
+      },
+      orderBy: { idMarca: "asc" },
+    });
 
-      return NextResponse.json(marcas, {
-        headers: {
-          "Cache-Control": "no-store",
-        },
-      });
-    } catch (error) {
+    const marcasJSON = JSON.parse(
+      JSON.stringify(marcas, (_, value) =>
+        typeof value === "bigint" ? Number(value) : value
+      )
+    );
+
+    return NextResponse.json(marcasJSON, {
+      headers: {
+        "Cache-Control": "no-store",
+      },
+    });
+  } catch (error) {
+    console.error("GET /api/marcas error:", error);
+
+    return NextResponse.json(
+      { mensaje: "Error al obtener marcas" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(req) {
+  try {
+    const { nombre } = await req.json();
+
+    if (!nombre || typeof nombre !== "string") {
       return NextResponse.json(
-        { mensaje: "Error al obtener marcas" },
-        { status: 500 }
+        { mensaje: "El nombre es obligatorio" },
+        { status: 422 }
       );
     }
-  }
 
-  export async function POST(req) {
-    try {
-      const { nombre } = await req.json();
+    const nombreLimpio = nombre.trim();
 
-      if (!nombre || typeof nombre !== "string") {
-        return NextResponse.json(
-          { mensaje: "El nombre es obligatorio" },
-          { status: 422 }
-        );
-      }
-
-      const nombreLimpio = nombre.trim();
-
-      const marcaExistente = await prisma.marca.findFirst({
-        where: {
-          nombre: {
-            equals: nombreLimpio,
-            mode: "insensitive",
-          },
+    const marcaExistente = await prisma.marca.findFirst({
+      where: {
+        nombre: {
+          equals: nombreLimpio,
+          mode: "insensitive",
         },
-      });
+      },
+    });
 
-      if (marcaExistente) {
-        return NextResponse.json(
-          { mensaje: "Ya existe una marca con ese nombre" },
-          { status: 409 }
-        );
-      }
-
-      const marca = await prisma.marca.create({
-        data: {
-          nombre,
-          estado: 1,
-        },
-      });
-
-      return NextResponse.json(marca, { status: 201 });
-    } catch (error) {
-      console.error("POST /api/marcas error:", error);
-
+    if (marcaExistente) {
       return NextResponse.json(
-        { mensaje: "Error al guardar marca" },
-        { status: 500 }
+        { mensaje: "Ya existe una marca con ese nombre" },
+        { status: 409 }
       );
     }
+
+    const marca = await prisma.marca.create({
+      data: {
+        nombre: nombreLimpio,
+        estado: 1,
+      },
+    });
+
+    const marcaJSON = JSON.parse(
+      JSON.stringify(marca, (_, value) =>
+        typeof value === "bigint" ? Number(value) : value
+      )
+    );
+
+    return NextResponse.json(marcaJSON, { status: 201 });
+  } catch (error) {
+    console.error("POST /api/marcas error:", error);
+
+    return NextResponse.json(
+      { mensaje: "Error al guardar marca" },
+      { status: 500 }
+    );
   }
+}

@@ -2,34 +2,51 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verificarAdmin } from "@/lib/auth";
 
+function serializarBigInt(data) {
+  return JSON.parse(
+    JSON.stringify(data, (_, value) =>
+      typeof value === "bigint" ? Number(value) : value
+    )
+  );
+}
+
 export async function GET(_req, { params }) {
-  const { id } = await params; 
+  try {
+    const { id } = await params;
 
-  const colorId = Number(id);
-  if (isNaN(colorId)) {
+    const colorId = Number(id);
+
+    if (isNaN(colorId)) {
+      return NextResponse.json(
+        { mensaje: "ID inválido" },
+        { status: 400 }
+      );
+    }
+
+    const color = await prisma.color.findUnique({
+      where: { id: colorId },
+    });
+
+    if (!color) {
+      return NextResponse.json(
+        { mensaje: "Color no encontrado" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(serializarBigInt(color));
+  } catch (error) {
+    console.error("GET /api/colores/[id] error:", error);
+
     return NextResponse.json(
-      { mensaje: "ID inválido" },
-      { status: 400 }
+      { mensaje: "Error al obtener color" },
+      { status: 500 }
     );
   }
-
-  const color = await prisma.color.findUnique({
-    where: { id: colorId },
-  });
-
-  if (!color) {
-    return NextResponse.json(
-      { mensaje: "Color no encontrado" },
-      { status: 404 }
-    );
-  }
-
-  return NextResponse.json(color);
 }
 
 export async function PUT(req, { params }) {
   try {
-
     const usuario = await verificarAdmin();
 
     if (!usuario) {
@@ -40,6 +57,7 @@ export async function PUT(req, { params }) {
     }
 
     const { id } = await params;
+
     const colorId = Number(id);
 
     if (isNaN(colorId)) {
@@ -88,8 +106,7 @@ export async function PUT(req, { params }) {
       },
     });
 
-    return NextResponse.json(color);
-
+    return NextResponse.json(serializarBigInt(color));
   } catch (error) {
     console.error("PUT /api/colores/[id] error:", error);
 

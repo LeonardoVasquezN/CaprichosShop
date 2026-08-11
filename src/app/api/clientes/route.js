@@ -1,5 +1,12 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";  
+import { prisma } from "@/lib/prisma";
+
+const serializeBigInt = (data) =>
+  JSON.parse(
+    JSON.stringify(data, (_, value) =>
+      typeof value === "bigint" ? Number(value) : value
+    )
+  );
 
 // GET: listar clientes
 export async function GET() {
@@ -10,12 +17,14 @@ export async function GET() {
         nombre: true,
         documento: true,
       },
-      take: 100, // opcional: limitar resultados para evitar latencia
+      take: 100,
     });
 
-    return NextResponse.json(clientes);
+    return NextResponse.json(serializeBigInt(clientes));
+
   } catch (error) {
     console.error("Error en GET /api/clientes:", error);
+
     return NextResponse.json(
       { message: "Error interno al obtener clientes" },
       { status: 500 }
@@ -43,9 +52,14 @@ export async function POST(req) {
       },
     });
 
-    return NextResponse.json(cliente, { status: 201 });
+    return NextResponse.json(
+      serializeBigInt(cliente),
+      { status: 201 }
+    );
+
   } catch (error) {
     console.error("Error en POST /api/clientes:", error);
+
     return NextResponse.json(
       { message: "Error interno al crear cliente" },
       { status: 500 }
