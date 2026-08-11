@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verificarAdmin } from "@/lib/auth";
+import { serializeBigInt } from "@/lib/serialize";
 
 export async function GET() {
   try {
@@ -21,13 +22,7 @@ export async function GET() {
       },
     });
 
-    const variantesJSON = JSON.parse(
-      JSON.stringify(variantes, (_, value) =>
-        typeof value === "bigint"
-          ? Number(value)
-          : value
-      )
-    );
+    const variantesJSON = serializeBigInt(variantes);
 
     return NextResponse.json(variantesJSON);
 
@@ -83,11 +78,7 @@ export async function PUT(req, { params }) {
 
   return NextResponse.json({
     mensaje: "Variante actualizada correctamente",
-    variante: JSON.parse(
-      JSON.stringify(variante, (_, value) =>
-        typeof value === "bigint" ? Number(value) : value
-      )
-    )
+    variante: serializeBigInt(variante)
   });
 }
 

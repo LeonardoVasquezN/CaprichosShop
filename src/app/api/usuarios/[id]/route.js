@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verificarAdmin } from "@/lib/auth";
 import bcrypt from "bcryptjs";
+import { serializeBigInt } from "@/lib/serialize";
 
 export async function GET(_req, { params }) {
   const id = Number(params.id);
@@ -29,7 +30,7 @@ export async function GET(_req, { params }) {
     );
   }
 
-  return NextResponse.json(usuario);
+  return NextResponse.json(serializeBigInt(usuario));
 }
 
 export async function PUT(req, { params }) {
@@ -70,7 +71,7 @@ export async function PUT(req, { params }) {
       },
     });
 
-    return NextResponse.json(usuarioActualizado);
+    return NextResponse.json(serializeBigInt(usuarioActualizado));
   } catch (error) {
     return NextResponse.json(
       { mensaje: "Error al actualizar usuario" },

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verificarAdmin } from "@/lib/auth";
+import { serializeBigInt } from "@/lib/serialize";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -33,11 +34,7 @@ export async function GET(req, context) {
       );
     }
 
-    const marcaJSON = JSON.parse(
-      JSON.stringify(marca, (_, value) =>
-        typeof value === "bigint" ? Number(value) : value
-      )
-    );
+    const marcaJSON = serializeBigInt(marca);
 
     return NextResponse.json(marcaJSON);
   } catch (error) {
@@ -109,11 +106,7 @@ export async function PUT(req, context) {
       },
     });
 
-    const marcaJSON = JSON.parse(
-      JSON.stringify(marcaActualizada, (_, value) =>
-        typeof value === "bigint" ? Number(value) : value
-      )
-    );
+    const marcaJSON = serializeBigInt(marca);
 
     return NextResponse.json(marcaJSON);
   } catch (error) {

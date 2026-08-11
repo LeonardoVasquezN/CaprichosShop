@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { serializeBigInt } from "@/lib/serialize";
 
 export async function POST(req, { params }) {
   const id = Number(params.id);
@@ -41,10 +42,12 @@ export async function POST(req, { params }) {
 
   await actualizarStockProducto(variante.productoId);
 
-  return NextResponse.json({
-    message: "Stock actualizado correctamente",
-    nuevo_stock: varianteActualizada.stock,
-  });
+  return NextResponse.json(
+    serializeBigInt({
+      message: "Stock actualizado correctamente",
+      nuevo_stock: varianteActualizada.stock,
+    })
+  );
 }
 
 async function actualizarStockProducto(productoId) {

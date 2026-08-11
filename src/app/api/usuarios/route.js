@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { serializeBigInt } from "@/lib/serialize";
 
 export async function GET() {
   try {
@@ -13,7 +14,7 @@ export async function GET() {
       orderBy: { id: "desc" },
     });
 
-    return NextResponse.json(usuarios);
+    return NextResponse.json(serializeBigInt(usuarios));
   } catch (error) {
     return NextResponse.json(
       { mensaje: "Error al obtener usuarios" },
@@ -64,7 +65,7 @@ export async function POST(req) {
     return NextResponse.json(
       {
         mensaje: "usuario guardado con exito",
-        usuarios: userSafe,
+        usuarios: serializeBigInt(userSafe),
       },
       { status: 201 }
     );
