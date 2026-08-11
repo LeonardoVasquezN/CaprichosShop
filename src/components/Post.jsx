@@ -110,24 +110,82 @@ export default function Post() {
     }
   };
 
-  const obtenerVariantes = async () => {
+const obtenerVariantes = async () => {
+  try {
+    const res = await fetch("/api/variantes", {
+      cache: "no-store",
+    });
 
-  const res = await fetch("/api/variantes");
-  const data = await res.json();
+    if (!res.ok) {
+      throw new Error("No se pudieron obtener las variantes");
+    }
 
-  setVariantes(data);
+    const data = await res.json();
+
+    setVariantes(
+      data.map((v) => ({
+        ...v,
+        id: Number(v.id),
+        productoId: Number(v.productoId),
+        colorId: Number(v.colorId),
+        tallaId: Number(v.tallaId),
+        stock: Number(v.stock),
+      }))
+    );
+
+  } catch (error) {
+    console.error("ERROR OBTENIENDO VARIANTES:", error);
+  }
 };
+
 
 const obtenerColores = async () => {
-  const res = await fetch("/api/colores");
-  const data = await res.json();
-  setColores(data);
+  try {
+    const res = await fetch("/api/colores", {
+      cache: "no-store",
+    });
+
+    if (!res.ok) {
+      throw new Error("No se pudieron obtener los colores");
+    }
+
+    const data = await res.json();
+
+    setColores(
+      data.map((color) => ({
+        ...color,
+        id: Number(color.id),
+      }))
+    );
+
+  } catch (error) {
+    console.error("ERROR OBTENIENDO COLORES:", error);
+  }
 };
 
+
 const obtenerTallas = async () => {
-  const res = await fetch("/api/tallas");
-  const data = await res.json();
-  setTallas(data);
+  try {
+    const res = await fetch("/api/tallas", {
+      cache: "no-store",
+    });
+
+    if (!res.ok) {
+      throw new Error("No se pudieron obtener las tallas");
+    }
+
+    const data = await res.json();
+
+    setTallas(
+      data.map((talla) => ({
+        ...talla,
+        id: Number(talla.id),
+      }))
+    );
+
+  } catch (error) {
+    console.error("ERROR OBTENIENDO TALLAS:", error);
+  }
 };
 
  const seleccionarProducto = (producto)=>{
@@ -153,10 +211,11 @@ const agregarProductoFinal = ()=>{
     return;
 }
 
-const variante = variantes.find((v)=>
-  v.productoId === productoSeleccionado.id &&
-  v.colorId === Number(colorSeleccionado) &&
-  v.tallaId === Number(tallaSeleccionada)
+const variante = variantes.find(
+  (v) =>
+    Number(v.productoId) === Number(productoSeleccionado.id) &&
+    Number(v.colorId) === Number(colorSeleccionado) &&
+    Number(v.tallaId) === Number(tallaSeleccionada)
 );
 
 if(!variante){
@@ -304,6 +363,7 @@ setCantidadSeleccionada(1);
           total,
           metodo_de_pago: JSON.stringify(pagosSeleccionados),
           id_cliente: clienteSeleccionado?.id ?? 16,
+          tipoComprobante,
           preVentaId: null,
           detalles
         })
@@ -366,13 +426,15 @@ setCantidadSeleccionada(1);
     );
   });
 
-  const varianteSeleccionada = productoSeleccionado && colorSeleccionado && tallaSeleccionada
-  ? variantes.find((v) =>
-      v.productoId === productoSeleccionado.id &&
-      v.colorId === Number(colorSeleccionado) &&
-      v.tallaId === Number(tallaSeleccionada)
-    )
-  : null;
+  const varianteSeleccionada =
+  productoSeleccionado && colorSeleccionado && tallaSeleccionada
+    ? variantes.find(
+        (v) =>
+          Number(v.productoId) === Number(productoSeleccionado.id) &&
+          Number(v.colorId) === Number(colorSeleccionado) &&
+          Number(v.tallaId) === Number(tallaSeleccionada)
+      )
+    : null;
 
   const sinStock =
     varianteSeleccionada &&
@@ -452,6 +514,24 @@ setCantidadSeleccionada(1);
               onClick={() => setTipoComprobante('F')}
             >
               F-FACTURA
+            </button>
+
+            {/* BOTON DE PROBAR LUCODE */}
+            <button
+              type="button"
+              onClick={async () => {
+                const res = await fetch("/api/lucode/test", {
+                  method: "POST"
+                });
+
+                const data = await res.json();
+
+                console.log("RESULTADO TEST LUCODE:", data);
+
+                alert(JSON.stringify(data, null, 2));
+              }}
+            >
+              PROBAR LUCODE
             </button>
           </div>
 
@@ -549,11 +629,12 @@ setCantidadSeleccionada(1);
 
                             {
                                 colores
-                                .filter(c=>
-                                    variantes.some(v=>
-                                        v.productoId===productoSeleccionado.id &&
-                                        v.colorId===c.id
-                                    )
+                                .filter((c) =>
+                                  variantes.some(
+                                    (v) =>
+                                      Number(v.productoId) === Number(productoSeleccionado.id) &&
+                                      Number(v.colorId) === Number(c.id)
+                                  )
                                 )
                                 .map(color=>(
                                     <option
@@ -580,12 +661,13 @@ setCantidadSeleccionada(1);
                             {
                               colorSeleccionado &&
                               tallas
-                              .filter(t=>
-                                  variantes.some(v=>
-                                      v.productoId===productoSeleccionado.id &&
-                                      v.colorId===Number(colorSeleccionado) &&
-                                      v.tallaId===t.id
-                                  )
+                              .filter((t) =>
+                                variantes.some(
+                                  (v) =>
+                                    Number(v.productoId) === Number(productoSeleccionado.id) &&
+                                    Number(v.colorId) === Number(colorSeleccionado) &&
+                                    Number(v.tallaId) === Number(t.id)
+                                )
                               )
                               .map(talla=>(
                                   <option
