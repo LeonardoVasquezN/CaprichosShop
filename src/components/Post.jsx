@@ -368,12 +368,39 @@ setCantidadSeleccionada(1);
           detalles
         })
       });
-
       const data = await respuesta.json();
 
       if (!respuesta.ok) {
-        alert(data.detail || "Error");
+        alert(data.detail || data.error || "Error");
         return;
+      }
+
+      const ventaId = data.ventaId;
+      console.log("VENTA CREADA:", ventaId);
+
+      if (tipoComprobante === "B") {
+        const respuestaBoleta = await fetch(
+          `/api/ventas/${ventaId}/boleta`,
+          {
+            method: "POST",
+          }
+        );
+
+        const dataBoleta = await respuestaBoleta.json();
+
+        console.log("RESPUESTA BOLETA LUCODE:", dataBoleta);
+
+        if (!respuestaBoleta.ok) {
+          alert(
+            dataBoleta.detail ||
+            dataBoleta.error ||
+            "La venta se registró, pero la boleta no pudo emitirse"
+          );
+
+          return;
+        }
+
+        console.log("BOLETA EMITIDA CORRECTAMENTE:", dataBoleta);
       }
 
       const resVariantes = await fetch("/api/variantes", {
@@ -517,7 +544,7 @@ setCantidadSeleccionada(1);
             </button>
 
             {/* BOTON DE PROBAR LUCODE */}
-            <button
+            {/* <button
               type="button"
               onClick={async () => {
                 const res = await fetch("/api/lucode/test", {
@@ -532,7 +559,7 @@ setCantidadSeleccionada(1);
               }}
             >
               PROBAR LUCODE
-            </button>
+            </button> */}
           </div>
 
           <div className={Style.workspace}>
