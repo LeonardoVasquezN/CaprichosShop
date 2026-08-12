@@ -3,9 +3,14 @@ import { prisma } from "@/lib/prisma";
 import { verificarAdmin } from "@/lib/auth";
 import { serializeBigInt } from "@/lib/serialize";
 
-export async function GET() {
+export async function GET(req, { params }) {
   try {
-    const variantes = await prisma.variante.findMany({
+    const id = Number(params.id);
+
+    const variante = await prisma.variante.findUnique({
+      where: {
+        id,
+      },
       include: {
         producto: {
           include: {
@@ -22,21 +27,24 @@ export async function GET() {
       },
     });
 
-    const variantesJSON = serializeBigInt(variantes);
+    if (!variante) {
+      return NextResponse.json(
+        { mensaje: "Variante no encontrada" },
+        { status: 404 }
+      );
+    }
 
-    return NextResponse.json(variantesJSON);
+    return NextResponse.json(serializeBigInt(variante));
 
   } catch (error) {
-    console.error("ERROR GET VARIANTES:", error);
+    console.error("ERROR GET VARIANTE:", error);
 
     return NextResponse.json(
       {
-        error: "Error al obtener variantes",
+        mensaje: "Error al obtener la variante",
         detail: error.message,
       },
-      {
-        status: 500,
-      }
+      { status: 500 }
     );
   }
 }
