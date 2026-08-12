@@ -27,13 +27,21 @@ export async function POST() {
       );
     }
 
+    const ahora = new Date();
+
+    const fechaDeEmision = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "America/Lima",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).format(ahora);
+
+
     const comprobante = {
       documento: "boleta",
       serie: "B001",
-      numero: 1,
-      fecha_de_emision: new Date()
-        .toISOString()
-        .split("T")[0],
+      numero: 5,
+      fecha_de_emision: fechaDeEmision,
 
       moneda: "PEN",
 
@@ -59,9 +67,6 @@ export async function POST() {
       total: "118.00"
     };
 
-    console.log("ENVIANDO A LUCODE:");
-    console.log(comprobante);
-
     const respuesta = await fetch(url, {
       method: "POST",
 
@@ -74,9 +79,6 @@ export async function POST() {
     });
 
     const data = await respuesta.json();
-
-    console.log("RESPUESTA LUCODE:");
-    console.log(data);
 
     return NextResponse.json(
       {

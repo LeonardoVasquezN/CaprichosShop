@@ -1,14 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams  } from "next/navigation";
+import { useRouter, useSearchParams, useParams } from "next/navigation";
 import Style from "./mantExistencia.module.css";
 
-export default function MantExistencia({id}) {
+export default function MantExistencia() {
   const router = useRouter();
-   const searchParams = useSearchParams();
+  const searchParams = useSearchParams();
+  const params = useParams();
 
-    const productoIdDesdeURL = searchParams.get("productoId");
+  const id = params.id;
+
+  const productoIdDesdeURL = searchParams.get("productoId");
   
   const [categorias, setCategorias] = useState([]);
   const [subCategorias, setSubCategorias] = useState([]);
@@ -101,9 +104,9 @@ export default function MantExistencia({id}) {
       .then(res => res.json())
       .then(data => {
 
-        const categoriaId = data.producto.subCategoria.categoria.id;
-        const subCategoriaId = data.producto.subCategoria.id;
-        const productoId = data.producto.id;
+        const categoriaId = data.producto?.subCategoria.categoria.id;
+        const subCategoriaId = data.producto?.subCategoria.id;
+        const productoId = data.producto?.id;
 
         setSubCategoriasFiltradas(
           subCategorias.filter(
@@ -120,8 +123,8 @@ export default function MantExistencia({id}) {
         setIdCategoria(categoriaId);
         setIdSubCategoria(subCategoriaId);
         setIdProducto(productoId);
-        setIdColor(data.color.id);
-        setIdTalla(data.talla.id);
+        setIdColor(data.color?.id);
+        setIdTalla(data.talla?.id);
         setCantidad(data.stock);
 
       });

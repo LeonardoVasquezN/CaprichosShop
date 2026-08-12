@@ -120,7 +120,12 @@ export async function POST(req) {
       }
 
       return venta;
-    });
+    },
+    {
+      maxWait: 10000,
+      timeout: 15000,
+    }
+  );
 
     if (preVentaId) {
       await prisma.detallePreVenta.deleteMany({
@@ -168,8 +173,6 @@ export async function GET() {
       FROM ventas
       WHERE id_cliente IS NULL
     `;
-
-    console.log("VENTAS CON NULL:", serializeBigInt(prueba));
 
     const ventas = await prisma.venta.findMany({
       orderBy: {
