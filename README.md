@@ -18,18 +18,6 @@ Permite administrar productos, controlar stock y organizar la información de ma
 - Interfaz web responsive
 - Conexión con base de datos
 
-## Acceso de prueba
-
-Para fines de demostración, se pueden usar las siguientes credenciales:
-
-**Administrador**
-- Usuario: `Admin`
-- Contraseña: `123`
-
-**Vendedor**
-- Usuario: `Vendedora`
-- Contraseña: `12345`
-
 ## Instalación y ejecución
 
 1. Clonar el repositorio:
