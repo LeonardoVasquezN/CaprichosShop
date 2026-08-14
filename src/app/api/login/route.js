@@ -23,7 +23,7 @@ export async function POST(req) {
 
     const usuario = await prisma.Usuario.findFirst({
       where: {
-        nombre: nombre
+        nombre: nombre,
       },
     });
 
@@ -34,17 +34,58 @@ export async function POST(req) {
       );
     }
 
-    if (usuario.bloqueadoHasta && usuario.bloqueadoHasta > new Date()) {
+    const ahora = new Date();
+
+    if (usuario.bloqueadoHasta && usuario.bloqueadoHasta > ahora) {
       const minutosRestantes = Math.ceil(
-        (usuario.bloqueadoHasta.getTime() - Date.now()) / 60000
+        (usuario.bloqueadoHasta.getTime() - ahora.getTime()) / 60000
       );
 
       return NextResponse.json(
         {
           message: `Cuenta bloqueada temporalmente. Intenta nuevamente en ${minutosRestantes} minuto(s).`,
+          bloqueadoHasta: usuario.bloqueadoHasta.getTime(),
         },
         { status: 429 }
       );
+    }
+
+    if (usuario.bloqueadoHasta && usuario.bloqueadoHasta <= ahora) {
+      await prisma.Usuario.update({
+        where: {
+          id: usuario.id,
+        },
+        data: {
+          intentosFallidos: 0,
+          bloqueadoHasta: null,
+          ultimoIntentoFallido: null,
+        },
+      });
+
+      usuario.intentosFallidos = 0;
+      usuario.bloqueadoHasta = null;
+      usuario.ultimoIntentoFallido = null;
+    }
+
+    const TREINTA_MINUTOS = 30 * 60 * 1000;
+
+    if (
+      usuario.ultimoIntentoFallido &&
+      ahora.getTime() - usuario.ultimoIntentoFallido.getTime() >=
+        TREINTA_MINUTOS
+    ) {
+      await prisma.Usuario.update({
+        where: {
+          id: usuario.id,
+        },
+        data: {
+          intentosFallidos: 0,
+          ultimoIntentoFallido: null,
+        },
+      });
+
+      usuario.intentosFallidos = 0;
+      usuario.ultimoIntentoFallido = null;
     }
 
     const coincide = await bcrypt.compare(clave, usuario.clave);
@@ -53,15 +94,18 @@ export async function POST(req) {
       const nuevosIntentos = usuario.intentosFallidos + 1;
 
       if (nuevosIntentos >= 5) {
-        const bloqueadoHasta = new Date(Date.now() + 15 * 60 * 1000);
+        const bloqueadoHasta = new Date(
+          ahora.getTime() + 15 * 60 * 1000
+        );
 
         await prisma.Usuario.update({
           where: {
             id: usuario.id,
           },
           data: {
-            intentosFallidos: nuevosIntentos,
+            intentosFallidos: 5,
             bloqueadoHasta,
+            ultimoIntentoFallido: ahora,
           },
         });
 
@@ -69,6 +113,7 @@ export async function POST(req) {
           {
             message:
               "Demasiados intentos fallidos. La cuenta ha sido bloqueada durante 15 minutos.",
+            bloqueadoHasta: bloqueadoHasta.getTime(),
           },
           { status: 429 }
         );
@@ -80,6 +125,7 @@ export async function POST(req) {
         },
         data: {
           intentosFallidos: nuevosIntentos,
+          ultimoIntentoFallido: ahora,
         },
       });
 
@@ -92,7 +138,7 @@ export async function POST(req) {
     }
 
     const { clave: _, ...usuarioSeguro } = usuario;
-    
+
     await prisma.Usuario.update({
       where: {
         id: usuario.id,
@@ -100,6 +146,7 @@ export async function POST(req) {
       data: {
         intentosFallidos: 0,
         bloqueadoHasta: null,
+        ultimoIntentoFallido: null,
       },
     });
 

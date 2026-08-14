@@ -92,16 +92,38 @@
 }
 
 .btnIniciarSesion {
-  border: 2px solid black;
+  border: 2px solid purple;
   border-radius: 7px;
   width: 320px;
   height: 40px;
-  padding: 10px;  
+  padding: 10px;
+
+  background-color: purple;
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
 .btnIniciarSesion:hover {
-  cursor: pointer;
-  background-color: #f0f0f0;
+  background-color: purple;
+}
+
+.btnIniciarSesion:disabled {
+  background-color: #b9a3d6;
+  border-color: #b9a3d6;
+  color: #eeeeee;
+
+  cursor: not-allowed;
+  opacity: 1;
+}
+
+.btnIniciarSesion:disabled:hover {
+  background-color: #b9a3d6;
+  border-color: #b9a3d6;
+  cursor: not-allowed;
 }
 
 @media (max-width:768px) {

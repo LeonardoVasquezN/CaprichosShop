@@ -306,15 +306,16 @@ model Cambio {
 }
 
 model Usuario {
-  id               BigInt    @id(map: "pk_usuario") @default(autoincrement())
-  nombre           String    @unique(map: "usuario_nombre_unique") @db.VarChar(255)
-  cargo            String    @db.VarChar(255)
-  clave            String    @db.VarChar(255)
-  created_at       DateTime  @default(now()) @db.Timestamp(6)
-  updated_at       DateTime  @default(now()) @db.Timestamp(6)
-  trial621         String?   @db.Char(1)
-  intentosFallidos Int       @default(0)
-  bloqueadoHasta   DateTime? @db.Timestamp(6)
+  id                   BigInt    @id(map: "pk_usuario") @default(autoincrement())
+  nombre               String    @unique(map: "usuario_nombre_unique") @db.VarChar(255)
+  cargo                String    @db.VarChar(255)
+  clave                String    @db.VarChar(255)
+  created_at           DateTime  @default(now()) @db.Timestamp(6)
+  updated_at           DateTime  @default(now()) @db.Timestamp(6)
+  trial621             String?   @db.Char(1)
+  intentosFallidos     Int       @default(0)
+  bloqueadoHasta       DateTime? @db.Timestamp(6)
+  ultimoIntentoFallido DateTime? @db.Timestamp(6)
 
   @@map("usuario")
 }
