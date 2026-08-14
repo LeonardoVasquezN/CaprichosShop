@@ -447,9 +447,19 @@ setCantidadSeleccionada(1);
   const productosFiltrados = productosBD.filter((producto) => {
     const texto = buscarProducto.toLowerCase();
 
+    const tieneVariantes = variantes.some(
+      (v) =>
+        Number(v.productoId) === Number(producto.id) &&
+        v.colorId &&
+        v.tallaId
+    );
+
     return (
-      producto.nombre.toLowerCase().includes(texto) ||
-      producto.marca?.nombre?.toLowerCase().includes(texto)
+      tieneVariantes &&
+      (
+        producto.nombre.toLowerCase().includes(texto) ||
+        producto.marca?.nombre?.toLowerCase().includes(texto)
+      )
     );
   });
 
