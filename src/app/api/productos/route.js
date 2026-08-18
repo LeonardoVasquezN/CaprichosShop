@@ -13,6 +13,16 @@ cloudinary.config({
 
 export async function GET() {
   try {
+    // const productos = await prisma.producto.findMany({
+    //   include: {
+    //     subCategoria: {
+    //       include: {
+    //         categoria: true,
+    //       },
+    //     },
+    //     marca: true,
+    //   },
+    // });
     const productos = await prisma.producto.findMany({
       include: {
         subCategoria: {
@@ -21,6 +31,12 @@ export async function GET() {
           },
         },
         marca: true,
+        variantes: {
+          include: {
+            talla: true,
+            color: true,
+          },
+        },
       },
     });
 
