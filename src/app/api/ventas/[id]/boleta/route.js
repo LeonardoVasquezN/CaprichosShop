@@ -37,7 +37,7 @@ export async function POST(req, { params }) {
 
    // CORRELATIVO MANUAL POR AHOR
     const serie = "B001";
-    const numero = 9;
+    const numero = 18;
 
     const venta = await prisma.venta.findUnique({
       where: {
