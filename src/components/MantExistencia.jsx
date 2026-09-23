@@ -42,6 +42,14 @@ export default function MantExistencia() {
       setProductos(prod);
       setColores(col);
       setTallas(tal);
+
+      const colorNegro = col.find(
+        c => c.hexadecimal?.toUpperCase() === "#000000"
+      );
+
+      if (colorNegro) {
+        setIdColor(String(colorNegro.id));
+      }
     });
   }, []);
 
